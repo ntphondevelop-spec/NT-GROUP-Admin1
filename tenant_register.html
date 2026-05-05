@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tenant Form - Pak Phanang Prestige Hall</title>
+    <link href="https://fonts.googleapis.com/css2?family=Anuphan:wght@300;400;500;600;700&family=Audiowide&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    
+    <style>
+        :root {
+            --font-ui: 'Anuphan', sans-serif;
+            --font-logo: 'Audiowide', cursive;
+            --bg-dark: #03030A;
+            --surface-dark: #0A0A2A;
+            --surface-card: #0F0F30;
+            --gold-accent: #D4AF37;
+            --gold-hover: #E5C354;
+            --text-light: #F5F5F7;
+            --text-gray: #8E8E93;
+            --border-light: rgba(255,255,255,0.1);
+            --alert-red: #FF3B30;
+            --success-green: #34C759;
+            --info-blue: #0A84FF;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: var(--font-ui); }
+        body { background-color: var(--bg-dark); color: var(--text-light); -webkit-font-smoothing: antialiased; min-height: 100vh; padding-bottom: 60px; overflow-x: hidden; }
+
+        .topbar { background: var(--surface-dark); border-bottom: 1px solid var(--border-light); padding: 16px clamp(20px, 4vw, 40px); display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 50; }
+        .btn-back { display: flex; align-items: center; gap: 8px; color: var(--text-gray); text-decoration: none; font-weight: 600; transition: 0.2s; font-size: clamp(0.9rem, 2vw, 1rem);}
+        .btn-back:hover { color: var(--gold-accent); }
+        .btn-back svg { width: 24px; height: 24px; stroke: currentColor; stroke-width: 2.5; fill: none;}
+        .brand { font-family: var(--font-logo); color: var(--gold-accent); font-size: clamp(1rem, 3vw, 1.2rem);}
+
+        .container { max-width: 1100px; margin: 40px auto 0; padding: 0 clamp(16px, 4vw, 24px); animation: fadeIn 0.6s ease forwards;}
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        .page-header { margin-bottom: 32px; text-align: center;}
+        .page-header h1 { font-size: clamp(1.8rem, 5vw, 2.4rem); color: #fff; margin-bottom: 8px;}
+        .page-header p { color: var(--text-gray); font-size: 1rem;}
+
+        .reader-card { background: linear-gradient(135deg, rgba(212, 175, 55, 0.05) 0%, rgba(10, 10, 42, 0.8) 100%); border: 1px solid var(--gold-accent); border-radius: 24px; padding: clamp(24px, 4vw, 32px); text-align: center; margin-bottom: 32px; }
+        .btn-read-card { background: var(--gold-accent); color: var(--bg-dark); border: none; padding: 0 32px; border-radius: 16px; font-size: 1.1rem; font-weight: 700; cursor: pointer; transition: 0.2s; display: inline-flex; align-items: center; gap: 12px; width: 100%; max-width: 400px; justify-content: center; height: 56px;}
+        .btn-read-card:hover { background: var(--gold-hover); transform: translateY(-2px); box-shadow: 0 8px 20px rgba(212, 175, 55, 0.3);}
+        .btn-read-card svg { width: 24px !important; height: 24px !important; stroke: currentColor; stroke-width: 2.5; fill: none; flex-shrink: 0;}
+
+        .form-card { background: var(--surface-card); border: 1px solid var(--border-light); border-radius: 24px; padding: clamp(24px, 4vw, 40px); }
+        .section-title { font-size: 1.2rem; font-weight: 700; color: var(--gold-accent); margin-bottom: 24px; border-bottom: 1px solid var(--border-light); padding-bottom: 12px;}
+        
+        /* 🚨 แก้ไข Grid ตรงนี้! เพิ่ม .col-5 เข้าไปให้ครบทั้งหน้าจอคอมและมือถือ */
+        .form-grid { display: grid; grid-template-columns: repeat(12, 1fr); gap: 20px; margin-bottom: 32px;}
+        .col-12 { grid-column: span 12; } 
+        .col-6 { grid-column: span 6; } 
+        .col-5 { grid-column: span 5; } /* เพิ่มมาแล้ว ไม่หดเป็นรูเข็มแน่นอน */
+        .col-4 { grid-column: span 4; } 
+        .col-3 { grid-column: span 3; } 
+        .col-2 { grid-column: span 2; }
+        
+        @media (max-width: 768px) { 
+            /* มือถือให้ทุก Column ขยายเต็ม 12 ส่วนไปเลย */
+            .col-6, .col-5, .col-4, .col-3, .col-2 { grid-column: span 12; } 
+        }
+
+        .input-group { display: flex; flex-direction: column; gap: 8px; position: relative;}
+        .input-group label { font-size: 0.95rem; color: var(--text-gray); font-weight: 600;}
+        .input-group input, .input-group textarea, .input-group select { width: 100%; padding: 16px; background: rgba(0,0,0,0.3); border: 1px solid var(--border-light); border-radius: 14px; color: var(--text-light); font-size: 1.05rem; outline: none; transition: 0.3s; appearance: none;}
+        .input-group input:focus, .input-group textarea:focus, .input-group select:focus { border-color: var(--gold-accent); box-shadow: 0 0 0 4px rgba(212, 175, 55, 0.1); }
+        
+        /* ลูกศรสำหรับ Select */
+        .select-arrow { position: absolute; right: 16px; top: 44px; width: 16px; height: 16px; pointer-events: none; stroke: var(--text-gray); stroke-width: 2.5; fill: none; }
+        
+        .custom-input { display: none; margin-top: 8px; animation: slideDown 0.3s ease forwards;}
+        @keyframes slideDown { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+
+        .form-actions { display: flex; justify-content: flex-end; gap: 16px; margin-top: 40px;}
+        
+        .btn-cancel { background: transparent; color: var(--text-gray); border: 1px solid var(--border-light); padding: 0 32px; border-radius: 14px; font-size: 1.05rem; font-weight: 700; cursor: pointer; transition: 0.2s; height: 56px; display: inline-flex; align-items: center; justify-content: center;}
+        .btn-cancel:hover { background: rgba(255,255,255,0.05); color: #fff;}
+        
+        .btn-save { background: var(--info-blue); color: #fff; border: none; padding: 0 40px; border-radius: 14px; font-size: 1.05rem; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 10px; transition: 0.2s; height: 56px;}
+        .btn-save:hover { background: #0071E3; transform: translateY(-2px); box-shadow: 0 8px 20px rgba(10, 132, 255, 0.3);}
+        .btn-save svg { width: 24px !important; height: 24px !important; stroke: currentColor; stroke-width: 2.5; fill: none; flex-shrink: 0;}
+
+        @media (max-width: 768px) {
+            .form-actions { flex-direction: column-reverse; }
+            .btn-cancel, .btn-save { width: 100%; }
+        }
+
+        #custom-toast { position: fixed; bottom: 30px; right: 30px; z-index: 2000; display: flex; flex-direction: column; gap: 10px; pointer-events: none; }
+        .toast-item { background: var(--surface-dark); border: 1px solid var(--gold-accent); color: #fff; padding: 16px 24px; border-radius: 16px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); display: flex; align-items: center; gap: 12px; animation: slideIn 0.4s ease forwards; min-width: 280px; font-weight: 600;}
+        @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+        .toast-item.error { border-color: var(--alert-red); }
+    </style>
+</head>
+<body>
+
+    <div class="topbar">
+        <a href="tenant_manage.html" class="btn-back">
+            <svg viewBox="0 0 24 24"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>ย้อนกลับ
+        </a>
+        <div class="brand">PAK PHANANG PRESTIGE</div>
+    </div>
+
+    <div class="container">
+        <div class="page-header">
+            <h1 id="page-title">ลงทะเบียนผู้เช่าใหม่</h1>
+            <p id="page-desc">กรุณาเสียบเครื่องอ่านบัตรประชาชน (Smart Card) หรือพิมพ์ข้อมูลลงฟอร์ม</p>
+        </div>
+
+        <!-- อ่านบัตร -->
+        <div class="reader-card">
+            <button class="btn-read-card" id="btn-read-id" type="button">
+                <svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+                อัปเดตข้อมูลผ่านบัตรประชาชน
+            </button>
+            <p style="margin-top: 12px; font-size: 0.95rem; color: var(--text-gray);">* หากไม่มีเครื่องอ่านบัตร สามารถแก้ไขข้อมูลลงในฟอร์มด้านล่างได้ทันที</p>
+        </div>
+
+        <div class="form-card">
+            <form id="tenant-form">
+                <div class="section-title">ข้อมูลพื้นฐานสำหรับระบบ</div>
+                <div class="form-grid">
+                    <div class="input-group col-6">
+                        <label>เลขห้องพัก (Room No.) <span style="color:var(--alert-red);">*</span></label>
+                        <input type="text" id="room_number" placeholder="เช่น 101" required>
+                    </div>
+                    <div class="input-group col-6">
+                        <label>เบอร์โทรศัพท์มือถือ <span style="color:var(--alert-red);">*</span></label>
+                        <input type="tel" id="phone_number" placeholder="08xxxxxxxx" maxlength="10" required>
+                    </div>
+                </div>
+
+                <div class="section-title">ข้อมูลผู้เช่า (Tenant Data)</div>
+                <div class="form-grid">
+                    <div class="input-group col-12">
+                        <label>เลขประจำตัวประชาชน 13 หลัก</label>
+                        <input type="text" id="id_card_number" maxlength="13">
+                    </div>
+                    
+                    <!-- ส่วนของคำนำหน้าภาษาไทย (Smart Dropdown) -->
+                    <div class="input-group col-3">
+                        <label>คำนำหน้า (TH)</label>
+                        <select id="prefix_th">
+                            <option value="">เลือก...</option>
+                            <option value="นาย">นาย</option>
+                            <option value="นาง">นาง</option>
+                            <option value="นางสาว">นางสาว</option>
+                            <option value="ด.ช.">ด.ช.</option>
+                            <option value="ด.ญ.">ด.ญ.</option>
+                            <option value="อื่นๆ">อื่นๆ (ระบุเอง)</option>
+                        </select>
+                        <svg class="select-arrow" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                        <input type="text" id="custom_prefix_th" class="custom-input" placeholder="พิมพ์คำนำหน้า/ยศ...">
+                    </div>
+                    
+                    <div class="input-group col-4">
+                        <label>ชื่อจริง (TH)</label>
+                        <input type="text" id="first_name_th" required>
+                    </div>
+                    <div class="input-group col-5">
+                        <label>นามสกุล (TH)</label>
+                        <input type="text" id="last_name_th" required>
+                    </div>
+
+                    <!-- ส่วนของคำนำหน้าภาษาอังกฤษ -->
+                    <div class="input-group col-3">
+                        <label>Prefix (EN)</label>
+                        <select id="prefix_en">
+                            <option value="">Select...</option>
+                            <option value="Mr.">Mr.</option>
+                            <option value="Mrs.">Mrs.</option>
+                            <option value="Miss">Miss</option>
+                            <option value="Mstr.">Mstr.</option>
+                            <option value="Other">Other</option>
+                        </select>
+                        <svg class="select-arrow" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                        <input type="text" id="custom_prefix_en" class="custom-input" placeholder="Type Prefix...">
+                    </div>
+                    
+                    <div class="input-group col-4">
+                        <label>First Name (EN)</label>
+                        <input type="text" id="first_name_en">
+                    </div>
+                    <div class="input-group col-5">
+                        <label>Last Name (EN)</label>
+                        <input type="text" id="last_name_en">
+                    </div>
+
+                    <div class="input-group col-12">
+                        <label>ที่อยู่ตามทะเบียนบ้าน (Address)</label>
+                        <textarea id="address" rows="2"></textarea>
+                    </div>
+                </div>
+
+                <div class="section-title">ข้อมูลสัญญาเช่าเบื้องต้น</div>
+                <div class="form-grid">
+                    <div class="input-group col-6">
+                        <label>วันที่เข้าอยู่ (Move-in Date) <span style="color:var(--alert-red);">*</span></label>
+                        <input type="date" id="move_in_date" required>
+                    </div>
+                    <div class="input-group col-6">
+                        <label>วันที่สิ้นสุดสัญญา (Contract End Date) <span style="color:var(--alert-red);">*</span></label>
+                        <input type="date" id="contract_end_date" required>
+                    </div>
+                </div>
+
+                <div class="form-actions">
+                    <button type="button" class="btn-cancel" onclick="window.history.back()">ยกเลิก</button>
+                    <button type="submit" class="btn-save" id="btn-save">
+                        <svg viewBox="0 0 24 24"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg>
+                        <span id="btn-text">บันทึกข้อมูลเข้าสู่ระบบ</span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="custom-toast"></div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            const DB_URL = 'https://vnlqxtxifgchrouongpu.supabase.co';
+            const DB_KEY = 'sb_publishable_jBw7w_gyrLx7B0oSHAtWOw_nVTHTzxl'; 
+            const db = window.supabase.createClient(DB_URL, DB_KEY);
+
+            window.showToast = function(msg, type = 'success') {
+                const container = document.getElementById('custom-toast');
+                const toast = document.createElement('div');
+                toast.className = `toast-item ${type}`;
+                const icon = type === 'success' ? 
+                    `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--success-green)" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>` :
+                    `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--alert-red)" stroke-width="2.5"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>`;
+                toast.innerHTML = `${icon} <span>${msg}</span>`;
+                container.appendChild(toast);
+                setTimeout(() => { toast.style.opacity = '0'; setTimeout(() => toast.remove(), 400); }, 3000);
+            }
+
+            document.getElementById('btn-read-id').addEventListener('click', () => {
+                showToast("ยังไม่มีการเชื่อมต่อ API เครื่องอ่านบัตร กรุณาพิมพ์ข้อมูลแก้ไขเอง", "error");
+            });
+
+            // ==========================================
+            // ระบบ Smart Prefix (ออโต้แปลภาษา + พิมพ์ยศเองได้)
+            // ==========================================
+            const prefixTh = document.getElementById('prefix_th');
+            const customPrefixTh = document.getElementById('custom_prefix_th');
+            const prefixEn = document.getElementById('prefix_en');
+            const customPrefixEn = document.getElementById('custom_prefix_en');
+
+            prefixTh.addEventListener('change', (e) => {
+                const val = e.target.value;
+                if(val === 'อื่นๆ') {
+                    customPrefixTh.style.display = 'block';
+                    customPrefixTh.required = true;
+                    // ฝั่งอังกฤษก็เปิดเป็น Other ด้วย
+                    prefixEn.value = 'Other';
+                    customPrefixEn.style.display = 'block';
+                } else {
+                    customPrefixTh.style.display = 'none';
+                    customPrefixTh.required = false;
+                    customPrefixTh.value = '';
+                    
+                    // Auto-mapping ไปเป็นภาษาอังกฤษ
+                    if(val === 'นาย') { prefixEn.value = 'Mr.'; customPrefixEn.style.display = 'none'; }
+                    else if(val === 'นาง') { prefixEn.value = 'Mrs.'; customPrefixEn.style.display = 'none'; }
+                    else if(val === 'นางสาว') { prefixEn.value = 'Miss'; customPrefixEn.style.display = 'none'; }
+                    else if(val === 'ด.ช.') { prefixEn.value = 'Mstr.'; customPrefixEn.style.display = 'none'; }
+                    else if(val === 'ด.ญ.') { prefixEn.value = 'Miss'; customPrefixEn.style.display = 'none'; }
+                    else { prefixEn.value = ''; customPrefixEn.style.display = 'none'; }
+                }
+            });
+
+            prefixEn.addEventListener('change', (e) => {
+                if(e.target.value === 'Other') {
+                    customPrefixEn.style.display = 'block';
+                } else {
+                    customPrefixEn.style.display = 'none';
+                    customPrefixEn.value = '';
+                }
+            });
+
+            // ==========================================
+            // โหมดแก้ไข (Edit Mode) ดึงข้อมูลเดิมมาโชว์
+            // ==========================================
+            const urlParams = new URLSearchParams(window.location.search);
+            const editId = urlParams.get('edit_id');
+
+            function setPrefixData(dbThVal, dbEnVal) {
+                // จัดการฝั่งไทย
+                const thOptions = ["นาย", "นาง", "นางสาว", "ด.ช.", "ด.ญ."];
+                if(dbThVal) {
+                    if(thOptions.includes(dbThVal)) {
+                        prefixTh.value = dbThVal;
+                    } else {
+                        prefixTh.value = 'อื่นๆ';
+                        customPrefixTh.style.display = 'block';
+                        customPrefixTh.value = dbThVal;
+                    }
+                }
+                
+                // จัดการฝั่งอังกฤษ
+                const enOptions = ["Mr.", "Mrs.", "Miss", "Mstr."];
+                if(dbEnVal) {
+                    if(enOptions.includes(dbEnVal)) {
+                        prefixEn.value = dbEnVal;
+                    } else {
+                        prefixEn.value = 'Other';
+                        customPrefixEn.style.display = 'block';
+                        customPrefixEn.value = dbEnVal;
+                    }
+                }
+            }
+
+            if (editId) {
+                document.getElementById('page-title').innerText = "แก้ไขข้อมูลผู้เช่า";
+                document.getElementById('page-desc').innerText = "แก้ไขข้อมูลหรือเสียบเครื่องอ่านบัตรเพื่ออัปเดต";
+                document.getElementById('btn-text').innerText = "บันทึกการแก้ไขข้อมูล";
+                document.getElementById('room_number').readOnly = true;
+
+                const { data, error } = await db.from('tenant_profiles').select('*').eq('id', editId).single();
+                if (data) {
+                    document.getElementById('room_number').value = data.room_number || '';
+                    document.getElementById('phone_number').value = data.phone_number || '';
+                    document.getElementById('id_card_number').value = data.id_card_number || '';
+                    document.getElementById('first_name_th').value = data.first_name_th || '';
+                    document.getElementById('last_name_th').value = data.last_name_th || '';
+                    document.getElementById('first_name_en').value = data.first_name_en || '';
+                    document.getElementById('last_name_en').value = data.last_name_en || '';
+                    document.getElementById('address').value = data.address || '';
+                    document.getElementById('move_in_date').value = data.move_in_date || '';
+                    document.getElementById('contract_end_date').value = data.contract_end_date || '';
+                    
+                    // เซ็ตค่า Dropdown คำนำหน้า
+                    setPrefixData(data.prefix_th, data.prefix_en);
+                } else {
+                    showToast("ไม่พบข้อมูลผู้เช่ารายนี้", "error");
+                }
+            }
+
+            // ==========================================
+            // บันทึกข้อมูล
+            // ==========================================
+            const form = document.getElementById('tenant-form');
+            const saveBtn = document.getElementById('btn-save');
+
+            form.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                saveBtn.disabled = true;
+                document.getElementById('btn-text').innerText = "กำลังบันทึก...";
+
+                // ตรวจสอบค่าคำนำหน้า ว่าจะเอาจาก Dropdown หรือช่องพิมพ์เอง
+                const finalPrefixTh = prefixTh.value === 'อื่นๆ' ? customPrefixTh.value.trim() : prefixTh.value;
+                const finalPrefixEn = prefixEn.value === 'Other' ? customPrefixEn.value.trim() : prefixEn.value;
+
+                const tenantData = {
+                    room_number: document.getElementById('room_number').value.trim(),
+                    phone_number: document.getElementById('phone_number').value.trim(),
+                    id_card_number: document.getElementById('id_card_number').value.replace(/\D/g, ''),
+                    prefix_th: finalPrefixTh,
+                    first_name_th: document.getElementById('first_name_th').value.trim(),
+                    last_name_th: document.getElementById('last_name_th').value.trim(),
+                    prefix_en: finalPrefixEn,
+                    first_name_en: document.getElementById('first_name_en').value.trim(),
+                    last_name_en: document.getElementById('last_name_en').value.trim(),
+                    address: document.getElementById('address').value.trim(),
+                    move_in_date: document.getElementById('move_in_date').value,
+                    contract_end_date: document.getElementById('contract_end_date').value,
+                    status: 'ACTIVE'
+                };
+
+                try {
+                    let result;
+                    if (editId) {
+                        // โหมดแก้ไข: สั่ง UPDATE ข้อมูล
+                        result = await db.from('tenant_profiles').update(tenantData).eq('id', editId);
+                    } else {
+                        // โหมดสร้างใหม่: สั่ง INSERT ข้อมูล
+                        result = await db.from('tenant_profiles').insert([tenantData]);
+                    }
+
+                    if (result.error) throw result.error;
+
+                    showToast(editId ? "อัปเดตข้อมูลสำเร็จ!" : "ลงทะเบียนผู้เช่าใหม่สำเร็จ!", "success");
+                    setTimeout(() => { window.location.href = 'tenant_manage.html'; }, 1500);
+
+                } catch (error) {
+                    showToast(error.message || "เกิดข้อผิดพลาด", "error");
+                    document.getElementById('btn-text').innerText = editId ? "บันทึกการแก้ไขข้อมูล" : "บันทึกข้อมูลเข้าสู่ระบบ";
+                    saveBtn.disabled = false;
+                }
+            });
+        });
+    </script>
+</body>
+</html>

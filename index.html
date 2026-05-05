@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Staff Portal - Pak Phanang Prestige Hall</title>
+    <link href="https://fonts.googleapis.com/css2?family=Anuphan:wght@300;400;500;600;700&family=Audiowide&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --font-ui: 'Anuphan', sans-serif;
+            --font-logo: 'Audiowide', cursive;
+            
+            --navy-super-dark: #03030A;
+            --navy-dark: #0A0A2A;
+            --gold-accent: #D4AF37;
+            --gold-hover: #E5C354;
+            
+            --text-light: #F5F5F7;
+            --text-gray: #8E8E93;
+            --border-light: rgba(255,255,255,0.1);
+            
+            --alert-red: #FF3B30;
+            --success-green: #34C759;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body { 
+            font-family: var(--font-ui); 
+            background-color: var(--navy-super-dark);
+            color: var(--text-light); 
+            overflow: hidden; 
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* =========================================
+           Smart Typing HUD (แสดงข้อมูลชัดๆ เวลาพิมพ์)
+           ========================================= */
+        .typing-hud {
+            position: fixed; top: 16px; left: 50%; transform: translate(-50%, -150%);
+            width: 90%; max-width: 380px; z-index: 10000;
+            background: rgba(5, 5, 21, 0.95); backdrop-filter: blur(12px);
+            border: 1px solid var(--gold-accent); border-radius: 16px;
+            padding: 16px 24px; text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.8), 0 0 20px rgba(212, 175, 55, 0.2);
+            opacity: 0; pointer-events: none; transition: 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .typing-hud.active { opacity: 1; transform: translate(-50%, 0); }
+        .hud-label { font-size: 0.85rem; color: var(--gold-accent); font-weight: 700; margin-bottom: 6px; letter-spacing: 0.5px;}
+        .hud-value { font-size: 1.25rem; font-weight: 600; color: #fff; min-height: 30px; word-break: break-all; line-height: 1.2;}
+        @media (min-width: 901px) { .typing-hud { display: none !important; } }
+
+        /* =========================================
+           Popup Toast
+           ========================================= */
+        #smart-toast {
+            position: fixed; top: -100px; left: 50%; transform: translateX(-50%);
+            background: rgba(20, 20, 20, 0.95); backdrop-filter: blur(20px);
+            padding: 16px 32px; border-radius: 50px; box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+            display: flex; align-items: center; gap: 12px; z-index: 9999;
+            transition: top 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        #smart-toast.show { top: 40px; }
+        .toast-icon svg { width: 24px; height: 24px; fill: none; stroke-width: 2.5; }
+        #smart-toast.is-error .toast-icon svg { stroke: var(--alert-red); }
+        #smart-toast.is-success .toast-icon svg { stroke: var(--success-green); }
+        #toast-msg { font-weight: 600; font-size: 1rem; color: #fff;}
+
+        /* =========================================
+           Layout & Split Screen
+           ========================================= */
+        .layout-wrapper { display: flex; min-height: 100vh; width: 100%; }
+        
+        .image-section { 
+            flex: 1.3; position: relative; overflow: hidden; background-color: #000; 
+        }
+        
+        .bg-image {
+            position: absolute; top: -5%; left: -5%; width: 110%; height: 110%;
+            
+            /* 🔴 ดึงภาพจากไฟล์ในโฟลเดอร์เดียวกัน */
+            background: url('positive_images-gran-hotel-havana-1923490.jpg') center/cover no-repeat;
+            
+            animation: slowZoom 30s infinite alternate ease-in-out;
+            opacity: 0.85;
+            filter: grayscale(10%) contrast(1.1);
+        }
+        @keyframes slowZoom { 0% { transform: scale(1); } 100% { transform: scale(1.1); } }
+
+        .bg-overlay {
+            position: absolute; inset: 0;
+            background: linear-gradient(135deg, rgba(3,3,10,0.7) 0%, rgba(10,10,42,0.5) 100%);
+            z-index: 1;
+        }
+
+        .form-section { 
+            flex: 1; display: flex; justify-content: center; align-items: center; 
+            padding: clamp(20px, 5vw, 60px); background: var(--navy-super-dark); z-index: 3;
+            box-shadow: -30px 0 60px rgba(0,0,0,0.5); position: relative;
+        }
+        
+        .form-entrance-layer { animation: fadeUpForm 0.8s ease 0.2s both; width: 100%; display: flex; justify-content: center;}
+        @keyframes fadeUpForm { 0% { opacity: 0; transform: translateY(20px); } 100% { opacity: 1; transform: translateY(0); } }
+
+        .form-container { width: 100%; max-width: 420px; }
+        
+        .brand-logo { font-family: var(--font-logo); font-size: clamp(2rem, 4vw, 2.4rem); color: var(--gold-accent); margin-bottom: 4px; letter-spacing: 1px; line-height: 1.2;}
+        .brand-logo span { color: var(--text-light); }
+        .subtitle { color: var(--text-gray); font-size: 1rem; font-weight: 500; margin-bottom: 48px; text-transform: uppercase; letter-spacing: 2px;}
+
+        /* --- Input Styles --- */
+        .input-group { position: relative; margin-bottom: 28px; }
+        
+        .input-icon {
+            position: absolute; left: 20px; top: 50%; transform: translateY(-50%);
+            width: 22px; height: 22px; stroke: var(--text-gray); stroke-width: 2; fill: none;
+            transition: 0.3s; pointer-events: none;
+        }
+
+        .input-control { 
+            width: 100%; padding: 18px 20px 18px 56px; 
+            background: rgba(255,255,255,0.03); border: 2px solid var(--border-light); 
+            border-radius: 16px; font-family: var(--font-ui); font-size: 1.15rem; font-weight: 500;
+            color: var(--text-light); outline: none; transition: all 0.3s ease;
+        }
+        .input-control::placeholder { color: transparent; }
+        
+        .input-label { 
+            position: absolute; left: 56px; top: 50%; transform: translateY(-50%); 
+            color: var(--text-gray); transition: all 0.3s ease; pointer-events: none; font-weight: 500;
+        }
+        
+        .input-control:focus ~ .input-label, .input-control:not(:placeholder-shown) ~ .input-label { 
+            top: 0; left: 20px; font-size: 0.85rem; color: var(--gold-accent); font-weight: 700; 
+            background: var(--navy-super-dark); padding: 0 8px;
+        }
+
+        .input-control:focus { border-color: var(--gold-accent); background: rgba(0,0,0,0.4); box-shadow: 0 0 0 4px rgba(212, 175, 55, 0.1);}
+        .input-control:focus ~ .input-icon { stroke: var(--gold-accent); }
+
+        .input-group.error .input-control { border-color: var(--alert-red); box-shadow: 0 0 0 4px rgba(255, 59, 48, 0.1);}
+        .input-group.error .input-icon { stroke: var(--alert-red); }
+        .input-group.error .input-label { color: var(--alert-red); }
+        
+        .input-group.complete .input-control { border-color: var(--success-green); box-shadow: 0 0 0 4px rgba(52, 199, 89, 0.1);}
+        .input-group.complete .input-icon { stroke: var(--success-green); }
+        .input-group.complete .input-label { color: var(--success-green); }
+
+        .toggle-password {
+            position: absolute; right: 20px; top: 50%; transform: translateY(-50%);
+            cursor: pointer; padding: 4px; background: none; border: none; outline: none;
+        }
+        .toggle-password svg { width: 22px; height: 22px; stroke: var(--text-gray); stroke-width: 2; fill: none; transition: 0.2s; }
+        .toggle-password:hover svg { stroke: var(--gold-accent); }
+
+        /* --- Button --- */
+        .btn-submit { 
+            width: 100%; padding: 20px; margin-top: 16px;
+            background: var(--gold-accent); color: var(--navy-super-dark); 
+            border: none; border-radius: 16px; font-family: var(--font-ui); font-size: 1.15rem; font-weight: 700; 
+            cursor: pointer; transition: 0.2s; letter-spacing: 0.5px; display: flex; justify-content: center; align-items: center; gap: 10px;
+        }
+        .btn-submit:hover { background: var(--gold-hover); transform: translateY(-3px); box-shadow: 0 10px 25px rgba(212, 175, 55, 0.25); }
+        .btn-submit:active { transform: translateY(0); }
+        .btn-submit svg { width: 20px; height: 20px; stroke: currentColor; stroke-width: 2.5; fill: none; }
+
+        .shake { animation: shake 0.4s; }
+        @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-8px); } 75% { transform: translateX(8px); } }
+
+        /* =========================================
+           Responsive มือถือ
+           ========================================= */
+        @media (max-width: 900px) { 
+            body { 
+                background: var(--navy-super-dark);
+            }
+            .layout-wrapper { flex-direction: column; justify-content: flex-end; background: rgba(3, 3, 10, 0.7); backdrop-filter: blur(5px);}
+            .image-section { display: none; } 
+            
+            .form-section { 
+                flex: none; padding: 40px 24px 60px; 
+                background: var(--navy-super-dark);
+                border-radius: 40px 40px 0 0; 
+                box-shadow: 0 -20px 50px rgba(0,0,0,0.5);
+                animation: slideUpMobile 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            } 
+            .form-container { max-width: 100%; }
+            @keyframes slideUpMobile { 0% { transform: translateY(100%); } 100% { transform: translateY(0); } }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- HUD ป๊อปอัพแสดงข้อความเวลาพิมพ์บนมือถือ -->
+    <div class="typing-hud" id="typing-hud">
+        <div class="hud-label" id="hud-label">กำลังกรอกข้อมูล</div>
+        <div class="hud-value" id="hud-value">พิมพ์ที่นี่...</div>
+    </div>
+
+    <!-- Toast -->
+    <div id="smart-toast">
+        <div class="toast-icon" id="toast-icon-container"></div>
+        <span id="toast-msg"></span>
+    </div>
+
+    <div class="layout-wrapper">
+        <div class="image-section">
+            <div class="bg-image"></div>
+            <div class="bg-overlay"></div>
+        </div>
+
+        <div class="form-section">
+            <div class="form-entrance-layer">
+                <div class="form-container" id="form-container">
+                    
+                    <h1 class="brand-logo">PAK PHANANG<br><span>PRESTIGE HALL</span></h1>
+                    <p class="subtitle">Admin Management Portal</p>
+                    
+                    <!-- Username -->
+                    <div class="input-group" id="group-user">
+                        <svg class="input-icon" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                        <input type="text" id="username" class="input-control" placeholder=" " autocomplete="off">
+                        <label class="input-label">ชื่อผู้ใช้งาน (Username)</label>
+                    </div>
+                    
+                    <!-- Password (ตั้งค่าเปิดรหัสผ่านไว้เป็นค่าเริ่มต้น) -->
+                    <div class="input-group" id="group-pass">
+                        <svg class="input-icon" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+                        <input type="text" id="password" class="input-control" placeholder=" ">
+                        <label class="input-label">รหัสผ่าน (Password)</label>
+                        <button type="button" class="toggle-password" id="toggle-pass-btn">
+                            <svg id="eye-icon" viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                        </button>
+                    </div>
+                    
+                    <button class="btn-submit" id="login-btn">
+                        เข้าสู่ระบบพนักงาน
+                        <svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // SVGs
+            const iconError = `<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>`;
+            const iconSuccess = `<svg viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>`;
+            const eyeOpen = `<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle>`;
+            const eyeClosed = `<path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line>`;
+            
+            let toastTimer;
+
+            function showToast(msgText, type = 'error') {
+                clearTimeout(toastTimer);
+                const toast = document.getElementById('smart-toast');
+                document.getElementById('toast-msg').innerText = msgText;
+                toast.className = type === 'error' ? 'is-error' : 'is-success';
+                document.getElementById('toast-icon-container').innerHTML = type === 'error' ? iconError : iconSuccess;
+                toast.classList.add('show');
+                toastTimer = setTimeout(() => toast.classList.remove('show'), 3500);
+            }
+
+            function triggerShake() {
+                const form = document.getElementById('form-container');
+                form.classList.remove('shake'); void form.offsetWidth; form.classList.add('shake');
+            }
+
+            // Elements
+            const userInp = document.getElementById('username');
+            const passInp = document.getElementById('password');
+            const grpUser = document.getElementById('group-user');
+            const grpPass = document.getElementById('group-pass');
+            const toggleBtn = document.getElementById('toggle-pass-btn');
+            const eyeIcon = document.getElementById('eye-icon');
+            const loginBtn = document.getElementById('login-btn');
+
+            const hud = document.getElementById('typing-hud');
+            const hudLabel = document.getElementById('hud-label');
+            const hudValue = document.getElementById('hud-value');
+
+            // 🟢 ตั้งค่าเริ่มต้นให้ "แสดงรหัสผ่านเสมอ"
+            let isPassVisible = true; 
+            
+            toggleBtn.addEventListener('click', () => {
+                isPassVisible = !isPassVisible;
+                passInp.type = isPassVisible ? 'text' : 'password';
+                eyeIcon.innerHTML = isPassVisible ? eyeOpen : eyeClosed;
+                if (document.activeElement === passInp) {
+                    updateHud(passInp, 'รหัสผ่าน (Password)', true);
+                }
+            });
+
+            function validateInput(input, group) {
+                if (input.value.trim() === '') group.className = 'input-group error';
+                else group.className = 'input-group complete';
+            }
+
+            function updateHud(input, labelText, isPasswordField) {
+                hudLabel.innerText = `กำลังกรอก: ${labelText}`;
+                let val = input.value;
+                if (val === '') {
+                    hudValue.innerHTML = '<span style="color:rgba(255,255,255,0.3);">พิมพ์ที่นี่...</span>';
+                } else if (isPasswordField && !isPassVisible) {
+                    hudValue.innerText = '•'.repeat(val.length);
+                } else {
+                    hudValue.innerText = val; // แสดงข้อความชัดๆ
+                }
+            }
+
+            userInp.addEventListener('focus', () => {
+                hud.classList.add('active');
+                updateHud(userInp, 'ชื่อผู้ใช้งาน (Username)', false);
+            });
+            userInp.addEventListener('input', () => {
+                validateInput(userInp, grpUser);
+                updateHud(userInp, 'ชื่อผู้ใช้งาน (Username)', false);
+            });
+            userInp.addEventListener('blur', () => hud.classList.remove('active'));
+
+            passInp.addEventListener('focus', () => {
+                hud.classList.add('active');
+                updateHud(passInp, 'รหัสผ่าน (Password)', true);
+            });
+            passInp.addEventListener('input', () => {
+                validateInput(passInp, grpPass);
+                updateHud(passInp, 'รหัสผ่าน (Password)', true);
+            });
+            passInp.addEventListener('blur', () => hud.classList.remove('active'));
+
+            loginBtn.addEventListener('click', () => {
+                const username = userInp.value.trim();
+                const password = passInp.value.trim();
+                
+                if(!username || !password) {
+                    showToast("กรุณากรอกข้อมูลให้ครบถ้วน", "error");
+                    if(!username) grpUser.className = 'input-group error';
+                    if(!password) grpPass.className = 'input-group error';
+                    triggerShake();
+                    return;
+                }
+
+                loginBtn.innerHTML = `ตรวจสอบสิทธิ์... <svg viewBox="0 0 24 24"><line x1="12" y1="2" x2="12" y2="6"></line><line x1="12" y1="18" x2="12" y2="22"></line><line x1="4.93" y1="4.93" x2="7.76" y2="7.76"></line><line x1="16.24" y1="16.24" x2="19.07" y2="19.07"></line><line x1="2" y1="12" x2="6" y2="12"></line><line x1="18" y1="12" x2="22" y2="12"></line><line x1="4.93" y1="19.07" x2="7.76" y2="16.24"></line><line x1="16.24" y1="7.76" x2="19.07" y2="4.93"></line></svg>`;
+                loginBtn.disabled = true;
+
+                // 🚨 จำลองการเข้าสู่ระบบ
+                setTimeout(() => {
+                    const mockAdminData = {
+                        username: username,
+                        first_name: 'ประธานกรรมการ',
+                        last_name: 'Pak Phanang Prestige Hall',
+                        role: 'PRESIDENT'
+                    };
+
+                    showToast(`ยินดีต้อนรับ ${mockAdminData.role}`, "success");
+                    localStorage.setItem('admin_user_data', JSON.stringify(mockAdminData));
+
+                    setTimeout(() => { 
+                        window.location.href = 'dashboard.html'; 
+                    }, 800);
+                }, 1000);
+            });
+
+            passInp.addEventListener('keypress', function (e) {
+                if (e.key === 'Enter') loginBtn.click();
+            });
+        });
+    </script>
+</body>
+</html>
