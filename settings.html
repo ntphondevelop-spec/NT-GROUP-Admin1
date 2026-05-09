@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ตั้งค่าระบบและพนักงาน - Pak Phanang Prestige Hall</title>
+    <link href="https://fonts.googleapis.com/css2?family=Anuphan:wght@300;400;500;600;700&family=Audiowide&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    
+    <style>
+        :root {
+            --font-ui: 'Anuphan', sans-serif;
+            --font-logo: 'Audiowide', cursive;
+            
+            --bg-dark: #03030A;
+            --surface-dark: #0A0A2A;
+            --surface-card: #0F0F30;
+            --gold-accent: #D4AF37;
+            --gold-hover: #E5C354;
+            
+            --text-light: #F5F5F7;
+            --text-gray: #8E8E93;
+            --border-light: rgba(255,255,255,0.08);
+            
+            --alert-red: #FF3B30;
+            --success-green: #34C759;
+            --info-blue: #0A84FF;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: var(--font-ui); }
+
+        body { 
+            background-color: var(--bg-dark);
+            color: var(--text-light); 
+            display: flex; min-height: 100vh; overflow-x: hidden;
+        }
+
+        /* ================= MOBILE HEADER ================= */
+        .mobile-header { display: none; width: 100%; background: var(--surface-dark); padding: 16px 24px; border-bottom: 1px solid var(--border-light); align-items: center; justify-content: space-between; position: fixed; top: 0; left: 0; z-index: 90; }
+        .mobile-brand { font-family: var(--font-logo); color: var(--gold-accent); font-size: 1.2rem; }
+        .menu-toggle { background: none; border: none; color: var(--text-light); cursor: pointer; }
+        .menu-toggle svg { width: 28px; height: 28px; stroke: currentColor; stroke-width: 2; fill: none; }
+
+        /* ================= SIDEBAR ================= */
+        .sidebar { width: 280px; background: var(--surface-dark); border-right: 1px solid var(--border-light); display: flex; flex-direction: column; position: fixed; top: 0; left: 0; height: 100vh; z-index: 100; transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+        .sidebar-header { padding: 24px; border-bottom: 1px solid var(--border-light); }
+        .brand-logo { font-family: var(--font-logo); font-size: 1.4rem; color: var(--gold-accent); line-height: 1.2; }
+        .brand-logo span { font-family: var(--font-ui); display: block; font-size: 1rem; color: var(--text-gray); margin-top: 4px;}
+        
+        .nav-menu { padding: 24px 16px; flex: 1; display: flex; flex-direction: column; gap: 8px; overflow-y: auto;}
+        .nav-item { display: flex; align-items: center; gap: 16px; padding: 14px 20px; color: var(--text-gray); text-decoration: none; border-radius: 12px; font-weight: 500; transition: 0.2s; font-size: 1.05rem; border: 1px solid transparent; }
+        .nav-item svg { width: 22px; height: 22px; stroke: currentColor; stroke-width: 2; fill: none; }
+        .nav-item:hover { background: rgba(255,255,255,0.03); color: var(--text-light); }
+        .nav-item.active { background: rgba(212, 175, 55, 0.1); color: var(--gold-accent); border-color: rgba(212, 175, 55, 0.2); font-weight: 600;}
+        
+        .user-profile { padding: 24px; border-top: 1px solid var(--border-light); display: flex; align-items: center; justify-content: space-between; background: rgba(0,0,0,0.2); }
+        .user-info div:first-child { font-weight: 700; color: var(--text-light); font-size: 0.95rem; }
+        .user-info div:last-child { font-size: 0.8rem; color: var(--gold-accent); font-weight: 700; margin-top: 2px; text-transform: uppercase;}
+        .btn-logout { background: none; border: none; color: var(--alert-red); cursor: pointer; padding: 8px; border-radius: 8px; transition: 0.2s;}
+        .btn-logout:hover { background: rgba(255, 59, 48, 0.1); }
+        .btn-logout svg { width: 20px; height: 20px; stroke: currentColor; stroke-width: 2; fill: none;}
+        .sidebar-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6); backdrop-filter: blur(4px); z-index: 95; }
+
+        /* ================= MAIN CONTENT ================= */
+        .main-content { flex: 1; margin-left: 280px; padding: 40px; width: calc(100% - 280px); }
+        .top-header { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 30px; }
+        .greeting h1 { font-size: 2.2rem; font-weight: 700; color: #fff; margin-bottom: 8px;}
+        .greeting p { color: var(--text-gray); font-weight: 500;}
+
+        /* Toolbar */
+        .toolbar { background: var(--surface-card); border: 1px solid var(--border-light); border-radius: 20px; padding: 20px 24px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px; margin-bottom: 24px; }
+        .search-box { width: 100%; max-width: 350px; }
+        .search-box input { width: 100%; background: var(--bg-dark); border: 1px solid var(--border-light); color: #FFF; padding: 12px 20px; border-radius: 8px; font-size: 1rem; outline: none; transition: 0.3s;}
+        .search-box input:focus { border-color: var(--gold-accent); }
+        
+        .btn-primary { background: var(--gold-accent); color: var(--bg-dark); padding: 12px 24px; border-radius: 10px; font-weight: 700; border: none; cursor: pointer; transition: 0.3s; font-size: 1rem;}
+        .btn-primary:hover { background: var(--gold-hover); transform: translateY(-2px); }
+
+        /* Table */
+        .table-wrapper { background: var(--surface-card); border: 1px solid var(--border-light); border-radius: 20px; padding: 24px; overflow-x: auto; box-shadow: 0 4px 20px rgba(0,0,0,0.3); }
+        table { width: 100%; border-collapse: collapse; text-align: left; }
+        th { padding: 16px; color: var(--text-gray); font-weight: 600; border-bottom: 1px solid var(--border-light); }
+        td { padding: 16px; border-bottom: 1px solid rgba(255,255,255,0.03); vertical-align: middle; white-space: nowrap; }
+        
+        .role-badge { padding: 6px 12px; border-radius: 6px; font-weight: 700; font-size: 0.85rem; }
+        .role-president { background: rgba(212, 175, 55, 0.1); color: var(--gold-accent); border: 1px solid rgba(212, 175, 55, 0.3); }
+        .role-admin { background: rgba(10, 132, 255, 0.1); color: var(--info-blue); border: 1px solid rgba(10, 132, 255, 0.3); }
+        
+        .btn-act { padding: 8px 16px; border-radius: 8px; font-weight: 600; cursor: pointer; font-size: 0.85rem; background: rgba(255,255,255,0.05); color: var(--text-light); border: 1px solid transparent; transition: 0.2s;}
+        .btn-act:hover { border-color: var(--gold-accent); color: var(--gold-accent); }
+
+        /* ================= MODALS ================= */
+        .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(5px); display: none; justify-content: center; align-items: center; z-index: 1000; padding: 20px; }
+        .modal-overlay.show { display: flex; }
+        .modal-card { background: var(--surface-dark); border: 1px solid var(--gold-accent); border-radius: 20px; width: 100%; max-width: 600px; max-height: 90vh; display: flex; flex-direction: column; overflow: hidden; box-shadow: 0 10px 40px rgba(0,0,0,0.5); }
+        
+        .modal-header { padding: 24px 32px; border-bottom: 1px solid var(--border-light); display: flex; justify-content: space-between; align-items: center; background: var(--surface-card); }
+        .modal-header h2 { color: var(--gold-accent); font-size: 1.4rem; }
+        .close-btn { background: none; border: none; color: var(--text-gray); font-size: 1.2rem; cursor: pointer; font-weight: bold;}
+        .close-btn:hover { color: var(--alert-red); }
+
+        .modal-body { padding: 32px; overflow-y: auto; flex: 1; display: grid; grid-template-columns: 1fr; gap: 20px; }
+        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        .form-group { display: flex; flex-direction: column; gap: 8px; }
+        .form-group label { font-size: 0.9rem; color: var(--text-gray); font-weight: 500; }
+        .form-group input, .form-group select { padding: 14px; background: var(--bg-dark); border: 1px solid var(--border-light); border-radius: 10px; color: #FFF; font-size: 1rem; width: 100%; outline: none;}
+        .form-group input:focus, .form-group select:focus { border-color: var(--gold-accent); }
+        
+        .modal-footer { padding: 20px 32px; border-top: 1px solid var(--border-light); display: flex; justify-content: space-between; align-items: center; background: var(--surface-card); }
+        .btn-delete { background: rgba(255, 59, 48, 0.1); color: var(--alert-red); border: 1px solid rgba(255, 59, 48, 0.3); padding: 12px 24px; border-radius: 10px; font-weight: 700; cursor: pointer; transition: 0.3s; }
+        .btn-delete:hover { background: var(--alert-red); color: #FFF; }
+        .right-actions { display: flex; gap: 16px; }
+
+        /* Mobile Adjustments */
+        @media (max-width: 768px) {
+            .mobile-header { display: flex; }
+            .sidebar { transform: translateX(-100%); }
+            .sidebar.open { transform: translateX(0); }
+            .sidebar-overlay.open { display: block; }
+            .main-content { margin-left: 0; width: 100%; padding: 100px 20px 40px; }
+            .form-row { grid-template-columns: 1fr; }
+            .modal-footer { flex-direction: column-reverse; gap: 15px; }
+            .modal-footer button { width: 100%; }
+            .right-actions { width: 100%; flex-direction: column; }
+        }
+    </style>
+</head>
+<body>
+
+    <header class="mobile-header">
+        <div class="mobile-brand">PAK PHANANG <span>Prestige Hall</span></div>
+        <button class="menu-toggle" id="mobile-menu-btn">
+            <svg viewBox="0 0 24 24"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+        </button>
+    </header>
+
+    <div class="sidebar-overlay" id="sidebar-overlay"></div>
+
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <div class="brand-logo">PAK PHANANG<br><span>Prestige Hall</span></div>
+        </div>
+        
+        <nav class="nav-menu">
+            <a href="dashboard.html" class="nav-item">
+                <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+                <span>ภาพรวมระบบ</span>
+            </a>
+            <a href="tenant_manage.html" class="nav-item">
+                <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+                <span>จัดการลูกบ้าน</span>
+            </a>
+            <a href="billing.html" class="nav-item">
+                <svg viewBox="0 0 24 24"><rect x="2" y="5" width="20" height="14" rx="2" ry="2"></rect><line x1="2" y1="10" x2="22" y2="10"></line></svg>
+                <span>การเงินและบิล</span>
+            </a>
+            <a href="maintenance.html" class="nav-item">
+                <svg viewBox="0 0 24 24"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"></path></svg>
+                <span>แจ้งซ่อม</span>
+            </a>
+            <a href="settings.html" class="nav-item active" id="nav-settings">
+                <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+                <span>ตั้งค่าพนักงาน</span>
+            </a>
+        </nav>
+
+        <div class="user-profile">
+            <div class="user-info">
+                <div id="display-name">คุณประธานกรรมการ</div>
+                <div id="display-role">PRESIDENT</div>
+            </div>
+            <button class="btn-logout" id="logout-btn" title="ออกจากระบบ">
+                <svg viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+            </button>
+        </div>
+    </aside>
+
+    <main class="main-content">
+        <header class="top-header">
+            <div class="greeting">
+                <h1>ตั้งค่าระบบและบัญชีพนักงาน</h1>
+                <p>จัดการสิทธิ์การเข้าถึง และข้อมูลส่วนตัวของแอดมินระบบ</p>
+            </div>
+        </header>
+
+        <div class="toolbar">
+            <div class="search-box">
+                <input type="text" id="search-input" placeholder="ค้นหาชื่อ หรือ Username..." onkeyup="filterTable()">
+            </div>
+            <div class="action-group">
+                <button class="btn-primary" onclick="openModal()">เพิ่มพนักงานใหม่</button>
+            </div>
+        </div>
+
+        <div class="table-wrapper">
+            <table>
+                <thead>
+                    <tr>
+                        <th>ชื่อ - นามสกุล</th>
+                        <th>ชื่อผู้ใช้งาน (Username)</th>
+                        <th>ระดับสิทธิ์</th>
+                        <th>วันที่เพิ่มข้อมูล</th>
+                        <th style="text-align: right;">จัดการ</th>
+                    </tr>
+                </thead>
+                <tbody id="admin-table-body">
+                    <tr><td colspan="5" style="text-align: center; padding: 20px;">กำลังเชื่อมต่อฐานข้อมูล...</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </main>
+
+    <!-- MODAL: รายละเอียดพนักงาน -->
+    <div class="modal-overlay" id="admin-modal">
+        <div class="modal-card">
+            <header class="modal-header">
+                <h2 id="modal-title">ข้อมูลพนักงาน</h2>
+                <button class="close-btn" onclick="closeModal()">X</button>
+            </header>
+            
+            <div class="modal-body">
+                <input type="hidden" id="a-id">
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>ชื่อจริง *</label>
+                        <input type="text" id="a-fname" required>
+                    </div>
+                    <div class="form-group">
+                        <label>นามสกุล *</label>
+                        <input type="text" id="a-lname" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>ชื่อผู้ใช้งาน (Username) ใช้สำหรับล็อกอิน *</label>
+                    <input type="text" id="a-username" required>
+                </div>
+
+                <div class="form-group">
+                    <label>รหัสผ่าน (Password) *</label>
+                    <input type="text" id="a-password" placeholder="ตั้งรหัสผ่าน 6 ตัวอักษรขึ้นไป" required>
+                </div>
+
+                <div class="form-group">
+                    <label>ระดับสิทธิ์ผู้ใช้งาน *</label>
+                    <select id="a-role" required>
+                        <option value="ADMIN">ADMIN (พนักงานทั่วไป - ไม่สามารถตั้งค่าระบบได้)</option>
+                        <option value="PRESIDENT">PRESIDENT (ประธานกรรมการ - เข้าถึงได้ทุกระบบ)</option>
+                    </select>
+                </div>
+            </div>
+
+            <footer class="modal-footer">
+                <button class="btn-delete" id="btn-delete" onclick="deleteAdmin()" style="display: none;">ลบบัญชีนี้</button>
+                <div style="flex: 1;"></div> 
+                <div class="right-actions">
+                    <button class="btn-act" style="border: 1px solid var(--text-gray);" onclick="closeModal()">ยกเลิก</button>
+                    <button class="btn-primary" id="btn-save" onclick="saveAdmin()">บันทึกข้อมูล</button>
+                </div>
+            </footer>
+        </div>
+    </div>
+
+    <script>
+        // ==========================================
+        // UI & Security Check
+        // ==========================================
+        document.addEventListener('DOMContentLoaded', () => {
+            try {
+                const adminDataStr = localStorage.getItem('admin_user_data');
+                if (adminDataStr) {
+                    const adminData = JSON.parse(adminDataStr);
+                    document.getElementById('display-name').innerText = `${adminData.first_name || ''} ${adminData.last_name || ''}`;
+                    document.getElementById('display-role').innerText = adminData.role || 'ADMIN';
+                    
+                    // ป้องกันพนักงานทั่วไปเข้ามาหน้านี้
+                    if (adminData.role !== 'PRESIDENT') {
+                        alert("ขออภัย คุณไม่มีสิทธิ์เข้าถึงหน้านี้ เฉพาะประธานกรรมการเท่านั้น");
+                        window.location.href = 'dashboard.html';
+                    }
+                }
+            } catch (error) {
+                console.log("Local storage restricted or missing");
+            }
+
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebar-overlay');
+            const menuBtn = document.getElementById('mobile-menu-btn');
+
+            function toggleSidebar() {
+                sidebar.classList.toggle('open');
+                overlay.classList.toggle('open');
+            }
+            if(menuBtn) menuBtn.addEventListener('click', toggleSidebar);
+            if(overlay) overlay.addEventListener('click', toggleSidebar);
+
+            const logoutBtn = document.getElementById('logout-btn');
+            if(logoutBtn) {
+                logoutBtn.addEventListener('click', () => {
+                    try { localStorage.removeItem('admin_user_data'); } catch(e){}
+                    window.location.href = 'index.html';
+                });
+            }
+
+            fetchAdmins();
+        });
+
+        // ==========================================
+        // Supabase API Settings
+        // ==========================================
+        const SB_URL = 'https://vnlqxtxifgchrouongpu.supabase.co';
+        const SB_KEY = 'sb_publishable_jBw7w_gyrLx7B0oSHAtWOw_nVTHTzxl';
+        const TABLE = 'admin_users';
+        let adminDataList = [];
+
+        // ==========================================
+        // Fetch & Render
+        // ==========================================
+        async function fetchAdmins() {
+            const tbody = document.getElementById('admin-table-body');
+            tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; padding:30px;">กำลังโหลดข้อมูล...</td></tr>`;
+
+            try {
+                const res = await fetch(`${SB_URL}/rest/v1/${TABLE}?order=created_at.asc`, {
+                    headers: { 'apikey': SB_KEY, 'Authorization': `Bearer ${SB_KEY}` }
+                });
+                if (!res.ok) throw new Error('Fetch failed');
+                adminDataList = await res.json();
+                renderTable(adminDataList);
+            } catch (err) {
+                tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; color:var(--alert-red);">ไม่สามารถดึงข้อมูลได้ โปรดตรวจสอบการเชื่อมต่อ หรือรันคำสั่ง SQL ก่อน</td></tr>`;
+            }
+        }
+
+        function renderTable(data) {
+            const tbody = document.getElementById('admin-table-body');
+            tbody.innerHTML = '';
+            
+            if(data.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; color:var(--text-gray);">ไม่พบข้อมูลพนักงาน</td></tr>`;
+                return;
+            }
+
+            data.forEach(admin => {
+                let roleCls = admin.role === 'PRESIDENT' ? 'role-president' : 'role-admin';
+                let roleTxt = admin.role === 'PRESIDENT' ? 'ประธานกรรมการ' : 'พนักงาน (Admin)';
+                const dateCreated = new Date(admin.created_at).toLocaleDateString('th-TH');
+
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td style="color:#FFF; font-weight:bold;">${admin.first_name} ${admin.last_name}</td>
+                    <td style="color:var(--text-gray);">${admin.username}</td>
+                    <td><span class="role-badge ${roleCls}">${roleTxt}</span></td>
+                    <td style="color:var(--text-gray); font-size:0.9rem;">${dateCreated}</td>
+                    <td style="text-align: right;">
+                        <button class="btn-act" onclick="editAdmin('${admin.id}')">ดูข้อมูล / แก้ไข</button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function filterTable() {
+            const query = document.getElementById('search-input').value.toLowerCase();
+            const filtered = adminDataList.filter(admin => 
+                (admin.first_name && admin.first_name.toLowerCase().includes(query)) ||
+                (admin.last_name && admin.last_name.toLowerCase().includes(query)) ||
+                (admin.username && admin.username.toLowerCase().includes(query))
+            );
+            renderTable(filtered);
+        }
+
+        // ==========================================
+        // Modal Logic
+        // ==========================================
+        function openModal() {
+            document.getElementById('modal-title').innerText = "เพิ่มพนักงานใหม่";
+            document.getElementById('a-id').value = '';
+            document.getElementById('a-fname').value = '';
+            document.getElementById('a-lname').value = '';
+            document.getElementById('a-username').value = '';
+            document.getElementById('a-password').value = '';
+            document.getElementById('a-role').value = 'ADMIN';
+
+            document.getElementById('btn-delete').style.display = 'none';
+            document.getElementById('admin-modal').classList.add('show');
+        }
+
+        function closeModal() { 
+            document.getElementById('admin-modal').classList.remove('show'); 
+        }
+
+        function editAdmin(id) {
+            const admin = adminDataList.find(x => x.id === id);
+            if(!admin) return;
+
+            document.getElementById('modal-title').innerText = "ข้อมูลและสิทธิ์พนักงาน";
+            document.getElementById('a-id').value = admin.id;
+            document.getElementById('a-fname').value = admin.first_name;
+            document.getElementById('a-lname').value = admin.last_name;
+            document.getElementById('a-username').value = admin.username;
+            document.getElementById('a-password').value = admin.password;
+            document.getElementById('a-role').value = admin.role;
+
+            document.getElementById('btn-delete').style.display = 'block';
+            document.getElementById('admin-modal').classList.add('show');
+        }
+
+        // ==========================================
+        // Save & Delete Operations
+        // ==========================================
+        async function saveAdmin() {
+            const id = document.getElementById('a-id').value;
+            const btn = document.getElementById('btn-save');
+            
+            const fname = document.getElementById('a-fname').value.trim();
+            const lname = document.getElementById('a-lname').value.trim();
+            const user = document.getElementById('a-username').value.trim();
+            const pass = document.getElementById('a-password').value.trim();
+            const role = document.getElementById('a-role').value;
+            
+            if(!fname || !lname || !user || !pass) { 
+                alert("กรุณากรอกข้อมูลให้ครบถ้วนทุกช่อง"); 
+                return; 
+            }
+
+            const payload = {
+                first_name: fname,
+                last_name: lname,
+                username: user,
+                password: pass,
+                role: role
+            };
+
+            btn.innerText = "กำลังบันทึก..."; btn.disabled = true;
+
+            try {
+                let url = `${SB_URL}/rest/v1/${TABLE}`;
+                let method = id ? 'PATCH' : 'POST';
+                if(id) url += `?id=eq.${id}`;
+
+                const res = await fetch(url, {
+                    method: method,
+                    headers: { 'Content-Type': 'application/json', 'apikey': SB_KEY, 'Authorization': `Bearer ${SB_KEY}`, 'Prefer': 'return=minimal' },
+                    body: JSON.stringify(payload)
+                });
+
+                if (!res.ok) {
+                    const err = await res.json();
+                    if(err.code === '23505') throw new Error("ชื่อผู้ใช้งาน (Username) นี้มีคนใช้แล้ว โปรดตั้งชื่ออื่น");
+                    throw new Error(err.message);
+                }
+                alert('บันทึกข้อมูลเรียบร้อย');
+                closeModal();
+                fetchAdmins();
+            } catch(e) {
+                alert('ข้อผิดพลาด: ' + e.message);
+            } finally {
+                btn.innerText = "บันทึกข้อมูล"; btn.disabled = false;
+            }
+        }
+
+        async function deleteAdmin() {
+            const id = document.getElementById('a-id').value;
+            if (!id) return;
+
+            // ตรวจสอบไม่ให้ลบบัญชีประธานทั้งหมดทิ้ง
+            const currentAdmin = adminDataList.find(x => x.id === id);
+            const totalPresidents = adminDataList.filter(x => x.role === 'PRESIDENT').length;
+            
+            if (currentAdmin.role === 'PRESIDENT' && totalPresidents <= 1) {
+                alert('ไม่อนุญาตให้ลบบัญชีประธานกรรมการบัญชีสุดท้ายออกจากระบบเด็ดขาด!');
+                return;
+            }
+            
+            if (confirm(`คุณแน่ใจหรือไม่ว่าต้องการลบบัญชีของ ${currentAdmin.first_name} ออกจากระบบ?`)) {
+                const btn = document.getElementById('btn-delete');
+                btn.innerText = "กำลังลบ..."; btn.disabled = true;
+                
+                try {
+                    const res = await fetch(`${SB_URL}/rest/v1/${TABLE}?id=eq.${id}`, {
+                        method: 'DELETE',
+                        headers: { 'apikey': SB_KEY, 'Authorization': `Bearer ${SB_KEY}` }
+                    });
+
+                    if (!res.ok) throw new Error('ลบข้อมูลไม่สำเร็จ');
+                    
+                    alert('ลบข้อมูลเสร็จสิ้น');
+                    closeModal();
+                    fetchAdmins();
+                } catch(e) {
+                    alert('ข้อผิดพลาด: ' + e.message);
+                } finally {
+                    btn.innerText = "ลบบัญชีนี้"; btn.disabled = false;
+                }
+            }
+        }
+    </script>
+</body>
+</html>

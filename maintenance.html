@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>แจ้งซ่อมและบำรุงรักษา - Pak Phanang Prestige Hall</title>
+    <link href="https://fonts.googleapis.com/css2?family=Anuphan:wght@300;400;500;600;700&family=Audiowide&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --font-ui: 'Anuphan', sans-serif;
+            --font-logo: 'Audiowide', cursive;
+            
+            --bg-dark: #03030A;
+            --surface-dark: #0A0A2A;
+            --surface-card: #0F0F30;
+            --gold-accent: #D4AF37;
+            --gold-hover: #E5C354;
+            
+            --text-light: #F5F5F7;
+            --text-gray: #8E8E93;
+            --border-light: rgba(255,255,255,0.08);
+            
+            --alert-red: #FF3B30;
+            --warning-yellow: #FFCC00;
+            --info-blue: #0A84FF;
+            --success-green: #34C759;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: var(--font-ui); }
+
+        body { 
+            background-color: var(--bg-dark);
+            color: var(--text-light); 
+            display: flex; min-height: 100vh; overflow-x: hidden;
+        }
+
+        /* ================= MOBILE HEADER ================= */
+        .mobile-header { display: none; width: 100%; background: var(--surface-dark); padding: 16px 24px; border-bottom: 1px solid var(--border-light); align-items: center; justify-content: space-between; position: fixed; top: 0; left: 0; z-index: 90; }
+        .mobile-brand { font-family: var(--font-logo); color: var(--gold-accent); font-size: 1.2rem; }
+        .menu-toggle { background: none; border: none; color: var(--text-light); cursor: pointer; }
+        .menu-toggle svg { width: 28px; height: 28px; stroke: currentColor; stroke-width: 2; fill: none; }
+
+        /* ================= SIDEBAR ================= */
+        .sidebar { width: 280px; background: var(--surface-dark); border-right: 1px solid var(--border-light); display: flex; flex-direction: column; position: fixed; top: 0; left: 0; height: 100vh; z-index: 100; transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+        .sidebar-header { padding: 24px; border-bottom: 1px solid var(--border-light); }
+        .brand-logo { font-family: var(--font-logo); font-size: 1.4rem; color: var(--gold-accent); line-height: 1.2; }
+        .brand-logo span { font-family: var(--font-ui); display: block; font-size: 1rem; color: var(--text-gray); margin-top: 4px;}
+        
+        .nav-menu { padding: 24px 16px; flex: 1; display: flex; flex-direction: column; gap: 8px; overflow-y: auto;}
+        .nav-item { display: flex; align-items: center; gap: 16px; padding: 14px 20px; color: var(--text-gray); text-decoration: none; border-radius: 12px; font-weight: 500; transition: 0.2s; font-size: 1.05rem; border: 1px solid transparent; }
+        .nav-item svg { width: 22px; height: 22px; stroke: currentColor; stroke-width: 2; fill: none; }
+        .nav-item:hover { background: rgba(255,255,255,0.03); color: var(--text-light); }
+        .nav-item.active { background: rgba(212, 175, 55, 0.1); color: var(--gold-accent); border-color: rgba(212, 175, 55, 0.2); font-weight: 600;}
+        
+        .user-profile { padding: 24px; border-top: 1px solid var(--border-light); display: flex; align-items: center; justify-content: space-between; background: rgba(0,0,0,0.2); }
+        .user-info div:first-child { font-weight: 700; color: var(--text-light); font-size: 0.95rem; }
+        .user-info div:last-child { font-size: 0.8rem; color: var(--gold-accent); font-weight: 700; margin-top: 2px; text-transform: uppercase;}
+        
+        .btn-logout { background: none; border: none; color: var(--alert-red); cursor: pointer; padding: 8px; border-radius: 8px; transition: 0.2s;}
+        .btn-logout:hover { background: rgba(255, 59, 48, 0.1); }
+        .btn-logout svg { width: 20px; height: 20px; stroke: currentColor; stroke-width: 2; fill: none;}
+        .sidebar-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6); backdrop-filter: blur(4px); z-index: 95; }
+
+        /* ================= MAIN CONTENT ================= */
+        .main-content { flex: 1; margin-left: 280px; padding: 40px; width: calc(100% - 280px); }
+        .top-header { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 30px; }
+        .greeting h1 { font-size: 2.2rem; font-weight: 700; color: #fff; margin-bottom: 8px;}
+        .greeting p { color: var(--text-gray); font-weight: 500;}
+
+        /* Toolbar */
+        .toolbar { background: var(--surface-card); border: 1px solid var(--border-light); border-radius: 20px; padding: 20px 24px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px; margin-bottom: 24px; }
+        .filter-group { display: flex; align-items: center; gap: 15px; }
+        .filter-group label { color: var(--gold-accent); font-weight: 600; font-size: 1.1rem; }
+        .filter-group select { background: var(--bg-dark); border: 1px solid var(--border-light); color: #FFF; padding: 10px 15px; border-radius: 8px; font-size: 1rem; cursor: pointer; outline: none; }
+        .filter-group select:focus { border-color: var(--gold-accent); }
+        
+        .btn-primary { background: var(--gold-accent); color: var(--bg-dark); padding: 12px 24px; border-radius: 10px; font-weight: 700; border: none; cursor: pointer; transition: 0.3s; font-size: 1rem;}
+        .btn-primary:hover { background: var(--gold-hover); transform: translateY(-2px); }
+
+        /* Table */
+        .table-wrapper { background: var(--surface-card); border: 1px solid var(--border-light); border-radius: 20px; padding: 24px; overflow-x: auto; box-shadow: 0 4px 20px rgba(0,0,0,0.3); }
+        table { width: 100%; border-collapse: collapse; text-align: left; }
+        th { padding: 16px; color: var(--text-gray); font-weight: 600; border-bottom: 1px solid var(--border-light); }
+        td { padding: 16px; border-bottom: 1px solid rgba(255,255,255,0.03); vertical-align: middle; white-space: nowrap; }
+        
+        .status-badge { padding: 6px 12px; border-radius: 6px; font-weight: 700; font-size: 0.85rem; }
+        .status-pending { background: rgba(255, 59, 48, 0.1); color: var(--alert-red); border: 1px solid rgba(255, 59, 48, 0.3); }
+        .status-progress { background: rgba(10, 132, 255, 0.1); color: var(--info-blue); border: 1px solid rgba(10, 132, 255, 0.3); }
+        .status-completed { background: rgba(52, 199, 89, 0.1); color: var(--success-green); border: 1px solid rgba(52, 199, 89, 0.3); }
+        
+        .btn-act { padding: 8px 16px; border-radius: 8px; font-weight: 600; cursor: pointer; font-size: 0.85rem; background: rgba(255,255,255,0.05); color: var(--text-light); border: 1px solid transparent; transition: 0.2s;}
+        .btn-act:hover { border-color: var(--gold-accent); color: var(--gold-accent); }
+
+        /* ================= MODALS ================= */
+        .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(5px); display: none; justify-content: center; align-items: center; z-index: 1000; padding: 20px; }
+        .modal-overlay.show { display: flex; }
+        .modal-card { background: var(--surface-dark); border: 1px solid var(--gold-accent); border-radius: 20px; width: 100%; max-width: 800px; max-height: 90vh; display: flex; flex-direction: column; overflow: hidden; box-shadow: 0 10px 40px rgba(0,0,0,0.5); }
+        
+        .modal-header { padding: 24px 32px; border-bottom: 1px solid var(--border-light); display: flex; justify-content: space-between; align-items: center; background: var(--surface-card); }
+        .modal-header h2 { color: var(--gold-accent); font-size: 1.4rem; }
+        .close-btn { background: none; border: none; color: var(--text-gray); font-size: 1.2rem; cursor: pointer; font-weight: bold;}
+        .close-btn:hover { color: var(--alert-red); }
+
+        .modal-body { padding: 32px; overflow-y: auto; flex: 1; display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+        .form-group { display: flex; flex-direction: column; gap: 8px; }
+        .form-group.full { grid-column: 1 / -1; }
+        .form-group label { font-size: 0.9rem; color: var(--text-gray); font-weight: 500; }
+        .form-group input, .form-group select, .form-group textarea { padding: 14px; background: var(--bg-dark); border: 1px solid var(--border-light); border-radius: 10px; color: #FFF; font-size: 1rem; width: 100%; outline: none;}
+        .form-group input:focus, .form-group select:focus, .form-group textarea:focus { border-color: var(--gold-accent); }
+        .form-group textarea { resize: vertical; min-height: 100px; }
+        
+        .photo-upload-area { border: 2px dashed var(--border-light); border-radius: 10px; height: 150px; display: flex; justify-content: center; align-items: center; cursor: pointer; position: relative; overflow: hidden; text-align: center; background: var(--bg-dark); transition: 0.3s; }
+        .photo-upload-area:hover { border-color: var(--gold-accent); }
+        .photo-upload-area img { width: 100%; height: 100%; object-fit: cover; position: absolute; top:0; left:0; display:none; }
+        .photo-text { color: var(--text-gray); font-size: 0.9rem; }
+
+        .admin-section { background: rgba(212, 175, 55, 0.05); border: 1px solid rgba(212, 175, 55, 0.2); border-radius: 10px; padding: 20px; margin-top: 10px; }
+        .admin-section h3 { color: var(--gold-accent); font-size: 1rem; margin-bottom: 15px; border-bottom: 1px solid rgba(212, 175, 55, 0.2); padding-bottom: 8px;}
+
+        .modal-footer { padding: 20px 32px; border-top: 1px solid var(--border-light); display: flex; justify-content: space-between; align-items: center; background: var(--surface-card); }
+        .btn-delete { background: rgba(255, 59, 48, 0.1); color: var(--alert-red); border: 1px solid rgba(255, 59, 48, 0.3); padding: 12px 24px; border-radius: 10px; font-weight: 700; cursor: pointer; transition: 0.3s; }
+        .btn-delete:hover { background: var(--alert-red); color: #FFF; }
+        .right-actions { display: flex; gap: 16px; }
+
+        /* Mobile Adjustments */
+        @media (max-width: 768px) {
+            .mobile-header { display: flex; }
+            .sidebar { transform: translateX(-100%); }
+            .sidebar.open { transform: translateX(0); }
+            .sidebar-overlay.open { display: block; }
+            .main-content { margin-left: 0; width: 100%; padding: 100px 20px 40px; }
+            .modal-body { grid-template-columns: 1fr; }
+            .modal-footer { flex-direction: column-reverse; gap: 15px; }
+            .modal-footer button { width: 100%; }
+            .right-actions { width: 100%; flex-direction: column; }
+        }
+    </style>
+</head>
+<body>
+
+    <header class="mobile-header">
+        <div class="mobile-brand">PAK PHANANG <span>Prestige Hall</span></div>
+        <button class="menu-toggle" id="mobile-menu-btn">
+            <svg viewBox="0 0 24 24"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+        </button>
+    </header>
+
+    <div class="sidebar-overlay" id="sidebar-overlay"></div>
+
+    <!-- แถบเมนูด้านซ้าย -->
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <div class="brand-logo">PAK PHANANG<br><span>Prestige Hall</span></div>
+        </div>
+        
+        <nav class="nav-menu">
+            <a href="dashboard.html" class="nav-item">
+                <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+                <span>ภาพรวมระบบ</span>
+            </a>
+            <a href="tenant_manage.html" class="nav-item">
+                <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+                <span>จัดการลูกบ้าน</span>
+            </a>
+            <a href="billing.html" class="nav-item">
+                <svg viewBox="0 0 24 24"><rect x="2" y="5" width="20" height="14" rx="2" ry="2"></rect><line x1="2" y1="10" x2="22" y2="10"></line></svg>
+                <span>การเงินและบิล</span>
+            </a>
+            <a href="maintenance.html" class="nav-item active">
+                <svg viewBox="0 0 24 24"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"></path></svg>
+                <span>แจ้งซ่อม</span>
+            </a>
+            <!-- ปุ่มตั้งค่าพนักงาน (เอา style display:none ออกแล้ว แสดงตลอดเวลา) -->
+            <a href="settings.html" class="nav-item" id="nav-settings">
+                <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+                <span>ตั้งค่าพนักงาน</span>
+            </a>
+        </nav>
+
+        <div class="user-profile">
+            <div class="user-info">
+                <!-- ตั้งชื่อตรงนี้ให้สวยงามดูเป็นผู้บริหารตามต้องการ -->
+                <div id="display-name">คุณประธานกรรมการ</div>
+                <div id="display-role">PRESIDENT</div>
+            </div>
+            <button class="btn-logout" id="logout-btn" title="ออกจากระบบ">
+                <svg viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+            </button>
+        </div>
+    </aside>
+
+    <main class="main-content">
+        <header class="top-header">
+            <div class="greeting">
+                <h1>ระบบแจ้งซ่อมและบำรุงรักษา</h1>
+                <p>จัดการคำร้องขอซ่อมแซมจากลูกบ้าน และติดตามสถานะงานซ่อม</p>
+            </div>
+        </header>
+
+        <div class="toolbar">
+            <div class="filter-group">
+                <label>แสดงสถานะ:</label>
+                <select id="filter-status" onchange="fetchRequests()">
+                    <option value="ALL">ทั้งหมด (All)</option>
+                    <option value="PENDING">รอดำเนินการ (Pending)</option>
+                    <option value="IN_PROGRESS">กำลังซ่อมแซม (In Progress)</option>
+                    <option value="COMPLETED">ซ่อมเสร็จสิ้น (Completed)</option>
+                </select>
+            </div>
+            <div class="action-group">
+                <button class="btn-primary" onclick="openModal()">เพิ่มรายการแจ้งซ่อม</button>
+            </div>
+        </div>
+
+        <div class="table-wrapper">
+            <table>
+                <thead>
+                    <tr>
+                        <th>ห้องพัก</th>
+                        <th>ประเภทงานซ่อม</th>
+                        <th>วันที่แจ้งเรื่อง</th>
+                        <th>สถานะ</th>
+                        <th style="text-align: right;">จัดการ</th>
+                    </tr>
+                </thead>
+                <tbody id="maintenance-table-body">
+                    <tr><td colspan="5" style="text-align: center; padding: 20px;">กำลังโหลดข้อมูล...</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </main>
+
+    <!-- MODAL: รายละเอียดแจ้งซ่อม -->
+    <div class="modal-overlay" id="maintenance-modal">
+        <div class="modal-card">
+            <header class="modal-header">
+                <h2 id="modal-title">รายละเอียดการแจ้งซ่อม</h2>
+                <!-- ใช้ตัวอักษร X แทนอิโมจิ -->
+                <button class="close-btn" onclick="closeModal()">X</button>
+            </header>
+            
+            <div class="modal-body">
+                <input type="hidden" id="m-id">
+                
+                <div class="form-group">
+                    <label>หมายเลขห้องพัก *</label>
+                    <input type="text" id="m-room" placeholder="เช่น 101" required>
+                </div>
+                
+                <div class="form-group">
+                    <label>ประเภทงานซ่อม *</label>
+                    <select id="m-type" required>
+                        <option value="ระบบน้ำ (Plumbing)">ระบบน้ำ / ประปา</option>
+                        <option value="ระบบไฟฟ้า (Electrical)">ระบบไฟฟ้า / แอร์</option>
+                        <option value="เฟอร์นิเจอร์ (Furniture)">เฟอร์นิเจอร์ / โครงสร้าง</option>
+                        <option value="อื่นๆ (Others)">อื่นๆ</option>
+                    </select>
+                </div>
+
+                <div class="form-group full">
+                    <label>รายละเอียดปัญหาที่พบ *</label>
+                    <textarea id="m-desc" placeholder="ระบุอาการหรือปัญหาให้ชัดเจน..." required></textarea>
+                </div>
+
+                <div class="form-group full">
+                    <label>ภาพประกอบ (ถ้ามี)</label>
+                    <div class="photo-upload-area" onclick="document.getElementById('m-photo-file').click()">
+                        <span class="photo-text" id="m-photo-text">คลิกเพื่ออัปโหลดรูปภาพ</span>
+                        <img id="m-photo-preview" src="" alt="Preview">
+                        <input type="file" id="m-photo-file" hidden accept="image/*">
+                        <input type="hidden" id="m-photo-base64">
+                    </div>
+                </div>
+
+                <div class="form-group full admin-section">
+                    <h3>ส่วนการจัดการของเจ้าหน้าที่ (Admin Only)</h3>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px;">
+                        <div class="form-group">
+                            <label>สถานะงานซ่อม</label>
+                            <select id="m-status">
+                                <option value="PENDING">รอดำเนินการ (Pending)</option>
+                                <option value="IN_PROGRESS">กำลังซ่อมแซม (In Progress)</option>
+                                <option value="COMPLETED">ซ่อมเสร็จสิ้น (Completed)</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>บันทึกการซ่อม / หมายเหตุช่าง</label>
+                            <textarea id="m-admin-note" placeholder="บันทึกรายละเอียดการแก้ไขปัญหา..." style="min-height: 60px;"></textarea>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <footer class="modal-footer">
+                <button class="btn-delete" id="btn-delete" onclick="deleteRequest()" style="display: none;">ลบรายการนี้</button>
+                <div style="flex: 1;"></div> 
+                <div class="right-actions">
+                    <button class="btn-act" style="border: 1px solid var(--text-gray);" onclick="closeModal()">ยกเลิก</button>
+                    <button class="btn-primary" id="btn-save" onclick="saveRequest()">บันทึกข้อมูล</button>
+                </div>
+            </footer>
+        </div>
+    </div>
+
+    <script>
+        // ระบบเมนูมือถือ
+        document.addEventListener('DOMContentLoaded', () => {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebar-overlay');
+            const menuBtn = document.getElementById('mobile-menu-btn');
+
+            function toggleSidebar() {
+                sidebar.classList.toggle('open');
+                overlay.classList.toggle('open');
+            }
+            if(menuBtn) menuBtn.addEventListener('click', toggleSidebar);
+            if(overlay) overlay.addEventListener('click', toggleSidebar);
+
+            // โหลดข้อมูลเมื่อเปิดหน้าเว็บ
+            fetchRequests();
+        });
+
+        // ตั้งค่าการเชื่อมต่อฐานข้อมูล Supabase
+        const SB_URL = 'https://vnlqxtxifgchrouongpu.supabase.co';
+        const SB_KEY = 'sb_publishable_jBw7w_gyrLx7B0oSHAtWOw_nVTHTzxl';
+        const TABLE = 'maintenance_requests';
+        let requestsData = [];
+
+        // ==========================================
+        // การดึงข้อมูลและสร้างตาราง
+        // ==========================================
+        async function fetchRequests() {
+            const statusFilter = document.getElementById('filter-status').value;
+            const tbody = document.getElementById('maintenance-table-body');
+            tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; padding:30px;">กำลังโหลดข้อมูล...</td></tr>`;
+            
+            let queryUrl = `${SB_URL}/rest/v1/${TABLE}?order=reported_at.desc`;
+            if (statusFilter !== 'ALL') {
+                queryUrl += `&status=eq.${statusFilter}`;
+            }
+
+            try {
+                const res = await fetch(queryUrl, {
+                    headers: { 'apikey': SB_KEY, 'Authorization': `Bearer ${SB_KEY}` }
+                });
+                if (!res.ok) throw new Error('Fetch failed');
+                requestsData = await res.json();
+                renderTable(requestsData);
+            } catch (err) {
+                tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; color:var(--alert-red);">ไม่สามารถดึงข้อมูลได้ โปรดตรวจสอบการเชื่อมต่อ</td></tr>`;
+            }
+        }
+
+        function renderTable(data) {
+            const tbody = document.getElementById('maintenance-table-body');
+            tbody.innerHTML = '';
+            
+            if(data.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; color:var(--text-gray);">ไม่พบข้อมูลการแจ้งซ่อม</td></tr>`;
+                return;
+            }
+
+            data.forEach(req => {
+                let statusCls = '';
+                let statusTxt = '';
+                if (req.status === 'PENDING') { statusCls = 'status-pending'; statusTxt = 'รอดำเนินการ'; }
+                else if (req.status === 'IN_PROGRESS') { statusCls = 'status-progress'; statusTxt = 'กำลังซ่อมแซม'; }
+                else if (req.status === 'COMPLETED') { statusCls = 'status-completed'; statusTxt = 'ซ่อมเสร็จสิ้น'; }
+                
+                const reportDate = new Date(req.reported_at).toLocaleDateString('th-TH');
+
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td style="color:var(--gold-accent); font-weight:bold; font-size:1.1rem;">${req.room_number}</td>
+                    <td style="font-weight: 500;">${req.issue_type}</td>
+                    <td style="color:var(--text-gray); font-size:0.9rem;">${reportDate}</td>
+                    <td><span class="status-badge ${statusCls}">${statusTxt}</span></td>
+                    <td style="text-align: right;">
+                        <button class="btn-act" onclick="editRequest('${req.id}')">ตรวจสอบ / อัปเดต</button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        // ==========================================
+        // ระบบอัปโหลดรูปภาพและบีบอัด
+        // ==========================================
+        document.getElementById('m-photo-file').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onload = event => {
+                const img = new Image();
+                img.src = event.target.result;
+                img.onload = () => {
+                    const canvas = document.createElement('canvas');
+                    const MAX_WIDTH = 600; 
+                    let scaleSize = 1;
+                    if(img.width > MAX_WIDTH) { scaleSize = MAX_WIDTH / img.width; }
+                    
+                    canvas.width = img.width * scaleSize;
+                    canvas.height = img.height * scaleSize;
+                    
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                    
+                    const compressedBase64 = canvas.toDataURL('image/webp', 0.7);
+                    
+                    document.getElementById('m-photo-preview').src = compressedBase64;
+                    document.getElementById('m-photo-preview').style.display = 'block';
+                    document.getElementById('m-photo-text').style.display = 'none';
+                    document.getElementById('m-photo-base64').value = compressedBase64;
+                }
+            }
+        });
+
+        // ==========================================
+        // การเปิดปิดหน้าต่าง Modal
+        // ==========================================
+        function openModal() {
+            document.getElementById('modal-title').innerText = "เพิ่มรายการแจ้งซ่อมใหม่";
+            document.getElementById('m-id').value = '';
+            document.getElementById('m-room').value = '';
+            document.getElementById('m-type').value = 'ระบบน้ำ (Plumbing)';
+            document.getElementById('m-desc').value = '';
+            document.getElementById('m-status').value = 'PENDING';
+            document.getElementById('m-admin-note').value = '';
+            
+            document.getElementById('m-photo-base64').value = '';
+            document.getElementById('m-photo-preview').style.display = 'none';
+            document.getElementById('m-photo-preview').src = '';
+            document.getElementById('m-photo-text').style.display = 'block';
+
+            document.getElementById('btn-delete').style.display = 'none';
+            document.getElementById('maintenance-modal').classList.add('show');
+        }
+
+        function closeModal() { 
+            document.getElementById('maintenance-modal').classList.remove('show'); 
+        }
+
+        function editRequest(id) {
+            const req = requestsData.find(x => x.id === id);
+            if(!req) return;
+
+            document.getElementById('modal-title').innerText = "รายละเอียดและอัปเดตสถานะงานซ่อม";
+            document.getElementById('m-id').value = req.id;
+            document.getElementById('m-room').value = req.room_number;
+            document.getElementById('m-type').value = req.issue_type;
+            document.getElementById('m-desc').value = req.description;
+            document.getElementById('m-status').value = req.status;
+            document.getElementById('m-admin-note').value = req.admin_note || '';
+
+            if(req.photo_base64 && req.photo_base64.length > 50) {
+                document.getElementById('m-photo-preview').src = req.photo_base64;
+                document.getElementById('m-photo-preview').style.display = 'block';
+                document.getElementById('m-photo-text').style.display = 'none';
+                document.getElementById('m-photo-base64').value = req.photo_base64;
+            } else {
+                document.getElementById('m-photo-preview').style.display = 'none';
+                document.getElementById('m-photo-text').style.display = 'block';
+                document.getElementById('m-photo-base64').value = '';
+            }
+
+            document.getElementById('btn-delete').style.display = 'block';
+            document.getElementById('maintenance-modal').classList.add('show');
+        }
+
+        // ==========================================
+        // การบันทึกและการลบข้อมูล (Database)
+        // ==========================================
+        async function saveRequest() {
+            const id = document.getElementById('m-id').value;
+            const btn = document.getElementById('btn-save');
+            const room = document.getElementById('m-room').value.trim();
+            const type = document.getElementById('m-type').value;
+            const desc = document.getElementById('m-desc').value.trim();
+            const status = document.getElementById('m-status').value;
+            
+            if(!room || !desc) { 
+                alert("กรุณาระบุหมายเลขห้องและรายละเอียดปัญหาให้ครบถ้วน"); 
+                return; 
+            }
+
+            const payload = {
+                room_number: room,
+                issue_type: type,
+                description: desc,
+                status: status,
+                admin_note: document.getElementById('m-admin-note').value.trim(),
+                photo_base64: document.getElementById('m-photo-base64').value || null,
+                updated_at: new Date().toISOString()
+            };
+
+            if (status === 'COMPLETED') {
+                const currentReq = requestsData.find(x => x.id === id);
+                if (!currentReq || currentReq.status !== 'COMPLETED') {
+                    payload.completed_at = new Date().toISOString();
+                }
+            }
+
+            btn.innerText = "กำลังบันทึก..."; btn.disabled = true;
+
+            try {
+                let url = `${SB_URL}/rest/v1/${TABLE}`;
+                let method = id ? 'PATCH' : 'POST';
+                if(id) url += `?id=eq.${id}`;
+
+                const res = await fetch(url, {
+                    method: method,
+                    headers: { 'Content-Type': 'application/json', 'apikey': SB_KEY, 'Authorization': `Bearer ${SB_KEY}`, 'Prefer': 'return=minimal' },
+                    body: JSON.stringify(payload)
+                });
+
+                if (!res.ok) {
+                    const err = await res.json();
+                    throw new Error(err.message);
+                }
+                alert('บันทึกข้อมูลเรียบร้อย');
+                closeModal();
+                fetchRequests();
+            } catch(e) {
+                alert('ข้อผิดพลาด: ' + e.message);
+            } finally {
+                btn.innerText = "บันทึกข้อมูล"; btn.disabled = false;
+            }
+        }
+
+        async function deleteRequest() {
+            const id = document.getElementById('m-id').value;
+            if (!id) return;
+            
+            if (confirm('คุณต้องการลบรายการแจ้งซ่อมนี้ออกจากระบบใช่หรือไม่? ข้อมูลไม่สามารถกู้คืนได้')) {
+                const btn = document.getElementById('btn-delete');
+                btn.innerText = "กำลังลบ..."; btn.disabled = true;
+                
+                try {
+                    const res = await fetch(`${SB_URL}/rest/v1/${TABLE}?id=eq.${id}`, {
+                        method: 'DELETE',
+                        headers: { 'apikey': SB_KEY, 'Authorization': `Bearer ${SB_KEY}` }
+                    });
+
+                    if (!res.ok) throw new Error('ลบข้อมูลไม่สำเร็จ');
+                    
+                    alert('ลบข้อมูลเสร็จสิ้น');
+                    closeModal();
+                    fetchRequests();
+                } catch(e) {
+                    alert('ข้อผิดพลาด: ' + e.message);
+                } finally {
+                    btn.innerText = "ลบรายการนี้"; btn.disabled = false;
+                }
+            }
+        }
+    </script>
+</body>
+</html>

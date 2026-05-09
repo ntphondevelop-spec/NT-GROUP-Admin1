@@ -1,0 +1,830 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>การเงินและบิล - Pak Phanang Prestige Hall</title>
+    <link href="https://fonts.googleapis.com/css2?family=Anuphan:wght@300;400;500;600;700&family=Audiowide&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --font-ui: 'Anuphan', sans-serif;
+            --font-logo: 'Audiowide', cursive;
+            
+            --bg-dark: #03030A;
+            --surface-dark: #0A0A2A;
+            --surface-card: #0F0F30;
+            --gold-accent: #D4AF37;
+            --gold-hover: #E5C354;
+            
+            --text-light: #F5F5F7;
+            --text-gray: #8E8E93;
+            --border-light: rgba(255,255,255,0.08);
+            
+            --alert-red: #FF3B30;
+            --success-green: #34C759;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: var(--font-ui); }
+
+        body { 
+            background-color: var(--bg-dark);
+            color: var(--text-light); 
+            display: flex; min-height: 100vh; overflow-x: hidden;
+        }
+
+        /* ================= MOBILE HEADER ================= */
+        .mobile-header { display: none; width: 100%; background: var(--surface-dark); padding: 16px 24px; border-bottom: 1px solid var(--border-light); align-items: center; justify-content: space-between; position: fixed; top: 0; left: 0; z-index: 90; }
+        .mobile-brand { font-family: var(--font-logo); color: var(--gold-accent); font-size: 1.2rem; }
+        .menu-toggle { background: none; border: none; color: var(--text-light); cursor: pointer; }
+        .menu-toggle svg { width: 28px; height: 28px; stroke: currentColor; stroke-width: 2; fill: none; }
+
+        /* ================= SIDEBAR ================= */
+        .sidebar { width: 280px; background: var(--surface-dark); border-right: 1px solid var(--border-light); display: flex; flex-direction: column; position: fixed; top: 0; left: 0; height: 100vh; z-index: 100; transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+        .sidebar-header { padding: 24px; border-bottom: 1px solid var(--border-light); }
+        .brand-logo { font-family: var(--font-logo); font-size: 1.4rem; color: var(--gold-accent); line-height: 1.2; }
+        .brand-logo span { font-family: var(--font-ui); display: block; font-size: 1rem; color: var(--text-gray); margin-top: 4px;}
+        
+        .nav-menu { padding: 24px 16px; flex: 1; display: flex; flex-direction: column; gap: 8px; overflow-y: auto;}
+        .nav-item { display: flex; align-items: center; gap: 16px; padding: 14px 20px; color: var(--text-gray); text-decoration: none; border-radius: 12px; font-weight: 500; transition: 0.2s; font-size: 1.05rem; border: 1px solid transparent; }
+        .nav-item svg { width: 22px; height: 22px; stroke: currentColor; stroke-width: 2; fill: none; }
+        .nav-item:hover { background: rgba(255,255,255,0.03); color: var(--text-light); }
+        .nav-item.active { background: rgba(212, 175, 55, 0.1); color: var(--gold-accent); border-color: rgba(212, 175, 55, 0.2); font-weight: 600;}
+        
+        .user-profile { padding: 24px; border-top: 1px solid var(--border-light); display: flex; align-items: center; justify-content: space-between; background: rgba(0,0,0,0.2); }
+        .user-info div:first-child { font-weight: 700; color: var(--text-light); font-size: 0.95rem; }
+        .user-info div:last-child { font-size: 0.8rem; color: var(--gold-accent); font-weight: 600; margin-top: 2px;}
+        .sidebar-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6); backdrop-filter: blur(4px); z-index: 95; }
+
+        /* ================= MAIN CONTENT ================= */
+        .main-content { flex: 1; margin-left: 280px; padding: 40px; width: calc(100% - 280px); }
+        .top-header { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 30px; }
+        .greeting h1 { font-size: 2.2rem; font-weight: 700; color: #fff; margin-bottom: 8px;}
+        .greeting p { color: var(--text-gray); font-weight: 500;}
+
+        /* Toolbar */
+        .toolbar { background: var(--surface-card); border: 1px solid var(--border-light); border-radius: 20px; padding: 20px 24px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px; margin-bottom: 24px; }
+        .filter-group { display: flex; align-items: center; gap: 15px; }
+        .filter-group label { color: var(--gold-accent); font-weight: 600; font-size: 1.1rem; }
+        .filter-group input[type="month"] { background: var(--bg-dark); border: 1px solid var(--border-light); color: #FFF; padding: 10px 15px; border-radius: 8px; font-size: 1rem; cursor: pointer; }
+        
+        .action-group { display: flex; gap: 12px; }
+        .btn-secondary { background: transparent; color: var(--gold-accent); border: 1px solid var(--gold-accent); padding: 12px 20px; border-radius: 10px; font-weight: 600; cursor: pointer; transition: 0.3s; display: flex; align-items: center; gap: 8px;}
+        .btn-secondary:hover { background: rgba(212, 175, 55, 0.1); }
+        .btn-primary { background: var(--gold-accent); color: var(--bg-dark); padding: 12px 24px; border-radius: 10px; font-weight: 700; border: none; cursor: pointer; transition: 0.3s; }
+        .btn-primary:hover { background: var(--gold-hover); transform: translateY(-2px); }
+
+        /* Table */
+        .table-wrapper { background: var(--surface-card); border: 1px solid var(--border-light); border-radius: 20px; padding: 24px; overflow-x: auto; box-shadow: 0 4px 20px rgba(0,0,0,0.3); }
+        table { width: 100%; border-collapse: collapse; text-align: left; }
+        th { padding: 16px; color: var(--text-gray); font-weight: 600; border-bottom: 1px solid var(--border-light); }
+        td { padding: 16px; border-bottom: 1px solid rgba(255,255,255,0.03); vertical-align: middle; white-space: nowrap; }
+        .status-badge { padding: 6px 12px; border-radius: 6px; font-weight: 700; font-size: 0.85rem; }
+        .status-paid { background: rgba(52, 199, 89, 0.1); color: var(--success-green); border: 1px solid rgba(52, 199, 89, 0.3); }
+        .status-unpaid { background: rgba(255, 59, 48, 0.1); color: var(--alert-red); border: 1px solid rgba(255, 59, 48, 0.3); }
+        
+        .action-btns { display: flex; gap: 8px; justify-content: flex-end; }
+        .btn-act { padding: 8px 16px; border-radius: 8px; font-weight: 600; cursor: pointer; font-size: 0.85rem; background: rgba(255,255,255,0.05); color: var(--text-light); border: 1px solid transparent; transition: 0.2s;}
+        .btn-act:hover { border-color: var(--gold-accent); color: var(--gold-accent); }
+        .btn-print { padding: 8px 16px; border-radius: 8px; font-weight: 600; cursor: pointer; font-size: 0.85rem; background: transparent; color: var(--gold-accent); border: 1px solid var(--gold-accent); transition: 0.2s;}
+        .btn-print:hover { background: var(--gold-accent); color: var(--bg-dark); }
+
+        /* ================= MODALS ================= */
+        .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(5px); display: none; justify-content: center; align-items: center; z-index: 1000; padding: 20px; }
+        .modal-overlay.show { display: flex; }
+        .modal-card { background: var(--surface-dark); border: 1px solid var(--gold-accent); border-radius: 20px; width: 100%; max-height: 90vh; display: flex; flex-direction: column; overflow: hidden; box-shadow: 0 10px 40px rgba(0,0,0,0.5); }
+        .modal-card.large { max-width: 1000px; }
+        .modal-card.medium { max-width: 600px; }
+        
+        .modal-header { padding: 24px 32px; border-bottom: 1px solid var(--border-light); display: flex; justify-content: space-between; align-items: center; background: var(--surface-card); }
+        .modal-header h2 { color: var(--gold-accent); font-size: 1.4rem; }
+        .close-btn { background: none; border: none; color: var(--text-gray); font-size: 1.5rem; cursor: pointer; }
+        .close-btn:hover { color: var(--alert-red); }
+
+        .modal-body { padding: 32px; overflow-y: auto; flex: 1; }
+        .modal-footer { padding: 20px 32px; border-top: 1px solid var(--border-light); display: flex; justify-content: flex-end; gap: 16px; background: var(--surface-card); }
+
+        /* Billing Form Grid */
+        .bill-grid { display: grid; grid-template-columns: 2fr 1.2fr; gap: 40px; }
+        .section-title { font-size: 1.05rem; color: var(--gold-accent); border-bottom: 1px dashed var(--border-light); padding-bottom: 8px; margin-bottom: 16px; font-weight: 600; }
+        .form-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 16px; margin-bottom: 24px; }
+        .form-group { display: flex; flex-direction: column; gap: 8px; }
+        .form-group label { font-size: 0.85rem; color: var(--text-gray); font-weight: 500; }
+        .form-group input, .form-group select { padding: 12px; background: var(--bg-dark); border: 1px solid var(--border-light); border-radius: 8px; color: #FFF; font-size: 1rem; }
+        .form-group input:focus, .form-group select:focus { outline: none; border-color: var(--gold-accent); }
+        .readonly-input { background: rgba(212, 175, 55, 0.05) !important; color: var(--gold-accent) !important; font-weight: bold; border-color: rgba(212, 175, 55, 0.3) !important;}
+
+        /* Payment Panel Right Side */
+        .payment-panel { background: rgba(0,0,0,0.3); border-radius: 16px; padding: 24px; border: 1px solid var(--border-light); height: fit-content; }
+        .net-total-box { text-align: center; padding-bottom: 20px; border-bottom: 1px solid var(--border-light); margin-bottom: 20px; }
+        .net-total-box span { color: var(--text-gray); font-size: 0.9rem; }
+        .net-total-box h1 { color: var(--success-green); font-size: 2.8rem; margin-top: 5px; line-height: 1; }
+        .qr-box { text-align: center; background: #FFF; padding: 15px; border-radius: 12px; margin-top: 20px; display: none; }
+        .qr-box img { width: 180px; height: 180px; }
+        .qr-box p { color: #000; font-weight: bold; font-size: 0.9rem; margin-top: 10px; }
+
+        /* Room Settings List */
+        .room-set-row { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr 40px; gap: 10px; margin-bottom: 12px; align-items: center; }
+        .btn-del-sm { background: rgba(255, 59, 48, 0.1); color: var(--alert-red); border: none; border-radius: 6px; height: 100%; cursor: pointer; font-weight: bold; }
+        .btn-add-ex { width: 100%; padding: 10px; background: transparent; border: 1px dashed var(--gold-accent); color: var(--gold-accent); border-radius: 8px; cursor: pointer; margin-bottom: 20px;}
+        .btn-add-ex:hover { background: rgba(212, 175, 55, 0.1); }
+        .extra-row { display: grid; grid-template-columns: 1fr 120px 45px; gap: 10px; margin-bottom: 10px; }
+
+        /* ================= PRINT STYLES ================= */
+        @media print {
+            body * { visibility: hidden; }
+            #print-area, #print-area * { visibility: visible; }
+            #print-area { display: block !important; position: absolute; left: 0; top: 0; width: 100%; padding: 30px; font-family: 'Sarabun', sans-serif; background: #FFF; color: #000; }
+            .print-header { text-align: center; border-bottom: 2px solid #000; padding-bottom: 15px; margin-bottom: 30px; }
+            .print-header h2 { font-size: 24px; margin: 0 0 5px 0; }
+            .print-info { display: flex; justify-content: space-between; margin-bottom: 20px; font-size: 16px; }
+            .print-table { width: 100%; border-collapse: collapse; margin-bottom: 30px; }
+            .print-table th, .print-table td { border: 1px solid #000 !important; padding: 12px; text-align: left; }
+            .print-table th { background-color: #f2f2f2 !important; -webkit-print-color-adjust: exact; }
+            .text-right { text-align: right !important; }
+            .print-footer { margin-top: 60px; display: flex; justify-content: space-between; }
+            .sign-box { width: 200px; text-align: center; border-top: 1px solid #000; padding-top: 10px; }
+        }
+
+        /* Mobile Adjustments */
+        @media (max-width: 768px) {
+            .mobile-header { display: flex; }
+            .sidebar { transform: translateX(-100%); }
+            .sidebar.open { transform: translateX(0); }
+            .sidebar-overlay.open { display: block; }
+            .main-content { margin-left: 0; width: 100%; padding: 100px 20px 40px; }
+            .bill-grid { grid-template-columns: 1fr; }
+            .room-set-row { grid-template-columns: 1fr; border: 1px solid var(--border-light); padding: 15px; border-radius: 10px; margin-bottom: 15px; }
+        }
+    </style>
+</head>
+<body>
+
+    <header class="mobile-header">
+        <div class="mobile-brand">PAK PHANANG <span>Prestige Hall</span></div>
+        <button class="menu-toggle" id="mobile-menu-btn">
+            <svg viewBox="0 0 24 24"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+        </button>
+    </header>
+
+    <div class="sidebar-overlay" id="sidebar-overlay"></div>
+
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <div class="brand-logo">PAK PHANANG<br><span>Prestige Hall</span></div>
+        </div>
+        
+        <nav class="nav-menu">
+            <a href="dashboard.html" class="nav-item">
+                <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+                <span>ภาพรวมระบบ</span>
+            </a>
+            <a href="tenant_manage.html" class="nav-item">
+                <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+                <span>จัดการลูกบ้าน</span>
+            </a>
+            <a href="billing.html" class="nav-item active">
+                <svg viewBox="0 0 24 24"><rect x="2" y="5" width="20" height="14" rx="2" ry="2"></rect><line x1="2" y1="10" x2="22" y2="10"></line></svg>
+                <span>การเงินและบิล</span>
+            </a>
+            <a href="maintenance.html" class="nav-item">
+                <svg viewBox="0 0 24 24"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"></path></svg>
+                <span>แจ้งซ่อม</span>
+            </a>
+            <a href="settings.html" class="nav-item" id="nav-settings" style="display: none;">
+                <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+                <span>ตั้งค่าพนักงาน</span>
+            </a>
+        </nav>
+
+        <div class="user-profile">
+            <div class="user-info">
+                <div id="display-name">Loading...</div>
+                <div id="display-role">Admin</div>
+            </div>
+            <button class="btn-logout" id="logout-btn" title="ออกจากระบบ">
+                <svg viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+            </button>
+        </div>
+    </aside>
+
+    <main class="main-content">
+        <header class="top-header">
+            <div class="greeting">
+                <h1>การเงินและบิลค่าเช่า</h1>
+                <p>ออกบิลรายเดือน และตรวจสอบสถานะการชำระเงินของลูกบ้าน</p>
+            </div>
+        </header>
+
+        <div class="toolbar">
+            <div class="filter-group">
+                <label>รอบบิลเดือน:</label>
+                <input type="month" id="filter-month" onchange="fetchBills()">
+            </div>
+            <div class="action-group">
+                <button class="btn-secondary" onclick="openRoomSettings()">ตั้งค่าเรทราคาห้อง</button>
+                <button class="btn-primary" onclick="openBillModal()">สร้างบิลใบใหม่</button>
+            </div>
+        </div>
+
+        <div class="table-wrapper">
+            <table>
+                <thead>
+                    <tr>
+                        <th>ห้องพัก</th>
+                        <th>รอบบิล</th>
+                        <th>ยอดสุทธิ (บาท)</th>
+                        <th>สถานะการชำระ</th>
+                        <th>ช่องทาง</th>
+                        <th style="text-align: right;">จัดการ</th>
+                    </tr>
+                </thead>
+                <tbody id="bill-table-body">
+                    <tr><td colspan="6" style="text-align: center; padding: 20px;">กำลังโหลดข้อมูล...</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </main>
+
+    <!-- MODAL: ตั้งค่ารายห้อง -->
+    <div class="modal-overlay" id="room-settings-modal">
+        <div class="modal-card medium">
+            <header class="modal-header">
+                <h2>ตั้งค่าเรทราคารายห้อง</h2>
+                <button class="close-btn" onclick="closeRoomSettings()">✖</button>
+            </header>
+            <div class="modal-body">
+                <div class="form-group" style="margin-bottom: 20px;">
+                    <label>เบอร์พร้อมเพย์รับเงิน (ใช้ร่วมกันทุกห้อง)</label>
+                    <input type="text" id="global-promptpay" value="0624059581">
+                </div>
+                
+                <div class="section-title">รายการห้องพัก</div>
+                <div id="room-list-container"></div>
+                <button class="btn-secondary" style="width: 100%; border-style: dashed; margin-top: 15px; justify-content: center;" onclick="addRoomSettingRow()">เพิ่มการตั้งค่าห้องใหม่</button>
+            </div>
+            <footer class="modal-footer">
+                <button class="btn-act" onclick="closeRoomSettings()">ปิด</button>
+                <button class="btn-primary" onclick="saveRoomSettings()">บันทึกการตั้งค่า</button>
+            </footer>
+        </div>
+    </div>
+
+    <!-- MODAL: ออกบิล -->
+    <div class="modal-overlay" id="bill-modal">
+        <div class="modal-card large">
+            <header class="modal-header">
+                <h2>สร้างหรือแก้ไขบิลค่าเช่า</h2>
+                <button class="close-btn" onclick="closeBillModal()">✖</button>
+            </header>
+            
+            <div class="modal-body bill-grid">
+                <div class="form-content">
+                    <input type="hidden" id="b-id">
+                    
+                    <div class="form-section">
+                        <div class="section-title">ข้อมูลพื้นฐาน</div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>หมายเลขห้องพัก</label>
+                                <input type="text" id="b-room" onblur="applyRoomRates(this.value)" placeholder="เลขห้อง">
+                            </div>
+                            <div class="form-group">
+                                <label>ประจำเดือน</label>
+                                <input type="month" id="b-month">
+                            </div>
+                            <div class="form-group">
+                                <label>ค่าเช่าห้อง (บาท)</label>
+                                <input type="number" id="b-room-rate" class="calc" value="0" min="0">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-section">
+                        <div class="section-title">ค่าน้ำประปา</div>
+                        <div class="form-row" style="grid-template-columns: 1fr 1fr 1fr 1.5fr;">
+                            <div class="form-group"><label>มิเตอร์เดิม</label><input type="number" id="w-prev" class="calc" value="0"></div>
+                            <div class="form-group"><label>มิเตอร์ใหม่</label><input type="number" id="w-curr" class="calc" value="0"></div>
+                            <div class="form-group"><label>ราคาต่อหน่วย</label><input type="number" id="w-price" class="calc" value="20"></div>
+                            <div class="form-group"><label>รวมค่าน้ำ (บาท)</label><input type="text" id="w-total" class="readonly-input" readonly value="0"></div>
+                        </div>
+                    </div>
+
+                    <div class="form-section">
+                        <div class="section-title">ค่าไฟฟ้า</div>
+                        <div class="form-row" style="grid-template-columns: 1fr 1fr 1fr 1.5fr;">
+                            <div class="form-group"><label>มิเตอร์เดิม</label><input type="number" id="e-prev" class="calc" value="0"></div>
+                            <div class="form-group"><label>มิเตอร์ใหม่</label><input type="number" id="e-curr" class="calc" value="0"></div>
+                            <div class="form-group"><label>ราคาต่อหน่วย</label><input type="number" id="e-price" class="calc" value="8"></div>
+                            <div class="form-group"><label>รวมค่าไฟ (บาท)</label><input type="text" id="e-total" class="readonly-input" readonly value="0"></div>
+                        </div>
+                    </div>
+
+                    <div class="form-section">
+                        <div class="section-title">ค่าใช้จ่ายอื่นๆ</div>
+                        <div id="extra-container"></div>
+                        <button type="button" class="btn-add-ex" onclick="addExtraRow()">เพิ่มรายการค่าใช้จ่ายอื่น</button>
+                    </div>
+
+                    <div class="form-group" style="width: 250px;">
+                        <label>หักส่วนลด (บาท)</label>
+                        <input type="number" id="b-discount" class="calc" value="0" min="0" style="color: var(--alert-red);">
+                    </div>
+                </div>
+
+                <div>
+                    <div class="payment-panel">
+                        <div class="net-total-box">
+                            <span>ยอดสุทธิที่ต้องชำระ (บาท)</span>
+                            <h1 id="b-net-total">0.00</h1>
+                            <input type="hidden" id="hidden-net-total" value="0">
+                        </div>
+
+                        <div class="form-group" style="margin-bottom: 20px;">
+                            <label>สถานะการชำระเงิน</label>
+                            <select id="b-status" onchange="togglePaymentSection()">
+                                <option value="UNPAID">ค้างชำระ (UNPAID)</option>
+                                <option value="PAID">ชำระแล้ว (PAID)</option>
+                            </select>
+                        </div>
+
+                        <div id="method-group" style="display: none;">
+                            <div class="form-group">
+                                <label>รับชำระผ่านช่องทาง</label>
+                                <select id="b-method" onchange="togglePaymentSection()">
+                                    <option value="CASH">เงินสด (หน้าเคาน์เตอร์)</option>
+                                    <option value="TRANSFER">โอนเงิน (พร้อมเพย์)</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="qr-box" id="qr-container">
+                            <img id="qr-img" src="" alt="QR">
+                            <p>ให้ลูกค้าแสกนเพื่อชำระยอด <span id="qr-amount-txt" style="color:var(--success-green);">0</span> บาท</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <footer class="modal-footer">
+                <button class="btn-act" onclick="closeBillModal()">ยกเลิก</button>
+                <button class="btn-primary" id="btn-save" onclick="saveBill()">บันทึกข้อมูลบิล</button>
+            </footer>
+        </div>
+    </div>
+
+    <!-- PRINT AREA -->
+    <div id="print-area" style="display: none;">
+        <div class="print-header">
+            <h2>ใบแจ้งหนี้ และ ใบเสร็จรับเงิน</h2>
+            <p><strong>PAK PHANANG PRESTIGE HALL</strong></p>
+        </div>
+        <div class="print-info">
+            <div>
+                <strong>หมายเลขห้อง:</strong> <span id="pr-room"></span><br>
+                <strong>ประจำเดือน:</strong> <span id="pr-month"></span>
+            </div>
+            <div class="text-right">
+                <strong>สถานะ:</strong> <span id="pr-status"></span><br>
+                <strong>วันที่พิมพ์:</strong> <span id="pr-date"></span>
+            </div>
+        </div>
+        <table class="print-table">
+            <thead>
+                <tr>
+                    <th>รายการ</th>
+                    <th class="text-right">จำนวนเงิน (บาท)</th>
+                </tr>
+            </thead>
+            <tbody id="pr-body"></tbody>
+            <tfoot>
+                <tr>
+                    <th class="text-right" style="font-size: 18px;">รวมยอดสุทธิทั้งสิ้น</th>
+                    <th class="text-right" style="font-size: 18px; color: black;" id="pr-net"></th>
+                </tr>
+            </tfoot>
+        </table>
+        <div class="print-footer">
+            <div class="sign-box">ลายมือชื่อผู้ชำระเงิน</div>
+            <div class="sign-box">ลายมือชื่อผู้รับเงิน</div>
+        </div>
+    </div>
+
+    <script>
+        // ==========================================
+        // Safe Initialization
+        // ==========================================
+        document.addEventListener('DOMContentLoaded', () => {
+            try {
+                const adminDataStr = localStorage.getItem('admin_user_data');
+                if (adminDataStr) {
+                    const adminData = JSON.parse(adminDataStr);
+                    document.getElementById('display-name').innerText = `${adminData.first_name || ''} ${adminData.last_name || ''}`;
+                    document.getElementById('display-role').innerText = adminData.role || 'Admin';
+                    if (adminData.role === 'PRESIDENT') document.getElementById('nav-settings').style.display = 'flex';
+                }
+            } catch (error) {
+                console.log("Local storage restricted");
+            }
+
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebar-overlay');
+            const menuBtn = document.getElementById('mobile-menu-btn');
+
+            function toggleSidebar() {
+                sidebar.classList.toggle('open');
+                overlay.classList.toggle('open');
+            }
+            if(menuBtn) menuBtn.addEventListener('click', toggleSidebar);
+            if(overlay) overlay.addEventListener('click', toggleSidebar);
+
+            const logoutBtn = document.getElementById('logout-btn');
+            if(logoutBtn) {
+                logoutBtn.addEventListener('click', () => {
+                    try { localStorage.removeItem('admin_user_data'); } catch(e){}
+                    window.location.href = 'index.html';
+                });
+            }
+
+            // Set current month
+            const today = new Date();
+            document.getElementById('filter-month').value = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}`;
+            
+            // Start App
+            loadRoomSettings();
+            fetchBills();
+        });
+
+        // ==========================================
+        // API Settings (No External Scripts Required)
+        // ==========================================
+        const SB_URL = 'https://vnlqxtxifgchrouongpu.supabase.co';
+        const SB_KEY = 'sb_publishable_jBw7w_gyrLx7B0oSHAtWOw_nVTHTzxl';
+        const TABLE = 'billing_statements';
+        let billsData = [];
+        let roomSettingsCache = {};
+
+        // ==========================================
+        // Room Settings
+        // ==========================================
+        function loadRoomSettings() {
+            try {
+                const saved = localStorage.getItem('room_rates_settings');
+                if(saved) roomSettingsCache = JSON.parse(saved);
+                const pp = localStorage.getItem('global_promptpay');
+                if(pp) document.getElementById('global-promptpay').value = pp;
+            } catch(e) {}
+        }
+
+        function openRoomSettings() {
+            const container = document.getElementById('room-list-container');
+            container.innerHTML = '';
+            
+            if(Object.keys(roomSettingsCache).length === 0) {
+                addRoomSettingRow('101', 3500, 20, 8);
+            } else {
+                for(const [room, rates] of Object.entries(roomSettingsCache)) {
+                    addRoomSettingRow(room, rates.rent, rates.water, rates.electric);
+                }
+            }
+            document.getElementById('room-settings-modal').classList.add('show');
+        }
+
+        function closeRoomSettings() {
+            document.getElementById('room-settings-modal').classList.remove('show');
+        }
+
+        function addRoomSettingRow(room='', rent='', water='20', elec='8') {
+            const div = document.createElement('div');
+            div.className = 'room-set-row form-group';
+            div.innerHTML = `
+                <input type="text" class="rs-room" placeholder="เลขห้อง" value="${room}">
+                <input type="number" class="rs-rent" placeholder="ค่าเช่า" value="${rent}">
+                <input type="number" class="rs-water" placeholder="ค่าน้ำ" value="${water}">
+                <input type="number" class="rs-elec" placeholder="ค่าไฟ" value="${elec}">
+                <button class="btn-del-sm" onclick="this.parentElement.remove()">ลบ</button>
+            `;
+            document.getElementById('room-list-container').appendChild(div);
+        }
+
+        function saveRoomSettings() {
+            const newSettings = {};
+            const rows = document.querySelectorAll('.room-set-row');
+            rows.forEach(row => {
+                const room = row.querySelector('.rs-room').value.trim();
+                if(room) {
+                    newSettings[room] = {
+                        rent: parseFloat(row.querySelector('.rs-rent').value) || 0,
+                        water: parseFloat(row.querySelector('.rs-water').value) || 0,
+                        electric: parseFloat(row.querySelector('.rs-elec').value) || 0
+                    };
+                }
+            });
+            roomSettingsCache = newSettings;
+            try {
+                localStorage.setItem('room_rates_settings', JSON.stringify(newSettings));
+                localStorage.setItem('global_promptpay', document.getElementById('global-promptpay').value);
+            } catch(e) {}
+            
+            alert('บันทึกการตั้งค่าเรทราคารายห้องเรียบร้อย');
+            closeRoomSettings();
+        }
+
+        // ==========================================
+        // Fetch & Render
+        // ==========================================
+        async function fetchBills() {
+            const month = document.getElementById('filter-month').value;
+            const tbody = document.getElementById('bill-table-body');
+            tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; padding:30px;">กำลังโหลดข้อมูล...</td></tr>`;
+            
+            try {
+                const res = await fetch(`${SB_URL}/rest/v1/${TABLE}?billing_month=eq.${month}&order=room_number.asc`, {
+                    headers: { 'apikey': SB_KEY, 'Authorization': `Bearer ${SB_KEY}` }
+                });
+                if (!res.ok) throw new Error('Fetch failed');
+                billsData = await res.json();
+                renderTable(billsData);
+            } catch (err) {
+                tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; color:var(--alert-red);">ไม่สามารถดึงข้อมูลได้</td></tr>`;
+            }
+        }
+
+        function renderTable(data) {
+            const tbody = document.getElementById('bill-table-body');
+            tbody.innerHTML = '';
+            if(data.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; color:var(--text-gray);">ยังไม่มีข้อมูลบิลในเดือนนี้</td></tr>`;
+                return;
+            }
+
+            data.forEach(b => {
+                const isPaid = b.payment_status === 'PAID';
+                const statusCls = isPaid ? 'status-paid' : 'status-unpaid';
+                const statusTxt = isPaid ? 'ชำระแล้ว' : 'ค้างชำระ';
+                
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td style="color:var(--gold-accent); font-weight:bold; font-size:1.1rem;">${b.room_number}</td>
+                    <td>${b.billing_month}</td>
+                    <td style="font-size:1.1rem; font-weight:bold;">${parseFloat(b.net_total).toLocaleString('en-US', {minimumFractionDigits:2})}</td>
+                    <td><span class="status-badge ${statusCls}">${statusTxt}</span></td>
+                    <td style="color:var(--text-gray); font-size:0.9rem;">${isPaid ? (b.payment_method || 'CASH') : '-'}</td>
+                    <td>
+                        <div class="action-btns">
+                            <button class="btn-act" onclick="editBill('${b.id}')">ตรวจสอบ / ชำระ</button>
+                            <button class="btn-print" onclick="printBill('${b.id}')">พิมพ์บิล</button>
+                        </div>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        // ==========================================
+        // Calculations
+        // ==========================================
+        function calculateTotal() {
+            const roomRate = parseFloat(document.getElementById('b-room-rate').value) || 0;
+            
+            const wPrev = parseFloat(document.getElementById('w-prev').value) || 0;
+            const wCurr = parseFloat(document.getElementById('w-curr').value) || 0;
+            const wPrice = parseFloat(document.getElementById('w-price').value) || 0;
+            const wTotal = Math.max(0, (wCurr - wPrev) * wPrice);
+            document.getElementById('w-total').value = wTotal.toLocaleString('en-US', {minimumFractionDigits:2});
+
+            const ePrev = parseFloat(document.getElementById('e-prev').value) || 0;
+            const eCurr = parseFloat(document.getElementById('e-curr').value) || 0;
+            const ePrice = parseFloat(document.getElementById('e-price').value) || 0;
+            const eTotal = Math.max(0, (eCurr - ePrev) * ePrice);
+            document.getElementById('e-total').value = eTotal.toLocaleString('en-US', {minimumFractionDigits:2});
+
+            let extraTotal = 0;
+            document.querySelectorAll('.ex-amt').forEach(input => { extraTotal += parseFloat(input.value) || 0; });
+
+            const discount = parseFloat(document.getElementById('b-discount').value) || 0;
+
+            let net = (roomRate + wTotal + eTotal + extraTotal) - discount;
+            net = Math.max(0, net);
+
+            document.getElementById('b-net-total').innerText = net.toLocaleString('en-US', {minimumFractionDigits:2});
+            document.getElementById('hidden-net-total').value = net;
+            document.getElementById('qr-amount-txt').innerText = net.toLocaleString();
+
+            updateQR(net);
+        }
+
+        document.querySelectorAll('.calc').forEach(el => el.addEventListener('input', calculateTotal));
+
+        function applyRoomRates(roomNum) {
+            const rates = roomSettingsCache[roomNum];
+            if(rates) {
+                document.getElementById('b-room-rate').value = rates.rent;
+                document.getElementById('w-price').value = rates.water;
+                document.getElementById('e-price').value = rates.electric;
+                calculateTotal();
+            }
+        }
+
+        function addExtraRow(name = '', amt = '') {
+            const div = document.createElement('div');
+            div.className = 'extra-row';
+            div.innerHTML = `
+                <input type="text" class="ex-name" placeholder="ชื่อรายการ" value="${name}" style="padding:10px; border-radius:8px; border:1px solid var(--border-light); background:var(--bg-dark); color:#FFF;">
+                <input type="number" class="ex-amt calc" placeholder="ยอดเงิน" value="${amt}" min="0" style="padding:10px; border-radius:8px; border:1px solid var(--border-light); background:var(--bg-dark); color:#FFF;">
+                <button type="button" class="btn-del-ex" onclick="this.parentElement.remove(); calculateTotal();">ลบ</button>
+            `;
+            document.getElementById('extra-container').appendChild(div);
+            div.querySelector('.ex-amt').addEventListener('input', calculateTotal);
+        }
+
+        function togglePaymentSection() {
+            const status = document.getElementById('b-status').value;
+            const methodGroup = document.getElementById('method-group');
+            
+            if(status === 'PAID') {
+                methodGroup.style.display = 'block';
+                updateQR(document.getElementById('hidden-net-total').value);
+            } else {
+                methodGroup.style.display = 'none';
+                document.getElementById('qr-container').style.display = 'none';
+            }
+        }
+
+        function updateQR(netAmount) {
+            const method = document.getElementById('b-method').value;
+            const qrContainer = document.getElementById('qr-container');
+            const ppNo = document.getElementById('global-promptpay') ? document.getElementById('global-promptpay').value : '0624059581';
+            
+            if(method === 'TRANSFER' && netAmount > 0) {
+                document.getElementById('qr-img').src = `https://promptpay.io/${ppNo}/${netAmount}.png`;
+                qrContainer.style.display = 'block';
+            } else {
+                qrContainer.style.display = 'none';
+            }
+        }
+
+        // ==========================================
+        // Modal Save Logic
+        // ==========================================
+        function openBillModal() {
+            document.getElementById('b-id').value = '';
+            document.getElementById('b-room').value = '';
+            document.getElementById('b-room').readOnly = false;
+            document.getElementById('b-month').value = document.getElementById('filter-month').value;
+            
+            document.querySelectorAll('.calc').forEach(el => el.value = '0');
+            document.getElementById('w-price').value = '20';
+            document.getElementById('e-price').value = '8';
+
+            document.getElementById('extra-container').innerHTML = '';
+            document.getElementById('b-status').value = 'UNPAID';
+            document.getElementById('b-method').value = 'CASH';
+
+            togglePaymentSection();
+            calculateTotal();
+            document.getElementById('bill-modal').classList.add('show');
+        }
+
+        function closeBillModal() { document.getElementById('bill-modal').classList.remove('show'); }
+
+        function editBill(id) {
+            const b = billsData.find(x => x.id === id);
+            if(!b) return;
+
+            document.getElementById('b-id').value = b.id;
+            document.getElementById('b-room').value = b.room_number;
+            document.getElementById('b-room').readOnly = true; 
+            document.getElementById('b-month').value = b.billing_month;
+
+            document.getElementById('b-room-rate').value = b.room_rate;
+            document.getElementById('w-prev').value = b.water_meter_prev;
+            document.getElementById('w-curr').value = b.water_meter_curr;
+            document.getElementById('w-price').value = b.water_unit_price;
+            
+            document.getElementById('e-prev').value = b.electric_meter_prev;
+            document.getElementById('e-curr').value = b.electric_meter_curr;
+            document.getElementById('e-price').value = b.electric_unit_price;
+            
+            document.getElementById('b-discount').value = b.discount_amount;
+
+            document.getElementById('extra-container').innerHTML = '';
+            if(b.extra_charges && b.extra_charges.length > 0) {
+                b.extra_charges.forEach(ex => addExtraRow(ex.name, ex.amount));
+            }
+
+            document.getElementById('b-status').value = b.payment_status;
+            document.getElementById('b-method').value = b.payment_method || 'CASH';
+
+            togglePaymentSection();
+            calculateTotal();
+            document.getElementById('bill-modal').classList.add('show');
+        }
+
+        async function saveBill() {
+            const id = document.getElementById('b-id').value;
+            const btn = document.getElementById('btn-save');
+            const room = document.getElementById('b-room').value.trim();
+            const month = document.getElementById('b-month').value;
+            if(!room || !month) { alert("กรุณากรอกห้องและเดือนให้ครบถ้วน"); return; }
+
+            const extrasArr = [];
+            let extrasTotal = 0;
+            document.querySelectorAll('.extra-row').forEach(row => {
+                const name = row.querySelector('.ex-name').value.trim();
+                const amt = parseFloat(row.querySelector('.ex-amt').value) || 0;
+                if(name) { extrasArr.push({name, amount: amt}); extrasTotal += amt; }
+            });
+
+            const payload = {
+                room_number: room, billing_month: month,
+                room_rate: parseFloat(document.getElementById('b-room-rate').value) || 0,
+                water_meter_prev: parseFloat(document.getElementById('w-prev').value) || 0,
+                water_meter_curr: parseFloat(document.getElementById('w-curr').value) || 0,
+                water_unit_price: parseFloat(document.getElementById('w-price').value) || 0,
+                water_total: parseFloat(document.getElementById('w-total').value.replace(/,/g,'')) || 0,
+                electric_meter_prev: parseFloat(document.getElementById('e-prev').value) || 0,
+                electric_meter_curr: parseFloat(document.getElementById('e-curr').value) || 0,
+                electric_unit_price: parseFloat(document.getElementById('e-price').value) || 0,
+                electric_total: parseFloat(document.getElementById('e-total').value.replace(/,/g,'')) || 0,
+                extra_charges: extrasArr, extra_total: extrasTotal,
+                discount_amount: parseFloat(document.getElementById('b-discount').value) || 0,
+                net_total: parseFloat(document.getElementById('hidden-net-total').value) || 0,
+                payment_status: document.getElementById('b-status').value,
+                payment_method: document.getElementById('b-status').value === 'PAID' ? document.getElementById('b-method').value : null,
+                updated_at: new Date().toISOString()
+            };
+
+            btn.innerText = "กำลังบันทึก..."; btn.disabled = true;
+
+            try {
+                let url = `${SB_URL}/rest/v1/${TABLE}`;
+                let method = id ? 'PATCH' : 'POST';
+                if(id) url += `?id=eq.${id}`;
+
+                const res = await fetch(url, {
+                    method: method,
+                    headers: { 'Content-Type': 'application/json', 'apikey': SB_KEY, 'Authorization': `Bearer ${SB_KEY}`, 'Prefer': 'return=minimal' },
+                    body: JSON.stringify(payload)
+                });
+
+                if (!res.ok) {
+                    const err = await res.json();
+                    if(err.code === '23505') throw new Error("มีการออกบิลห้องนี้ไปแล้ว");
+                    throw new Error(err.message);
+                }
+                alert('บันทึกข้อมูลสำเร็จ');
+                closeBillModal();
+                fetchBills();
+            } catch(e) {
+                alert('ข้อผิดพลาด: ' + e.message);
+            } finally {
+                btn.innerText = "บันทึกข้อมูลบิล"; btn.disabled = false;
+            }
+        }
+
+        // ==========================================
+        // Print Logic
+        // ==========================================
+        function printBill(id) {
+            const b = billsData.find(x => x.id === id);
+            if(!b) return;
+
+            document.getElementById('pr-room').innerText = b.room_number;
+            document.getElementById('pr-month').innerText = b.billing_month;
+            
+            const todayStr = new Date().toLocaleDateString('th-TH', { year: 'numeric', month: 'long', day: 'numeric' });
+            document.getElementById('pr-date').innerText = todayStr;
+            document.getElementById('pr-status').innerText = b.payment_status === 'PAID' ? `ชำระเรียบร้อยแล้ว (${b.payment_method})` : 'รอชำระเงิน';
+
+            let tbody = '';
+            if(b.room_rate > 0) tbody += `<tr><td>ค่าเช่าห้องพัก</td><td class="text-right">${b.room_rate.toLocaleString('en-US', {minimumFractionDigits:2})}</td></tr>`;
+            
+            if(b.water_total > 0) {
+                const wUnits = b.water_meter_curr - b.water_meter_prev;
+                tbody += `<tr><td>ค่าน้ำประปา (${b.water_meter_prev} - ${b.water_meter_curr} = ${wUnits} หน่วย x ${b.water_unit_price} บาท)</td><td class="text-right">${b.water_total.toLocaleString('en-US', {minimumFractionDigits:2})}</td></tr>`;
+            }
+            
+            if(b.electric_total > 0) {
+                const eUnits = b.electric_meter_curr - b.electric_meter_prev;
+                tbody += `<tr><td>ค่าไฟฟ้า (${b.electric_meter_prev} - ${b.electric_meter_curr} = ${eUnits} หน่วย x ${b.electric_unit_price} บาท)</td><td class="text-right">${b.electric_total.toLocaleString('en-US', {minimumFractionDigits:2})}</td></tr>`;
+            }
+
+            if(b.extra_charges && b.extra_charges.length > 0) {
+                b.extra_charges.forEach(ex => {
+                    tbody += `<tr><td>${ex.name}</td><td class="text-right">${ex.amount.toLocaleString('en-US', {minimumFractionDigits:2})}</td></tr>`;
+                });
+            }
+
+            if(b.discount_amount > 0) {
+                tbody += `<tr><td>ส่วนลด</td><td class="text-right" style="color:red;">-${b.discount_amount.toLocaleString('en-US', {minimumFractionDigits:2})}</td></tr>`;
+            }
+
+            document.getElementById('pr-body').innerHTML = tbody;
+            document.getElementById('pr-net').innerText = b.net_total.toLocaleString('en-US', {minimumFractionDigits:2});
+
+            window.print();
+        }
+    </script>
+</body>
+</html>
