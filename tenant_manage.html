@@ -27,19 +27,15 @@
         :root {
             --font-ui: 'Anuphan', sans-serif;
             --font-logo: 'Audiowide', cursive;
-            
             --bg-body: #F8FAFC;
             --bg-white: #FFFFFF;
             --navy-dark: #0F172A;
-            --navy-light: #1E293B;
             --blue-primary: #2563EB;
             --blue-hover: #1D4ED8;
             --blue-light: #EFF6FF;
-            
             --text-main: #0F172A;
             --text-muted: #64748B;
             --border-color: #E2E8F0;
-            
             --alert-red: #EF4444;
             --success-green: #10B981;
             --warning-yellow: #F59E0B;
@@ -48,7 +44,7 @@
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: var(--font-ui); }
         body { background-color: var(--bg-body); color: var(--text-main); -webkit-font-smoothing: antialiased; overflow-x: hidden;}
 
-        /* ================= UNIVERSAL TOP NAVBAR (มาตรฐานเดียวกับทุกหน้า) ================= */
+        /* ================= UNIVERSAL TOP NAVBAR ================= */
         .top-navbar {
             background: var(--bg-white); border-bottom: 1px solid var(--border-color); padding: 0 24px; height: 70px;
             display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 2000; box-shadow: 0 1px 5px rgba(0,0,0,0.03);
@@ -126,7 +122,6 @@
         }
         .form-control:focus ~ .char-counter { color: var(--blue-primary); }
 
-        /* จัดการช่องวันที่ */
         input[type="date"].form-control { padding-top: 24px; padding-bottom: 6px; }
         input[type="date"] ~ .floating-label { top: 14px; font-size: 0.75rem; font-weight: 700; color: var(--blue-primary); }
 
@@ -145,9 +140,9 @@
         .select-items {
             position: absolute; background-color: #FFF; top: calc(100% + 5px); left: 0; right: 0; z-index: 99;
             border: 1px solid var(--border-color); border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.1);
-            max-height: 220px; overflow-y: auto; scroll-behavior: smooth;
+            max-height: 220px; overflow-y: auto; scroll-behavior: smooth; display: none;
         }
-        .select-hide { display: none; }
+        .select-items.show { display: block; }
         .select-items div { padding: 12px 16px; cursor: pointer; font-size: 1rem; border-bottom: 1px solid var(--bg-body); transition: 0.1s;}
         .select-items div:hover { background-color: var(--blue-light); color: var(--blue-primary); font-weight: 700; padding-left: 20px;}
         .select-items::-webkit-scrollbar { width: 6px; }
@@ -178,7 +173,7 @@
         .search-input:focus { border-color: var(--blue-primary); background:#FFF; box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);}
         
         .table-responsive { overflow-x: auto; border: 1px solid var(--border-color); border-radius: 16px; background: #FFF;}
-        table { width: 100%; border-collapse: collapse; text-align: left; }
+        table { width: 100%; border-collapse: collapse; text-align: left; min-width: 450px;}
         th { padding: 16px 20px; background: #F8FAFC; color: var(--navy-dark); font-weight: 700; font-size: 0.95rem; border-bottom: 2px solid var(--border-color); white-space: nowrap;}
         td { padding: 16px 20px; border-bottom: 1px solid var(--border-color); font-size: 1rem; vertical-align: middle;}
         
@@ -217,7 +212,7 @@
         #smart-toast.show { top: 20px; }
         .toast-icon svg { width: 20px; height: 20px; fill: none; stroke-width: 2.5; }
 
-        /* ================= MOBILE RESPONSIVE (มาตรฐานใหม่) ================= */
+        /* ================= MOBILE RESPONSIVE ================= */
         @media (max-width: 1024px) { 
             .main-container { grid-template-columns: 1fr; padding: 20px; } 
             
@@ -308,15 +303,16 @@
                 <div class="form-section-title">1. ข้อมูลบุคคล (อ้างอิงบัตรประชาชน)</div>
                 <div class="form-grid">
                     <div class="form-group full">
-                        <input type="tel" id="citizen_id" class="form-control" maxlength="13" placeholder=" " required oninput="updateCounter('citizen_id', 'count-cid', 13)" inputmode="numeric">
+                        <input type="tel" id="citizen_id" class="form-control" maxlength="13" placeholder=" " required inputmode="numeric">
                         <label class="floating-label">เลขประจำตัวประชาชน 13 หลัก <span>*</span></label>
                         <div class="char-counter" id="count-cid">0/13</div>
+                        <div id="cid-loading" style="display:none; position:absolute; right:15px; top:18px; font-size:0.8rem; color:var(--blue-primary); font-weight:700;">กำลังค้นหา...</div>
                     </div>
 
                     <div class="form-group" id="fg-prefix">
                         <div class="custom-select">
                             <div class="select-selected" id="display-prefix"></div>
-                            <div class="select-items select-hide" id="options-prefix">
+                            <div class="select-items" id="options-prefix">
                                 <div data-val="นาย">นาย</div><div data-val="นาง">นาง</div><div data-val="นางสาว">นางสาว</div><div data-val="อื่นๆ">อื่นๆ</div>
                             </div>
                             <input type="hidden" id="prefix" required>
@@ -327,7 +323,7 @@
                     <div class="form-group" id="fg-religion">
                         <div class="custom-select">
                             <div class="select-selected" id="display-religion"></div>
-                            <div class="select-items select-hide" id="options-religion">
+                            <div class="select-items" id="options-religion">
                                 <div data-val="พุทธ">พุทธ</div><div data-val="คริสต์">คริสต์</div><div data-val="อิสลาม">อิสลาม</div><div data-val="อื่นๆ">อื่นๆ</div>
                             </div>
                             <input type="hidden" id="religion">
@@ -350,7 +346,7 @@
                             <div class="form-group" id="fg-dob_year">
                                 <div class="custom-select">
                                     <div class="select-selected" id="display-dob_year"></div>
-                                    <div class="select-items select-hide" id="options-dob_year"></div>
+                                    <div class="select-items" id="options-dob_year"></div>
                                     <input type="hidden" id="dob_year">
                                 </div>
                                 <label class="floating-label" style="top:14px; font-size:0.75rem;">ปี พ.ศ.</label>
@@ -358,7 +354,7 @@
                             <div class="form-group" id="fg-dob_month">
                                 <div class="custom-select">
                                     <div class="select-selected" id="display-dob_month"></div>
-                                    <div class="select-items select-hide" id="options-dob_month"></div>
+                                    <div class="select-items" id="options-dob_month"></div>
                                     <input type="hidden" id="dob_month">
                                 </div>
                                 <label class="floating-label" style="top:14px; font-size:0.75rem;">เดือน</label>
@@ -366,7 +362,7 @@
                             <div class="form-group" id="fg-dob_day">
                                 <div class="custom-select">
                                     <div class="select-selected" id="display-dob_day"></div>
-                                    <div class="select-items select-hide" id="options-dob_day"></div>
+                                    <div class="select-items" id="options-dob_day"></div>
                                     <input type="hidden" id="dob_day">
                                 </div>
                                 <label class="floating-label" style="top:14px; font-size:0.75rem;">วัน</label>
@@ -375,7 +371,7 @@
                     </div>
 
                     <div class="form-group full">
-                        <input type="tel" id="phone" class="form-control" maxlength="10" placeholder=" " required oninput="updateCounter('phone', 'count-phone', 10)" inputmode="numeric">
+                        <input type="tel" id="phone" class="form-control" maxlength="10" placeholder=" " required inputmode="numeric">
                         <label class="floating-label">เบอร์โทรศัพท์ <span>*</span></label>
                         <div class="char-counter" id="count-phone">0/10</div>
                     </div>
@@ -386,7 +382,7 @@
                     <div class="form-group">
                         <div class="zip-search-wrapper">
                             <div style="position: relative; width: 100%;">
-                                <input type="tel" id="zip_code" class="form-control" maxlength="5" placeholder=" " required oninput="updateCounter('zip_code', 'count-zip', 5)" inputmode="numeric">
+                                <input type="tel" id="zip_code" class="form-control" maxlength="5" placeholder=" " required inputmode="numeric">
                                 <label class="floating-label">รหัสไปรษณีย์ <span>*</span></label>
                                 <div class="char-counter" id="count-zip">0/5</div>
                             </div>
@@ -397,7 +393,7 @@
                     <div class="form-group" id="fg-sub_district">
                         <div class="custom-select">
                             <div class="select-selected" id="display-sub_district"></div>
-                            <div class="select-items select-hide" id="options-sub_district"></div>
+                            <div class="select-items" id="options-sub_district"></div>
                             <input type="hidden" id="sub_district" required>
                         </div>
                         <label class="floating-label" id="label-subdist">ตำบล / แขวง (โปรดค้นหา) <span>*</span></label>
@@ -477,10 +473,10 @@
 
     <script>
         // ==========================================
-        // UI & NAVBAR INIT (เหมือนกันทุกหน้า)
+        // UI & NAVBAR INIT 
         // ==========================================
         document.addEventListener('DOMContentLoaded', () => {
-            // Load Session Data
+            // Session
             try {
                 const sess = JSON.parse(localStorage.getItem('admin_user_data'));
                 if(sess) {
@@ -490,14 +486,10 @@
                 }
             } catch(e) {}
 
-            // Mobile Menu Toggle
+            // Mobile Menu
             const mobileBtn = document.getElementById('mobile-menu-btn');
             const navLinks = document.getElementById('nav-links');
-            if(mobileBtn) {
-                mobileBtn.addEventListener('click', () => {
-                    navLinks.classList.toggle('show');
-                });
-            }
+            if(mobileBtn) mobileBtn.addEventListener('click', () => navLinks.classList.toggle('show'));
 
             // Logout
             document.getElementById('btn-logout').addEventListener('click', () => {
@@ -505,14 +497,22 @@
                 window.location.href = 'index.html';
             });
 
-            // Initialize Page specific features
+            // Input Counters
+            ['citizen_id', 'phone', 'zip_code'].forEach(id => {
+                const el = document.getElementById(id);
+                if(el) el.addEventListener('input', function() {
+                    let max = parseInt(this.getAttribute('maxlength'));
+                    updateCounter(id, `count-${id === 'citizen_id' ? 'cid' : id === 'zip_code' ? 'zip' : id}`, max);
+                });
+            });
+
             ['prefix', 'religion', 'sub_district', 'dob_year', 'dob_month', 'dob_day'].forEach(initCustomSelect);
             initCustomDate(); 
             fetchTenants();
         });
 
         // ==========================================
-        // 1. CUSTOM SELECT DROPDOWN LOGIC (ทำเอง 100%)
+        // 1. CUSTOM SELECT DROPDOWN LOGIC 
         // ==========================================
         function initCustomSelect(idName) {
             const display = document.getElementById(`display-${idName}`);
@@ -521,18 +521,15 @@
             const fg = document.getElementById(`fg-${idName}`);
 
             display.addEventListener('click', function(e) {
-                e.stopPropagation();
-                closeAllSelect(this);
-                options.classList.toggle('select-hide');
-                display.classList.toggle('active');
+                e.stopPropagation(); closeAllSelect(this);
+                options.classList.toggle('show'); display.classList.toggle('active');
             });
 
             options.addEventListener('click', function(e) {
                 if(e.target && e.target.nodeName === "DIV") {
                     display.innerText = e.target.innerText;
                     hidden.value = e.target.getAttribute('data-val');
-                    options.classList.add('select-hide');
-                    display.classList.remove('active');
+                    options.classList.remove('show'); display.classList.remove('active');
                     fg.classList.add('has-value'); 
                     hidden.dispatchEvent(new Event('change')); 
                 }
@@ -541,7 +538,7 @@
 
         function closeAllSelect(except) {
             document.querySelectorAll('.select-items').forEach(el => {
-                if(el.previousElementSibling !== except) el.classList.add('select-hide');
+                if(el.previousElementSibling !== except) el.classList.remove('show');
             });
             document.querySelectorAll('.select-selected').forEach(el => {
                 if(el !== except) el.classList.remove('active');
@@ -605,11 +602,14 @@
         // ==========================================
         // 3. UI, Toast & Zip API
         // ==========================================
-
         function updateCounter(inputId, counterId, max) {
             const val = document.getElementById(inputId).value.length;
-            document.getElementById(counterId).innerText = `${val}/${max}`;
-            document.getElementById(counterId).style.color = (val === max) ? "var(--success-green)" : "var(--blue-primary)";
+            const el = document.getElementById(counterId);
+            if(el) {
+                el.innerText = `${val}/${max}`;
+                el.style.display = (val === 0) ? 'none' : 'block';
+                el.style.color = (val === max) ? "var(--success-green)" : "var(--blue-primary)";
+            }
         }
 
         function showToast(msg, type = 'success') {
@@ -621,7 +621,6 @@
             document.getElementById('toast-msg').innerText = msg;
             t.className = type === 'error' ? 'is-error show' : 'is-success show';
             document.getElementById('toast-icon-container').innerHTML = iconHTML;
-            
             setTimeout(() => t.classList.remove('show'), 4000); 
         }
 
@@ -629,6 +628,68 @@
         const GLOBAL_KEY = 'sb_publishable_VGH1nDgXMXXIQWb_NnLE6g_yeWOt02O';
         const OPS_URL = 'https://vnlqxtxifgchrouongpu.supabase.co';
         const OPS_KEY = 'sb_publishable_jBw7w_gyrLx7B0oSHAtWOw_nVTHTzxl';
+
+        // 🌟 ฟังก์ชัน AUTO-FETCH ดึงข้อมูลจากฐานกลางทันทีเมื่อกรอกบัตร 13 หลัก 🌟
+        document.getElementById('citizen_id').addEventListener('input', async function() {
+            const cid = this.value.trim();
+            if (cid.length === 13) {
+                // ถ้าอยู่ในโหมดแก้ไขอยู่แล้ว ไม่ต้องดึงใหม่
+                if(document.getElementById('edit-tenant-id').value !== "") return;
+
+                document.getElementById('cid-loading').style.display = 'block';
+                document.getElementById('count-cid').style.display = 'none';
+
+                try {
+                    const res = await fetch(`${GLOBAL_URL}/rest/v1/global_customers?citizen_id=eq.${cid}&select=*`, {
+                        headers: { 'apikey': GLOBAL_KEY, 'Authorization': `Bearer ${GLOBAL_KEY}` }
+                    });
+                    
+                    if (!res.ok) throw new Error();
+                    const crmData = await res.json();
+                    
+                    if (crmData.length > 0) {
+                        showToast("พบประวัติในระบบ ดึงข้อมูลอัตโนมัติเรียบร้อย", "success");
+                        const c = crmData[0];
+                        
+                        // เติมข้อมูลส่วนตัว
+                        if(c.first_name) { document.getElementById('first_name').value = c.first_name; document.getElementById('first_name').dispatchEvent(new Event('change')); }
+                        if(c.last_name) { document.getElementById('last_name').value = c.last_name; document.getElementById('last_name').dispatchEvent(new Event('change')); }
+                        if(c.phone_number) { document.getElementById('phone').value = c.phone_number; document.getElementById('phone').dispatchEvent(new Event('change')); updateCounter('phone', 'count-phone', 10); }
+                        
+                        if(c.prefix) setCustomValue('prefix', c.prefix, c.prefix);
+                        if(c.religion) setCustomValue('religion', c.religion, c.religion);
+                        
+                        if(c.date_of_birth) {
+                            const [y, m, d] = c.date_of_birth.split('-');
+                            setCustomValue('dob_year', y, parseInt(y)+543);
+                            setCustomValue('dob_month', m, thaiMonths[parseInt(m)-1]);
+                            document.getElementById('dob_year').dispatchEvent(new Event('change'));
+                            setTimeout(() => setCustomValue('dob_day', d, parseInt(d)), 50);
+                        }
+                        
+                        // เติมที่อยู่
+                        if(c.zip_code) {
+                            document.getElementById('zip_code').value = c.zip_code;
+                            document.getElementById('zip_code').dispatchEvent(new Event('change'));
+                            updateCounter('zip_code', 'count-zip', 5);
+                            await searchZipCode(); // ดึงอำเภอ/จังหวัด อัตโนมัติ
+                            setTimeout(() => {
+                                if(c.sub_district) setCustomValue('sub_district', c.sub_district, c.sub_district);
+                                if(c.address_line) {
+                                    document.getElementById('address_line').value = c.address_line;
+                                    document.getElementById('address_line').dispatchEvent(new Event('change'));
+                                }
+                            }, 500); // ดีเลย์รอให้ดรอปดาวน์ตำบลโหลดเสร็จ
+                        }
+                    }
+                } catch (err) {
+                    console.error("Auto-fetch error:", err);
+                } finally {
+                    document.getElementById('cid-loading').style.display = 'none';
+                    document.getElementById('count-cid').style.display = 'block';
+                }
+            }
+        });
 
         async function searchZipCode() {
             const zipInput = document.getElementById('zip_code').value.trim();
@@ -648,7 +709,6 @@
                     const uniqueSubs = [...new Set(matches.map(item => item.subdistrict))];
                     populateCustomOptions('sub_district', uniqueSubs, null, null);
                     setCustomValue('sub_district', '', ''); 
-                    showToast('พบข้อมูลที่อยู่!', 'success');
                 } else { throw new Error(); }
             } catch (error) { showToast('ไม่พบข้อมูลรหัสไปรษณีย์นี้', 'error'); } 
             finally { btnSearch.innerText = "ค้นหา"; btnSearch.disabled = false; }
@@ -664,14 +724,12 @@
             const tenantId = document.getElementById('edit-tenant-id').value;
             const isEditMode = tenantId !== "";
 
-            // Personal
             const cid = document.getElementById('citizen_id').value.trim();
             const prefix = document.getElementById('prefix').value;
             const fname = document.getElementById('first_name').value.trim();
             const lname = document.getElementById('last_name').value.trim();
             const phone = document.getElementById('phone').value.trim();
             
-            // Contract
             const room = document.getElementById('room_number').value.trim();
             const rent = parseFloat(document.getElementById('monthly_rent').value) || 0;
             const debt = parseFloat(document.getElementById('initial_debt').value) || 0;
@@ -682,8 +740,7 @@
             
             if(!prefix || !document.getElementById('sub_district').value) { showToast("เลือกคำนำหน้าและตำบลให้ครบ", "error"); return; }
 
-            btn.disabled = true; 
-            btnText.innerText = `กำลัง${isEditMode ? 'แก้ไข' : 'บันทึก'}...`;
+            btn.disabled = true; btnText.innerText = `กำลัง${isEditMode ? 'แก้ไข' : 'บันทึก'}...`;
 
             try {
                 // 1. CRM (Global DB) 
@@ -710,10 +767,7 @@
                     });
                 }
 
-                if(!crmRes.ok) {
-                    const err = await crmRes.json();
-                    throw new Error("CRM Error: " + (err.message || 'บันทึกข้อมูลส่วนบุคคลไม่สำเร็จ'));
-                }
+                if(!crmRes.ok) throw new Error("บันทึกข้อมูลส่วนบุคคลไม่สำเร็จ");
 
                 // 2. Dorm Ops
                 const opsPayload = { 
@@ -726,10 +780,7 @@
                         method: 'PATCH', headers: { 'Content-Type': 'application/json', 'apikey': OPS_KEY, 'Authorization': `Bearer ${OPS_KEY}` },
                         body: JSON.stringify(opsPayload)
                     });
-                    if(!opsRes.ok) {
-                        const err = await opsRes.json();
-                        throw new Error(`Dorm Error: ${err.message || 'แก้ไขข้อมูลสัญญาไม่สำเร็จ'}`);
-                    }
+                    if(!opsRes.ok) throw new Error("แก้ไขข้อมูลสัญญาไม่สำเร็จ");
                     showToast("อัปเดตสัญญาเรียบร้อย!", "success");
                 } else {
                     const checkRes = await fetch(`${OPS_URL}/rest/v1/dorm_tenants?room_number=eq.${room}&status=eq.ACTIVE&select=id`, { headers: { 'apikey': OPS_KEY, 'Authorization': `Bearer ${OPS_KEY}` } });
@@ -742,10 +793,7 @@
                         method: 'POST', headers: { 'Content-Type': 'application/json', 'apikey': OPS_KEY, 'Authorization': `Bearer ${OPS_KEY}` },
                         body: JSON.stringify(opsPayload)
                     });
-                    if(!opsRes.ok) {
-                        const err = await opsRes.json();
-                        throw new Error(`Dorm Error: ${err.message || 'สร้างสัญญาใหม่ไม่สำเร็จ'}`);
-                    }
+                    if(!opsRes.ok) throw new Error("สร้างสัญญาใหม่ไม่สำเร็จ");
                     showToast("สร้างสัญญาใหม่เรียบร้อย!", "success");
                 }
                 cancelEditMode(); fetchTenants(); 
@@ -753,8 +801,7 @@
             } catch (err) { 
                 showToast(err.message, "error"); 
             } finally { 
-                btn.disabled = false; 
-                btnText.innerText = isEditMode ? "บันทึกการแก้ไข" : "บันทึกข้อมูลและทำสัญญา"; 
+                btn.disabled = false; btnText.innerText = isEditMode ? "บันทึกการแก้ไข" : "บันทึกข้อมูลและทำสัญญา"; 
             }
         });
 
@@ -824,7 +871,6 @@
                 document.getElementById('monthly_rent').value = tenant.monthly_rent; document.getElementById('monthly_rent').dispatchEvent(new Event('change'));
                 document.getElementById('initial_debt').value = tenant.initial_debt; document.getElementById('initial_debt').dispatchEvent(new Event('change'));
                 
-                // โหลดวันที่จ่ายตัง/เริ่มสัญญา
                 if(tenant.payment_date) {
                     document.getElementById('payment_date').value = tenant.payment_date;
                     document.getElementById('payment_date').dispatchEvent(new Event('change'));
