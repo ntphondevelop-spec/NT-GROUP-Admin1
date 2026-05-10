@@ -8,6 +8,21 @@
     
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
+    <script>
+        // 🔒 ตรวจสอบว่ามี Session ค้างอยู่ไหม ถ้ามีและยังไม่หมดอายุ ให้เด้งเข้า Dashboard ทันที
+        (function() {
+            try {
+                const sessionStr = localStorage.getItem('admin_user_data');
+                if (sessionStr) {
+                    const data = JSON.parse(sessionStr);
+                    if (new Date().getTime() <= (data.loggedInAt + data.expiresIn)) {
+                        window.location.href = 'dashboard.html';
+                    }
+                }
+            } catch(e) {}
+        })();
+    </script>
+
     <style>
         :root {
             --font-ui: 'Anuphan', sans-serif;
@@ -16,9 +31,9 @@
             /* โทนสีใหม่ Clean White & Navy Blue */
             --bg-light: #F8FAFC;
             --bg-white: #FFFFFF;
-            --navy-primary: #0F172A; /* น้ำเงินเข้มมาก */
+            --navy-primary: #0F172A; 
             --navy-secondary: #1E293B;
-            --blue-accent: #2563EB; /* น้ำเงินสว่าง */
+            --blue-accent: #2563EB; 
             --blue-hover: #1D4ED8;
             
             --text-main: #0F172A;
@@ -84,7 +99,9 @@
         
         .bg-image {
             position: absolute; top: -5%; left: -5%; width: 110%; height: 110%;
+            /* ใช้รูปของคุณประธาน ถ้าไม่มีรูปนี้ในโฟลเดอร์ ให้เปลี่ยนลิงก์เป็นรูปอื่นนะคะ */
             background: url('positive_images-gran-hotel-havana-1923490.jpg') center/cover no-repeat;
+            background-color: var(--navy-secondary); /* Fallback เผื่อรูปโหลดไม่ขึ้น */
             animation: slowZoom 30s infinite alternate ease-in-out;
             opacity: 0.9;
         }
@@ -368,22 +385,29 @@
                         showToast("ไม่พบชื่อผู้ใช้งานนี้ในระบบ", "error");
                         grpUser.className = 'input-group error';
                         triggerShake();
+                        
+                        // คืนค่าปุ่ม
+                        loginBtn.disabled = false;
+                        loginBtn.innerHTML = `<span>เข้าสู่ระบบพนักงาน</span> <svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>`;
                     } else {
                         const admin = data[0];
-                        if (admin.password_hash === password) {
+                        
+                        // ตรวจสอบรหัสผ่าน (ใช้ column 'password' ตามโครงสร้างตารางเรา)
+                        if (admin.password === password) { 
                             
                             // เก็บบันทึกข้อมูล Session
                             const sessionData = {
                                 id: admin.id,
-                                first_name: admin.display_name.split(' ')[0], // ใช้คำแรกของชื่อ
-                                last_name: admin.display_name.substring(admin.display_name.indexOf(' ') + 1),
+                                username: admin.username,
+                                first_name: admin.first_name, 
+                                last_name: admin.last_name,
                                 role: admin.role,
                                 loggedInAt: new Date().getTime(),
-                                expiresIn: 2 * 60 * 60 * 1000 // ให้เวลา 2 ชั่วโมง
+                                expiresIn: 12 * 60 * 60 * 1000 // ให้เวลา 12 ชั่วโมง
                             };
                             localStorage.setItem('admin_user_data', JSON.stringify(sessionData));
 
-                            showToast(`ยินดีต้อนรับคุณ ${admin.display_name}`, "success");
+                            showToast(`ยินดีต้อนรับคุณ ${admin.first_name}`, "success");
                             loginBtn.innerHTML = `<span>เข้าสู่ระบบสำเร็จ</span>`;
                             loginBtn.style.background = 'var(--success-green)';
                             
@@ -395,20 +419,19 @@
                             grpPass.className = 'input-group error';
                             passInp.value = ''; // ล้างรหัสผ่านให้พิมพ์ใหม่
                             triggerShake();
+                            
+                            // คืนค่าปุ่ม
+                            loginBtn.disabled = false;
+                            loginBtn.innerHTML = `<span>เข้าสู่ระบบพนักงาน</span> <svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>`;
                         }
                     }
                 } catch (error) {
                     showToast("ระบบขัดข้อง ไม่สามารถเชื่อมต่อฐานข้อมูลได้", "error");
                     console.error(error);
-                } finally {
-                    if (document.getElementById('btn-save')) { // check if not successful
-                        loginBtn.innerHTML = `<span>เข้าสู่ระบบพนักงาน</span> <svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>`;
-                    } else {
-                        setTimeout(()=>{
-                            loginBtn.disabled = false;
-                            loginBtn.innerHTML = `<span>เข้าสู่ระบบพนักงาน</span> <svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>`;
-                        }, 2000);
-                    }
+                    
+                    // คืนค่าปุ่ม
+                    loginBtn.disabled = false;
+                    loginBtn.innerHTML = `<span>เข้าสู่ระบบพนักงาน</span> <svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>`;
                 }
             });
         });
