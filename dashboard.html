@@ -7,26 +7,18 @@
     
     <link href="https://fonts.googleapis.com/css2?family=Anuphan:wght@300;400;500;600;700&family=Audiowide&display=swap" rel="stylesheet">
     
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
     <script>
+        // 🔒 Check Session
         (function() {
             try {
                 const sessionStr = localStorage.getItem('admin_user_data');
-                if (!sessionStr) {
-                    window.location.href = 'index.html';
-                    return;
-                }
+                if (!sessionStr) { window.location.href = 'index.html'; return; }
                 const data = JSON.parse(sessionStr);
-                const now = new Date().getTime();
-                if (now > (data.loggedInAt + data.expiresIn)) {
+                if (new Date().getTime() > (data.loggedInAt + data.expiresIn)) {
                     localStorage.removeItem('admin_user_data');
-                    alert('เซสชันหมดอายุ กรุณาเข้าสู่ระบบใหม่');
-                    window.location.href = 'index.html';
+                    window.location.href = 'index.html'; return;
                 }
-            } catch(e) {
-                window.location.href = 'index.html';
-            }
+            } catch(e) { window.location.href = 'index.html'; }
         })();
     </script>
 
@@ -34,165 +26,123 @@
         :root {
             --font-ui: 'Anuphan', sans-serif;
             --font-logo: 'Audiowide', cursive;
-            
-            /* โทนสีคลีน ขาว-น้ำเงินกรมท่า */
             --bg-body: #F8FAFC;
             --bg-white: #FFFFFF;
             --navy-dark: #0F172A;
-            --navy-light: #1E293B;
             --blue-primary: #2563EB;
             --blue-hover: #1D4ED8;
-            
             --text-main: #0F172A;
             --text-muted: #64748B;
             --border-color: #E2E8F0;
-            
             --alert-red: #EF4444;
             --success-green: #10B981;
             --warning-yellow: #F59E0B;
         }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: var(--font-ui); }
+        body { background-color: var(--bg-body); color: var(--text-main); -webkit-font-smoothing: antialiased; display: flex; flex-direction: column; min-height: 100vh; overflow-x: hidden; }
 
-        body { 
-            font-family: var(--font-ui); 
-            background-color: var(--bg-body);
-            color: var(--text-main); 
-            -webkit-font-smoothing: antialiased;
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-        }
-
-        /* ================= TOP NAVBAR ================= */
+        /* ================= UNIVERSAL TOP NAVBAR (ใช้โค้ดชุดนี้ทุกหน้า!) ================= */
         .top-navbar {
-            background: var(--bg-white);
-            border-bottom: 1px solid var(--border-color);
-            padding: 0 24px;
-            height: 70px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            position: sticky;
-            top: 0;
-            z-index: 100;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            background: var(--bg-white); border-bottom: 1px solid var(--border-color); padding: 0 24px; height: 70px;
+            display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 2000; box-shadow: 0 1px 5px rgba(0,0,0,0.03);
         }
-
-        .nav-left { display: flex; align-items: center; gap: 40px; }
         
-        .brand { font-family: var(--font-logo); font-size: 1.4rem; color: var(--navy-dark); line-height: 1.1; letter-spacing: 0.5px;}
-        .brand span { font-family: var(--font-ui); display: block; font-size: 0.8rem; color: var(--blue-primary); letter-spacing: 0;}
+        /* ซ้าย: Hamburger + Logo */
+        .nav-left { display: flex; align-items: center; gap: 20px; }
+        .mobile-toggle { display: none; background: none; border: none; cursor: pointer; color: var(--navy-dark); padding: 5px; border-radius: 8px; transition: 0.2s; }
+        .mobile-toggle:hover { background: #F1F5F9; }
+        .mobile-toggle svg { width: 28px; height: 28px; stroke: currentColor; stroke-width: 2.5; fill: none; display: block;}
+        
+        .brand { font-family: var(--font-logo); font-size: 1.4rem; color: var(--navy-dark); line-height: 1.1; text-decoration: none; letter-spacing: 0.5px;}
+        .brand span { font-family: var(--font-ui); display: block; font-size: 0.8rem; color: var(--blue-primary); font-weight: 700; letter-spacing: 0;}
 
-        .nav-links { display: flex; gap: 8px; }
+        /* กลาง: เมนูลิงก์ */
+        .nav-links { display: flex; gap: 5px; }
         .nav-item {
-            display: flex; align-items: center; gap: 8px;
-            padding: 10px 16px;
-            color: var(--text-muted); text-decoration: none;
-            font-weight: 600; border-radius: 8px; transition: 0.2s;
-            font-size: 0.95rem;
+            display: flex; align-items: center; gap: 8px; padding: 10px 16px; color: var(--text-muted); text-decoration: none;
+            font-weight: 600; border-radius: 10px; transition: 0.2s; font-size: 0.95rem; cursor: pointer;
         }
-        .nav-item svg { width: 18px; height: 18px; stroke: currentColor; stroke-width: 2; fill: none; }
-        .nav-item:hover { background: var(--bg-body); color: var(--navy-dark); }
+        .nav-item svg { width: 18px; height: 18px; stroke: currentColor; stroke-width: 2.2; fill: none; flex-shrink: 0; }
+        .nav-item:hover { background: #F1F5F9; color: var(--navy-dark); }
         .nav-item.active { background: rgba(37, 99, 235, 0.1); color: var(--blue-primary); }
 
+        /* ขวา: ข้อมูลผู้ใช้ + ปุ่มออกระบบ */
         .nav-right { display: flex; align-items: center; gap: 20px; }
-        
-        .user-profile { display: flex; align-items: center; gap: 12px; text-align: right; }
+        .user-details { text-align: right; line-height: 1.2; }
         .user-details .name { font-weight: 700; font-size: 0.95rem; color: var(--navy-dark); }
-        .user-details .role { font-size: 0.75rem; color: var(--blue-primary); font-weight: 700; text-transform: uppercase; }
+        .user-details .role { font-size: 0.75rem; color: var(--blue-primary); font-weight: 800; text-transform: uppercase; }
         
         .btn-logout {
-            background: rgba(239, 68, 68, 0.1); color: var(--alert-red);
-            border: none; padding: 8px 12px; border-radius: 8px; cursor: pointer;
-            display: flex; align-items: center; gap: 6px; font-weight: 600; font-family: var(--font-ui); transition: 0.2s;
+            background: #FEF2F2; color: var(--alert-red); border: none; padding: 10px 16px; border-radius: 10px; cursor: pointer;
+            font-weight: 700; font-size: 0.9rem; display: flex; align-items: center; gap: 6px; transition: 0.2s; text-decoration: none; font-family: var(--font-ui);
         }
-        .btn-logout:hover { background: var(--alert-red); color: #FFF; }
-        .btn-logout svg { width: 16px; height: 16px; stroke: currentColor; stroke-width: 2; fill: none; }
+        .btn-logout:hover { background: var(--alert-red); color: #FFF; box-shadow: 0 4px 10px rgba(239, 68, 68, 0.2); }
+        .btn-logout svg { width: 18px; height: 18px; stroke: currentColor; stroke-width: 2.5; fill: none; flex-shrink: 0;}
 
-        .mobile-toggle { display: none; background: none; border: none; cursor: pointer; color: var(--navy-dark); }
-        .mobile-toggle svg { width: 28px; height: 28px; stroke: currentColor; stroke-width: 2; fill: none; }
-
-        /* ================= MAIN CONTENT ================= */
-        .main-container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 40px 24px;
-            width: 100%;
-            flex: 1;
-        }
-
-        .page-header { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 30px; flex-wrap: wrap; gap: 16px;}
-        .greeting h1 { font-size: 2rem; font-weight: 700; color: var(--navy-dark); margin-bottom: 6px; }
+        /* ================= MAIN CONTENT (DASHBOARD) ================= */
+        .main-container { max-width: 1200px; margin: 0 auto; padding: 40px 24px; width: 100%; flex: 1; }
+        
+        .page-header { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 30px; flex-wrap: wrap; gap: 15px; border-left: 5px solid var(--blue-primary); padding-left: 15px;}
+        .greeting h1 { font-size: 2rem; font-weight: 700; color: var(--navy-dark); margin-bottom: 5px; }
         .greeting p { color: var(--text-muted); font-size: 1rem; }
         .date-display { text-align: right; color: var(--text-muted); font-size: 0.9rem; }
-        .date-display strong { display: block; font-size: 1.1rem; color: var(--navy-dark); margin-top: 4px; }
+        .date-display strong { display: block; font-size: 1.1rem; color: var(--navy-dark); margin-top: 4px; font-weight: 800;}
 
-        /* --- Stats Grid --- */
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-            gap: 20px;
-            margin-bottom: 40px;
-        }
+        /* STATS GRID */
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 20px; margin-bottom: 40px; }
         .stat-card {
-            background: var(--bg-white); border: 1px solid var(--border-color);
-            border-radius: 16px; padding: 24px; display: flex; align-items: center; justify-content: space-between;
-            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); transition: 0.3s;
+            background: var(--bg-white); border: 1px solid var(--border-color); border-radius: 20px; padding: 25px;
+            display: flex; align-items: center; justify-content: space-between; box-shadow: 0 4px 15px rgba(0,0,0,0.02); transition: 0.3s;
         }
-        .stat-card:hover { transform: translateY(-3px); box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); border-color: var(--blue-primary); }
-        .stat-info p { color: var(--text-muted); font-size: 0.85rem; font-weight: 700; text-transform: uppercase; margin-bottom: 8px; }
-        .stat-info h3 { font-size: 2.2rem; font-weight: 700; color: var(--navy-dark); line-height: 1; }
-        
+        .stat-card:hover { transform: translateY(-3px); box-shadow: 0 10px 20px rgba(0,0,0,0.05); border-color: var(--blue-primary); }
+        .stat-info p { color: var(--text-muted); font-size: 0.85rem; font-weight: 700; margin-bottom: 8px; }
+        .stat-info h3 { font-size: 2.2rem; font-weight: 800; color: var(--navy-dark); line-height: 1; }
         .stat-icon { width: 56px; height: 56px; border-radius: 14px; display: flex; justify-content: center; align-items: center; }
+        .stat-icon svg { width: 28px; height: 28px; stroke: currentColor; stroke-width: 2; fill: none; }
         .icon-blue { background: rgba(37, 99, 235, 0.1); color: var(--blue-primary); }
         .icon-red { background: rgba(239, 68, 68, 0.1); color: var(--alert-red); }
         .icon-yellow { background: rgba(245, 158, 11, 0.1); color: var(--warning-yellow); }
         .icon-green { background: rgba(16, 185, 129, 0.1); color: var(--success-green); }
-        .stat-icon svg { width: 28px; height: 28px; stroke: currentColor; stroke-width: 2; fill: none; }
 
-        /* --- Quick Actions --- */
-        .section-title { font-size: 1.2rem; font-weight: 700; color: var(--navy-dark); margin-bottom: 20px; display: flex; align-items: center; gap: 10px; }
+        /* QUICK ACTIONS */
+        .section-title { font-size: 1.25rem; font-weight: 700; color: var(--navy-dark); margin-bottom: 20px; display: flex; align-items: center; gap: 10px; }
         .section-title svg { width: 22px; height: 22px; stroke: var(--blue-primary); stroke-width: 2.5; fill: none; }
-
-        .actions-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 20px;
-        }
         
+        .actions-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; }
         .action-btn {
-            background: var(--bg-white); border: 1px solid var(--border-color);
-            border-radius: 16px; padding: 24px 20px; text-align: center; text-decoration: none;
-            display: flex; flex-direction: column; align-items: center; gap: 12px;
-            transition: 0.3s; box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+            background: var(--bg-white); border: 1px solid var(--border-color); border-radius: 20px; padding: 25px 20px;
+            text-align: center; text-decoration: none; display: flex; flex-direction: column; align-items: center; gap: 15px;
+            transition: 0.3s; box-shadow: 0 4px 10px rgba(0,0,0,0.02);
         }
-        .action-btn:hover { border-color: var(--blue-primary); background: #F0Fdf4; }
-        .action-btn.primary { background: var(--navy-dark); color: #FFF; border: none; box-shadow: 0 4px 15px rgba(15, 23, 42, 0.2); }
-        .action-btn.primary:hover { background: var(--blue-hover); transform: translateY(-2px); }
+        .action-btn:hover { border-color: var(--blue-primary); background: #EFF6FF; transform: translateY(-2px); }
+        .action-btn.primary { background: var(--navy-dark); color: #FFF; border: none; box-shadow: 0 6px 15px rgba(15, 23, 42, 0.2); }
+        .action-btn.primary:hover { background: var(--blue-primary); }
         
-        .action-btn .a-icon { width: 48px; height: 48px; border-radius: 12px; background: rgba(37, 99, 235, 0.1); color: var(--blue-primary); display: flex; justify-content: center; align-items: center; }
-        .action-btn.primary .a-icon { background: rgba(255,255,255,0.2); color: #FFF; }
-        .action-btn .a-icon svg { width: 24px; height: 24px; stroke: currentColor; stroke-width: 2; fill: none; }
-        
-        .action-btn span { font-weight: 600; color: var(--navy-dark); line-height: 1.4; font-size: 0.95rem; }
+        .action-btn .a-icon { width: 52px; height: 52px; border-radius: 14px; background: rgba(37, 99, 235, 0.1); color: var(--blue-primary); display: flex; justify-content: center; align-items: center; }
+        .action-btn.primary .a-icon { background: rgba(255,255,255,0.15); color: #FFF; }
+        .action-btn .a-icon svg { width: 26px; height: 26px; stroke: currentColor; stroke-width: 2; fill: none; }
+        .action-btn span { font-weight: 700; color: var(--navy-dark); line-height: 1.4; font-size: 1rem; }
         .action-btn.primary span { color: #FFF; }
 
-        /* ================= RESPONSIVE ================= */
+        /* ================= MOBILE RESPONSIVE 100% ================= */
         @media (max-width: 1024px) {
-            .nav-links {
-                display: none; /* ซ่อนเมนูแนวนอนบนมือถือ */
-                position: absolute; top: 70px; left: 0; width: 100%;
-                background: var(--bg-white); flex-direction: column; gap: 0;
-                padding: 10px 0; border-bottom: 1px solid var(--border-color);
-                box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
-            }
-            .nav-links.show { display: flex; }
-            .nav-item { border-radius: 0; padding: 15px 24px; border-left: 4px solid transparent; }
-            .nav-item.active { border-left-color: var(--blue-primary); background: rgba(37, 99, 235, 0.05); }
+            .mobile-toggle { display: block; } /* โชว์ปุ่มแฮมเบอร์เกอร์ */
+            .user-details { display: none; } /* ซ่อนชื่อย่อพื้นที่ */
             
-            .mobile-toggle { display: block; }
-            .user-details { display: none; } /* ซ่อนชื่อยาวๆ บนจอมือถือ */
+            /* Slide Menu ด้านซ้ายสุดสมูท */
+            .nav-links {
+                position: fixed; top: 70px; left: -100%; width: 280px; height: calc(100vh - 70px);
+                background: var(--bg-white); flex-direction: column; padding: 20px; gap: 5px;
+                box-shadow: 4px 0 15px rgba(0,0,0,0.05); transition: 0.4s ease; z-index: 1999;
+                border-right: 1px solid var(--border-color);
+            }
+            .nav-links.show { left: 0; }
+            .nav-item { padding: 14px 20px; border-radius: 12px; font-size: 1.05rem; }
+            
+            .nav-left { gap: 15px; }
+            .btn-logout span { display: none; } /* มือถือเหลือแค่ไอคอนปุ่มออกระบบ */
+            .btn-logout { padding: 10px; }
         }
     </style>
 </head>
@@ -200,44 +150,38 @@
 
     <nav class="top-navbar">
         <div class="nav-left">
-            <div class="brand">PAK PHANANG<br><span>Prestige Hall</span></div>
+            <button class="mobile-toggle" id="mobile-menu-btn">
+                <svg viewBox="0 0 24 24"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+            </button>
+            <a href="dashboard.html" class="brand">PAK PHANANG<br><span>Prestige Hall</span></a>
             
             <div class="nav-links" id="nav-links">
                 <a href="dashboard.html" class="nav-item active">
-                    <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
-                    ภาพรวมระบบ
+                    <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg> ภาพรวมระบบ
                 </a>
                 <a href="tenant_manage.html" class="nav-item">
-                    <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle></svg>
-                    จัดการผู้เช่า
+                    <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle></svg> จัดการผู้เช่า
                 </a>
                 <a href="billing.html" class="nav-item">
-                    <svg viewBox="0 0 24 24"><rect x="2" y="5" width="20" height="14" rx="2" ry="2"></rect><line x1="2" y1="10" x2="22" y2="10"></line></svg>
-                    รับชำระเงิน/บิล
+                    <svg viewBox="0 0 24 24"><rect x="2" y="5" width="20" height="14" rx="2" ry="2"></rect><line x1="2" y1="10" x2="22" y2="10"></line></svg> รับชำระเงิน/บิล
                 </a>
                 <a href="maintenance.html" class="nav-item">
-                    <svg viewBox="0 0 24 24"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"></path></svg>
-                    แจ้งซ่อม
+                    <svg viewBox="0 0 24 24"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"></path></svg> แจ้งซ่อมและประกาศ
                 </a>
                 <a href="settings.html" class="nav-item" id="nav-settings" style="display: none;">
-                    <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
-                    ตั้งค่าผู้ดูแล
+                    <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"></circle></svg> ตั้งค่าระบบ
                 </a>
             </div>
         </div>
 
         <div class="nav-right">
-            <div class="user-profile">
-                <div class="user-details">
-                    <div class="name" id="display-name">กำลังโหลด...</div>
-                    <div class="role" id="display-role">Admin</div>
-                </div>
+            <div class="user-details">
+                <div class="name" id="display-name">กำลังโหลด...</div>
+                <div class="role" id="display-role">ADMIN</div>
             </div>
-            <button class="btn-logout" id="logout-btn">
-                ออกระบบ <svg viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
-            </button>
-            <button class="mobile-toggle" id="mobile-toggle">
-                <svg viewBox="0 0 24 24"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+            <button class="btn-logout" id="btn-logout">
+                <span>ออกระบบ</span>
+                <svg viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
             </button>
         </div>
     </nav>
@@ -268,7 +212,7 @@
             
             <div class="stat-card">
                 <div class="stat-info">
-                    <p>บิลค้างชำระ (Unpaid)</p>
+                    <p>ยอดค้างชำระ (บิล)</p>
                     <h3 id="stat-unpaid">...</h3>
                 </div>
                 <div class="stat-icon icon-red">
@@ -304,30 +248,19 @@
         
         <div class="actions-grid">
             <a href="tenant_manage.html" class="action-btn primary">
-                <div class="a-icon">
-                    <svg viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><line x1="19" y1="8" x2="19" y2="14"></line><line x1="22" y1="11" x2="16" y2="11"></line></svg>
-                </div>
+                <div class="a-icon"><svg viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><line x1="19" y1="8" x2="19" y2="14"></line><line x1="22" y1="11" x2="16" y2="11"></line></svg></div>
                 <span>เพิ่มผู้เช่าใหม่<br>ลงทะเบียนทำสัญญา</span>
             </a>
-
             <a href="billing.html" class="action-btn">
-                <div class="a-icon">
-                    <svg viewBox="0 0 24 24"><rect x="2" y="5" width="20" height="14" rx="2" ry="2"></rect><line x1="2" y1="10" x2="22" y2="10"></line></svg>
-                </div>
+                <div class="a-icon"><svg viewBox="0 0 24 24"><rect x="2" y="5" width="20" height="14" rx="2" ry="2"></rect><line x1="2" y1="10" x2="22" y2="10"></line></svg></div>
                 <span>ตรวจสอบและ<br>รับชำระค่าเช่า</span>
             </a>
-
             <a href="billing.html" class="action-btn">
-                <div class="a-icon">
-                    <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
-                </div>
+                <div class="a-icon"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg></div>
                 <span>ออกรายงาน<br>ยอดค้างชำระ</span>
             </a>
-
             <a href="maintenance.html" class="action-btn">
-                <div class="a-icon">
-                    <svg viewBox="0 0 24 24"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"></path></svg>
-                </div>
+                <div class="a-icon"><svg viewBox="0 0 24 24"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"></path></svg></div>
                 <span>บันทึกและตรวจสอบ<br>การแจ้งซ่อม</span>
             </a>
         </div>
@@ -336,98 +269,77 @@
 
     <script>
         // ==========================================
-        // UI & User Profile
+        // UI & User Logic
         // ==========================================
         document.addEventListener('DOMContentLoaded', () => {
-            // ตั้งค่าวันที่
-            const dateOptions = { year: 'numeric', month: 'long', day: 'numeric' };
-            document.getElementById('current-date').innerText = new Date().toLocaleDateString('th-TH', dateOptions);
+            // 1. จัดการวันที่ภาษาไทย
+            const thaiMonths = ["มกราคม", "กุมภาพันธ์", "มีนาคม", "เมษายน", "พฤษภาคม", "มิถุนายน", "กรกฎาคม", "สิงหาคม", "กันยายน", "ตุลาคม", "พฤศจิกายน", "ธันวาคม"];
+            const d = new Date();
+            document.getElementById('current-date').innerText = `${d.getDate()} ${thaiMonths[d.getMonth()]} ${d.getFullYear() + 543}`;
 
-            // โหลดข้อมูลผู้ใช้
-            try {
-                const sessionStr = localStorage.getItem('admin_user_data');
-                if (sessionStr) {
-                    const data = JSON.parse(sessionStr);
-                    document.getElementById('display-name').innerText = `${data.first_name} ${data.last_name}`;
-                    document.getElementById('display-role').innerText = data.role;
-                    document.getElementById('page-greeting').innerText = `สวัสดี, คุณ${data.first_name}`;
-                    
-                    if (data.role === 'PRESIDENT') {
-                        document.getElementById('nav-settings').style.display = 'flex';
-                    }
+            // 2. ดึงข้อมูลผู้ใช้จาก LocalStorage มาโชว์บน Navbar
+            const sessionStr = localStorage.getItem('admin_user_data');
+            if (sessionStr) {
+                const data = JSON.parse(sessionStr);
+                document.getElementById('display-name').innerText = `${data.first_name} ${data.last_name}`;
+                document.getElementById('display-role').innerText = data.role === 'PRESIDENT' ? 'PRESIDENT' : 'ADMIN';
+                document.getElementById('page-greeting').innerText = `สวัสดี, คุณ${data.first_name}`;
+                
+                // เปิดให้เห็นเมนูตั้งค่าเฉพาะ PRESIDENT
+                if (data.role === 'PRESIDENT') {
+                    document.getElementById('nav-settings').style.display = 'flex';
                 }
-            } catch(e) {}
-
-            // Mobile Menu Toggle
-            const toggleBtn = document.getElementById('mobile-toggle');
-            const navLinks = document.getElementById('nav-links');
-            if (toggleBtn && navLinks) {
-                toggleBtn.addEventListener('click', () => {
-                    navLinks.classList.toggle('show');
-                });
             }
 
-            // Logout
-            document.getElementById('logout-btn').addEventListener('click', () => {
+            // 3. ระบบ Hamburger Menu (เปิด/ปิด เมนูมือถือ)
+            const mobileBtn = document.getElementById('mobile-menu-btn');
+            const navLinks = document.getElementById('nav-links');
+            mobileBtn.addEventListener('click', () => {
+                navLinks.classList.toggle('show');
+            });
+
+            // 4. ระบบกด Logout
+            document.getElementById('btn-logout').addEventListener('click', () => {
                 localStorage.removeItem('admin_user_data');
                 window.location.href = 'index.html';
             });
 
-            // ดึงข้อมูลสถิติ
+            // ดึงสถิติ
             fetchDashboardStats();
         });
 
         // ==========================================
-        // Supabase API: ดึงสถิติ
+        // Supabase API: ดึงสถิติมาแสดง
         // ==========================================
-        const SB_URL = 'https://vnlqxtxifgchrouongpu.supabase.co';
+        const SB_URL = 'https://vnlqxtxifgchrouongpu.supabase.co/rest/v1';
         const SB_KEY = 'sb_publishable_jBw7w_gyrLx7B0oSHAtWOw_nVTHTzxl';
 
         async function fetchDashboardStats() {
             try {
                 // 1. นับผู้เช่า (dorm_tenants)
-                const resTenants = await fetch(`${SB_URL}/rest/v1/dorm_tenants?status=eq.ACTIVE&select=id`, {
-                    headers: { 'apikey': SB_KEY, 'Authorization': `Bearer ${SB_KEY}` }
-                });
-                if(resTenants.ok) {
-                    const data = await resTenants.json();
-                    document.getElementById('stat-tenants').innerText = data.length;
-                }
+                const resTenants = await fetch(`${SB_URL}/dorm_tenants?status=eq.ACTIVE&select=id`, { headers: { 'apikey': SB_KEY, 'Authorization': `Bearer ${SB_KEY}` } });
+                if(resTenants.ok) document.getElementById('stat-tenants').innerText = (await resTenants.json()).length;
 
                 // 2. บิลค้างชำระ (billing_statements)
-                const resUnpaid = await fetch(`${SB_URL}/rest/v1/billing_statements?payment_status=eq.UNPAID&select=id`, {
-                    headers: { 'apikey': SB_KEY, 'Authorization': `Bearer ${SB_KEY}` }
-                });
-                if(resUnpaid.ok) {
-                    const data = await resUnpaid.json();
-                    document.getElementById('stat-unpaid').innerText = data.length;
-                }
+                const resUnpaid = await fetch(`${SB_URL}/billing_statements?payment_status=eq.UNPAID&select=id`, { headers: { 'apikey': SB_KEY, 'Authorization': `Bearer ${SB_KEY}` } });
+                if(resUnpaid.ok) document.getElementById('stat-unpaid').innerText = (await resUnpaid.json()).length;
 
                 // 3. แจ้งซ่อม (maintenance_requests)
-                const resMaint = await fetch(`${SB_URL}/rest/v1/maintenance_requests?status=eq.PENDING&select=id`, {
-                    headers: { 'apikey': SB_KEY, 'Authorization': `Bearer ${SB_KEY}` }
-                });
-                if(resMaint.ok) {
-                    const data = await resMaint.json();
-                    document.getElementById('stat-maint').innerText = data.length;
-                }
+                const resMaint = await fetch(`${SB_URL}/maintenance_requests?status=eq.PENDING&select=id`, { headers: { 'apikey': SB_KEY, 'Authorization': `Bearer ${SB_KEY}` } });
+                if(resMaint.ok) document.getElementById('stat-maint').innerText = (await resMaint.json()).length;
 
                 // 4. สรุปรายได้เดือนนี้ (เฉพาะที่ PAID แล้ว)
-                const currentMonth = `${new Date().getFullYear()}-${String(new Date().getMonth() + 1).padStart(2, '0')}`;
-                const resRev = await fetch(`${SB_URL}/rest/v1/billing_statements?billing_month=eq.${currentMonth}&payment_status=eq.PAID&select=amount_due`, {
-                    headers: { 'apikey': SB_KEY, 'Authorization': `Bearer ${SB_KEY}` }
-                });
+                const d = new Date();
+                const currentMonth = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
+                const resRev = await fetch(`${SB_URL}/billing_statements?billing_month=eq.${currentMonth}&payment_status=eq.PAID&select=amount_due`, { headers: { 'apikey': SB_KEY, 'Authorization': `Bearer ${SB_KEY}` } });
                 
                 if(resRev.ok) {
                     const data = await resRev.json();
-                    let totalRevenue = 0;
-                    data.forEach(bill => totalRevenue += (parseFloat(bill.amount_due) || 0));
+                    const totalRevenue = data.reduce((sum, bill) => sum + (parseFloat(bill.amount_due) || 0), 0);
                     document.getElementById('stat-revenue').innerText = totalRevenue.toLocaleString('en-US', {minimumFractionDigits: 0});
                 }
 
-            } catch (err) {
-                console.error("Fetch stats error:", err);
-            }
+            } catch (err) { console.error("Fetch stats error:", err); }
         }
     </script>
 </body>

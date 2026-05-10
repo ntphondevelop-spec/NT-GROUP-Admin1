@@ -9,7 +9,7 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
     <script>
-        // 🔒 ป้องกันคนข้ามหน้า
+        // 🔒 ป้องกันคนข้ามหน้า (Check Session)
         (function() {
             try {
                 const sessionStr = localStorage.getItem('admin_user_data');
@@ -27,14 +27,19 @@
         :root {
             --font-ui: 'Anuphan', sans-serif;
             --font-logo: 'Audiowide', cursive;
+            
             --bg-body: #F8FAFC;
             --bg-white: #FFFFFF;
             --navy-dark: #0F172A;
+            --navy-light: #1E293B;
             --blue-primary: #2563EB;
             --blue-hover: #1D4ED8;
+            --blue-light: #EFF6FF;
+            
             --text-main: #0F172A;
             --text-muted: #64748B;
             --border-color: #E2E8F0;
+            
             --alert-red: #EF4444;
             --success-green: #10B981;
             --warning-yellow: #F59E0B;
@@ -43,36 +48,40 @@
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: var(--font-ui); }
         body { background-color: var(--bg-body); color: var(--text-main); -webkit-font-smoothing: antialiased; overflow-x: hidden;}
 
-        /* ================= TOP NAVBAR (ลอก Dashboard) ================= */
+        /* ================= UNIVERSAL TOP NAVBAR (มาตรฐานเดียวกับทุกหน้า) ================= */
         .top-navbar {
-            background: var(--bg-white); border-bottom: 1px solid var(--border-color);
-            padding: 0 24px; height: 70px; display: flex; align-items: center; justify-content: space-between;
-            position: sticky; top: 0; z-index: 1000; box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            background: var(--bg-white); border-bottom: 1px solid var(--border-color); padding: 0 24px; height: 70px;
+            display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 2000; box-shadow: 0 1px 5px rgba(0,0,0,0.03);
         }
-        .nav-left { display: flex; align-items: center; gap: 40px; }
-        .brand { font-family: var(--font-logo); font-size: 1.4rem; color: var(--navy-dark); line-height: 1.1; letter-spacing: 0.5px; text-decoration: none;}
-        .brand span { font-family: var(--font-ui); display: block; font-size: 0.8rem; color: var(--blue-primary); letter-spacing: 0; font-weight: 700;}
+        
+        .nav-left { display: flex; align-items: center; gap: 20px; }
+        .mobile-toggle { display: none; background: none; border: none; cursor: pointer; color: var(--navy-dark); padding: 5px; border-radius: 8px; transition: 0.2s; }
+        .mobile-toggle:hover { background: #F1F5F9; }
+        .mobile-toggle svg { width: 28px; height: 28px; stroke: currentColor; stroke-width: 2.5; fill: none; display: block;}
+        
+        .brand { font-family: var(--font-logo); font-size: 1.4rem; color: var(--navy-dark); line-height: 1.1; text-decoration: none; letter-spacing: 0.5px;}
+        .brand span { font-family: var(--font-ui); display: block; font-size: 0.8rem; color: var(--blue-primary); font-weight: 700; letter-spacing: 0;}
 
-        .nav-links { display: flex; gap: 8px; }
+        .nav-links { display: flex; gap: 5px; }
         .nav-item {
-            display: flex; align-items: center; gap: 8px; padding: 10px 16px;
-            color: var(--text-muted); text-decoration: none; font-weight: 600; border-radius: 8px; transition: 0.2s; font-size: 0.95rem;
+            display: flex; align-items: center; gap: 8px; padding: 10px 16px; color: var(--text-muted); text-decoration: none;
+            font-weight: 600; border-radius: 10px; transition: 0.2s; font-size: 0.95rem; cursor: pointer;
         }
-        .nav-item svg { width: 18px; height: 18px; stroke: currentColor; stroke-width: 2.2; fill: none; }
+        .nav-item svg { width: 18px; height: 18px; stroke: currentColor; stroke-width: 2.2; fill: none; flex-shrink: 0; }
         .nav-item:hover { background: #F1F5F9; color: var(--navy-dark); }
         .nav-item.active { background: rgba(37, 99, 235, 0.1); color: var(--blue-primary); }
 
-        .nav-right { display: flex; align-items: center; gap: 15px; }
+        .nav-right { display: flex; align-items: center; gap: 20px; }
         .user-details { text-align: right; line-height: 1.2; }
         .user-details .name { font-weight: 700; font-size: 0.95rem; color: var(--navy-dark); }
-        .user-details .role { font-size: 0.75rem; color: var(--blue-primary); font-weight: 700; text-transform: uppercase; }
+        .user-details .role { font-size: 0.75rem; color: var(--blue-primary); font-weight: 800; text-transform: uppercase; }
         
         .btn-logout {
-            background: rgba(239, 68, 68, 0.1); color: var(--alert-red); border: none; padding: 8px 12px; border-radius: 8px; cursor: pointer;
-            font-weight: 700; transition: 0.2s; font-size: 0.9rem; display: flex; align-items: center; gap: 6px;
+            background: #FEF2F2; color: var(--alert-red); border: none; padding: 10px 16px; border-radius: 10px; cursor: pointer;
+            font-weight: 700; font-size: 0.9rem; display: flex; align-items: center; gap: 6px; transition: 0.2s; text-decoration: none; font-family: var(--font-ui);
         }
-        .btn-logout:hover { background: var(--alert-red); color: #FFF; }
-        .mobile-toggle { display: none; background: none; border: none; cursor: pointer; color: var(--navy-dark); }
+        .btn-logout:hover { background: var(--alert-red); color: #FFF; box-shadow: 0 4px 10px rgba(239, 68, 68, 0.2); }
+        .btn-logout svg { width: 18px; height: 18px; stroke: currentColor; stroke-width: 2.5; fill: none; flex-shrink: 0;}
 
         /* ================= MAIN CONTENT ================= */
         .main-container { max-width: 1450px; margin: 0 auto; padding: 40px 24px; display: grid; grid-template-columns: 1.4fr 1fr; gap: 30px; align-items: start;}
@@ -117,11 +126,11 @@
         }
         .form-control:focus ~ .char-counter { color: var(--blue-primary); }
 
-        /* จัดการช่องวันที่ ให้ Label ลอยค้างตลอด */
+        /* จัดการช่องวันที่ */
         input[type="date"].form-control { padding-top: 24px; padding-bottom: 6px; }
         input[type="date"] ~ .floating-label { top: 14px; font-size: 0.75rem; font-weight: 700; color: var(--blue-primary); }
 
-        /* ================= CUSTOM DROPDOWN ================= */
+        /* ================= CUSTOM DROPDOWN (ทำเอง) ================= */
         .custom-select { position: relative; width: 100%; }
         .select-selected {
             width: 100%; padding: 22px 40px 8px 16px; border: 1.5px solid var(--border-color); border-radius: 12px;
@@ -140,7 +149,7 @@
         }
         .select-hide { display: none; }
         .select-items div { padding: 12px 16px; cursor: pointer; font-size: 1rem; border-bottom: 1px solid var(--bg-body); transition: 0.1s;}
-        .select-items div:hover { background-color: #EFF6FF; color: var(--blue-primary); font-weight: 700; padding-left: 20px;}
+        .select-items div:hover { background-color: var(--blue-light); color: var(--blue-primary); font-weight: 700; padding-left: 20px;}
         .select-items::-webkit-scrollbar { width: 6px; }
         .select-items::-webkit-scrollbar-thumb { background: #CBD5E1; border-radius: 10px; }
 
@@ -206,17 +215,28 @@
             display: flex; align-items: center; gap: 10px; font-weight: 700; font-size: 0.95rem; color: var(--navy-dark);
         }
         #smart-toast.show { top: 20px; }
-        #smart-toast.error { border-color: var(--alert-red); color: var(--alert-red); }
-        #smart-toast.success { border-color: var(--success-green); color: var(--success-green); }
         .toast-icon svg { width: 20px; height: 20px; fill: none; stroke-width: 2.5; }
 
-        @media (max-width: 1000px) { 
-            .main-container { grid-template-columns: 1fr; } 
-            .nav-links { display: none; position: absolute; top: 70px; left: 0; width: 100%; background: #FFF; flex-direction: column; padding: 20px; border-bottom: 1px solid var(--border-color); box-shadow: 0 10px 15px rgba(0,0,0,0.05);}
-            .nav-links.show { display: flex; }
+        /* ================= MOBILE RESPONSIVE (มาตรฐานใหม่) ================= */
+        @media (max-width: 1024px) { 
+            .main-container { grid-template-columns: 1fr; padding: 20px; } 
+            
             .mobile-toggle { display: block; }
             .user-details { display: none; }
-            .nav-left { gap: 20px; }
+            
+            .nav-links {
+                position: fixed; top: 70px; left: -100%; width: 280px; height: calc(100vh - 70px);
+                background: var(--bg-white); flex-direction: column; padding: 20px; gap: 5px;
+                box-shadow: 4px 0 15px rgba(0,0,0,0.05); transition: 0.4s ease; z-index: 1999;
+                border-right: 1px solid var(--border-color);
+            }
+            .nav-links.show { left: 0; }
+            .nav-item { padding: 14px 20px; border-radius: 12px; font-size: 1.05rem; }
+            .nav-left { gap: 15px; }
+            
+            .btn-logout span { display: none; }
+            .btn-logout { padding: 10px; }
+            .form-grid { grid-template-columns: 1fr; }
         }
     </style>
 </head>
@@ -237,7 +257,11 @@
 
     <nav class="top-navbar">
         <div class="nav-left">
+            <button class="mobile-toggle" id="mobile-menu-btn">
+                <svg viewBox="0 0 24 24"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+            </button>
             <a href="dashboard.html" class="brand">PAK PHANANG<br><span>Prestige Hall</span></a>
+            
             <div class="nav-links" id="nav-links">
                 <a href="dashboard.html" class="nav-item">
                     <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg> ภาพรวมระบบ
@@ -249,20 +273,19 @@
                     <svg viewBox="0 0 24 24"><rect x="2" y="5" width="20" height="14" rx="2" ry="2"></rect><line x1="2" y1="10" x2="22" y2="10"></line></svg> รับชำระเงิน/บิล
                 </a>
                 <a href="maintenance.html" class="nav-item">
-                    <svg viewBox="0 0 24 24"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"></path></svg> แจ้งซ่อม
+                    <svg viewBox="0 0 24 24"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"></path></svg> แจ้งซ่อมและประกาศ
                 </a>
                 <a href="settings.html" class="nav-item" id="nav-settings" style="display: none;">
                     <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"></circle></svg> ตั้งค่าระบบ
                 </a>
             </div>
         </div>
+
         <div class="nav-right">
-            <div class="user-details"><div class="name" id="display-name">...</div><div class="role" id="display-role">ADMIN</div></div>
-            <button class="btn-logout" id="logout-btn">
-                ออกระบบ <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="3" fill="none"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
-            </button>
-            <button class="mobile-toggle" id="mobile-toggle">
-                <svg viewBox="0 0 24 24" width="28" height="28" stroke="currentColor" stroke-width="2.5" fill="none"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+            <div class="user-details"><div class="name" id="display-name">กำลังโหลด...</div><div class="role" id="display-role">ADMIN</div></div>
+            <button class="btn-logout" id="btn-logout">
+                <span>ออกระบบ</span>
+                <svg viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
             </button>
         </div>
     </nav>
@@ -454,6 +477,41 @@
 
     <script>
         // ==========================================
+        // UI & NAVBAR INIT (เหมือนกันทุกหน้า)
+        // ==========================================
+        document.addEventListener('DOMContentLoaded', () => {
+            // Load Session Data
+            try {
+                const sess = JSON.parse(localStorage.getItem('admin_user_data'));
+                if(sess) {
+                    document.getElementById('display-name').innerText = `${sess.first_name} ${sess.last_name}`;
+                    document.getElementById('display-role').innerText = sess.role;
+                    if (sess.role === 'PRESIDENT') document.getElementById('nav-settings').style.display = 'flex';
+                }
+            } catch(e) {}
+
+            // Mobile Menu Toggle
+            const mobileBtn = document.getElementById('mobile-menu-btn');
+            const navLinks = document.getElementById('nav-links');
+            if(mobileBtn) {
+                mobileBtn.addEventListener('click', () => {
+                    navLinks.classList.toggle('show');
+                });
+            }
+
+            // Logout
+            document.getElementById('btn-logout').addEventListener('click', () => {
+                localStorage.removeItem('admin_user_data');
+                window.location.href = 'index.html';
+            });
+
+            // Initialize Page specific features
+            ['prefix', 'religion', 'sub_district', 'dob_year', 'dob_month', 'dob_day'].forEach(initCustomSelect);
+            initCustomDate(); 
+            fetchTenants();
+        });
+
+        // ==========================================
         // 1. CUSTOM SELECT DROPDOWN LOGIC (ทำเอง 100%)
         // ==========================================
         function initCustomSelect(idName) {
@@ -547,26 +605,6 @@
         // ==========================================
         // 3. UI, Toast & Zip API
         // ==========================================
-        document.addEventListener('DOMContentLoaded', () => {
-            try {
-                const sess = JSON.parse(localStorage.getItem('admin_user_data'));
-                document.getElementById('display-name').innerText = `${sess.first_name} ${sess.last_name}`;
-                document.getElementById('display-role').innerText = sess.role;
-                if (sess.role === 'PRESIDENT') document.getElementById('nav-settings').style.display = 'flex';
-            } catch(e) {}
-
-            document.getElementById('mobile-toggle').addEventListener('click', () => {
-                document.getElementById('nav-links').classList.toggle('show');
-            });
-            
-            document.getElementById('logout-btn').addEventListener('click', () => {
-                localStorage.removeItem('admin_user_data');
-                window.location.href = 'index.html';
-            });
-
-            ['prefix', 'religion', 'sub_district', 'dob_year', 'dob_month', 'dob_day'].forEach(initCustomSelect);
-            initCustomDate(); fetchTenants();
-        });
 
         function updateCounter(inputId, counterId, max) {
             const val = document.getElementById(inputId).value.length;
@@ -584,7 +622,7 @@
             t.className = type === 'error' ? 'is-error show' : 'is-success show';
             document.getElementById('toast-icon-container').innerHTML = iconHTML;
             
-            setTimeout(() => t.classList.remove('show'), 4000); // ให้นานขึ้นเพื่ออ่าน Error
+            setTimeout(() => t.classList.remove('show'), 4000); 
         }
 
         const GLOBAL_URL = 'https://zlzgxpmqplyakhvgkrwc.supabase.co';
@@ -645,11 +683,10 @@
             if(!prefix || !document.getElementById('sub_district').value) { showToast("เลือกคำนำหน้าและตำบลให้ครบ", "error"); return; }
 
             btn.disabled = true; 
-            const originalText = btnText.innerText;
             btnText.innerText = `กำลัง${isEditMode ? 'แก้ไข' : 'บันทึก'}...`;
 
             try {
-                // 1. CRM (Global DB) - ดักทาง 409 Conflict แบบหล่อๆ
+                // 1. CRM (Global DB) 
                 const globalPayload = {
                     citizen_id: cid, prefix: prefix, first_name: fname, last_name: lname, date_of_birth: dobCE, religion: document.getElementById('religion').value,
                     address_line: document.getElementById('address_line').value.trim(), sub_district: document.getElementById('sub_district').value,
@@ -662,17 +699,13 @@
                 
                 let crmRes;
                 if (existingCrm.length > 0) {
-                    // ถ้ามีอยู่แล้วให้ PATCH เท่านั้น (ห้าม POST เด็ดขาด ไม่งั้น 409 แดงเถือก)
                     crmRes = await fetch(`${GLOBAL_URL}/rest/v1/global_customers?citizen_id=eq.${cid}`, {
-                        method: 'PATCH',
-                        headers: { 'Content-Type': 'application/json', 'apikey': GLOBAL_KEY, 'Authorization': `Bearer ${GLOBAL_KEY}` },
+                        method: 'PATCH', headers: { 'Content-Type': 'application/json', 'apikey': GLOBAL_KEY, 'Authorization': `Bearer ${GLOBAL_KEY}` },
                         body: JSON.stringify(globalPayload)
                     });
                 } else {
-                    // สร้างใหม่
                     crmRes = await fetch(`${GLOBAL_URL}/rest/v1/global_customers`, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json', 'apikey': GLOBAL_KEY, 'Authorization': `Bearer ${GLOBAL_KEY}` },
+                        method: 'POST', headers: { 'Content-Type': 'application/json', 'apikey': GLOBAL_KEY, 'Authorization': `Bearer ${GLOBAL_KEY}` },
                         body: JSON.stringify(globalPayload)
                     });
                 }
@@ -682,7 +715,7 @@
                     throw new Error("CRM Error: " + (err.message || 'บันทึกข้อมูลส่วนบุคคลไม่สำเร็จ'));
                 }
 
-                // 2. Dorm Ops (ดักทาง 400 Bad Request ถ้าลืมสร้างคอลัมน์)
+                // 2. Dorm Ops
                 const opsPayload = { 
                     full_name: `${prefix}${fname} ${lname}`, phone_number: phone, room_number: room, 
                     monthly_rent: rent, initial_debt: debt, payment_date: paymentDate
@@ -690,8 +723,7 @@
 
                 if (isEditMode) {
                     const opsRes = await fetch(`${OPS_URL}/rest/v1/dorm_tenants?id=eq.${tenantId}`, {
-                        method: 'PATCH',
-                        headers: { 'Content-Type': 'application/json', 'apikey': OPS_KEY, 'Authorization': `Bearer ${OPS_KEY}` },
+                        method: 'PATCH', headers: { 'Content-Type': 'application/json', 'apikey': OPS_KEY, 'Authorization': `Bearer ${OPS_KEY}` },
                         body: JSON.stringify(opsPayload)
                     });
                     if(!opsRes.ok) {
@@ -707,13 +739,11 @@
                     opsPayload.status = 'ACTIVE';
                     
                     const opsRes = await fetch(`${OPS_URL}/rest/v1/dorm_tenants`, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json', 'apikey': OPS_KEY, 'Authorization': `Bearer ${OPS_KEY}` },
+                        method: 'POST', headers: { 'Content-Type': 'application/json', 'apikey': OPS_KEY, 'Authorization': `Bearer ${OPS_KEY}` },
                         body: JSON.stringify(opsPayload)
                     });
                     if(!opsRes.ok) {
                         const err = await opsRes.json();
-                        // ฟ้องให้รู้เลยว่าลืมสร้าง payment_date ใน Supabase หรือเปล่า!
                         throw new Error(`Dorm Error: ${err.message || 'สร้างสัญญาใหม่ไม่สำเร็จ'}`);
                     }
                     showToast("สร้างสัญญาใหม่เรียบร้อย!", "success");
@@ -724,7 +754,6 @@
                 showToast(err.message, "error"); 
             } finally { 
                 btn.disabled = false; 
-                // คืนค่าปุ่มให้ถูกต้อง ไม่ติด Null แน่นอน
                 btnText.innerText = isEditMode ? "บันทึกการแก้ไข" : "บันทึกข้อมูลและทำสัญญา"; 
             }
         });

@@ -8,6 +8,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Anuphan:wght@300;400;500;600;700&family=Audiowide&display=swap" rel="stylesheet">
     
     <script>
+        // 🔒 ป้องกันคนข้ามหน้า (Check Session)
         (function() {
             try {
                 const sessionStr = localStorage.getItem('admin_user_data');
@@ -28,9 +29,9 @@
             --bg-body: #F8FAFC;
             --bg-white: #FFFFFF;
             --navy-dark: #0F172A;
-            --navy-light: #1E293B;
             --blue-primary: #2563EB;
             --blue-hover: #1D4ED8;
+            --blue-light: #EFF6FF;
             --text-main: #0F172A;
             --text-muted: #64748B;
             --border-color: #E2E8F0;
@@ -39,123 +40,153 @@
             --warning-yellow: #F59E0B;
         }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: var(--font-ui); background-color: var(--bg-body); color: var(--text-main); -webkit-font-smoothing: antialiased; min-height: 100vh; display: flex; flex-direction: column; }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: var(--font-ui); }
+        body { background-color: var(--bg-body); color: var(--text-main); -webkit-font-smoothing: antialiased; overflow-x: hidden; display: flex; flex-direction: column; min-height: 100vh;}
 
-        /* ================= TOP NAVBAR ================= */
+        /* ================= UNIVERSAL TOP NAVBAR ================= */
         .top-navbar {
             background: var(--bg-white); border-bottom: 1px solid var(--border-color); padding: 0 24px; height: 70px;
-            display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 1000; box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 2000; box-shadow: 0 1px 5px rgba(0,0,0,0.03);
         }
-        .nav-left { display: flex; align-items: center; gap: 40px; }
-        .brand { font-family: var(--font-logo); font-size: 1.4rem; color: var(--navy-dark); line-height: 1.1; letter-spacing: 0.5px; text-decoration: none;}
-        .brand span { font-family: var(--font-ui); display: block; font-size: 0.8rem; color: var(--blue-primary); letter-spacing: 0; font-weight: 700;}
-        .nav-links { display: flex; gap: 8px; }
+        
+        .nav-left { display: flex; align-items: center; gap: 20px; }
+        .mobile-toggle { display: none; background: none; border: none; cursor: pointer; color: var(--navy-dark); padding: 5px; border-radius: 8px; transition: 0.2s; }
+        .mobile-toggle:hover { background: #F1F5F9; }
+        .mobile-toggle svg { width: 28px; height: 28px; stroke: currentColor; stroke-width: 2.5; fill: none; display: block;}
+        
+        .brand { font-family: var(--font-logo); font-size: 1.4rem; color: var(--navy-dark); line-height: 1.1; text-decoration: none; letter-spacing: 0.5px;}
+        .brand span { font-family: var(--font-ui); display: block; font-size: 0.8rem; color: var(--blue-primary); font-weight: 700; letter-spacing: 0;}
+
+        .nav-links { display: flex; gap: 5px; }
         .nav-item {
             display: flex; align-items: center; gap: 8px; padding: 10px 16px; color: var(--text-muted); text-decoration: none;
-            font-weight: 600; border-radius: 8px; transition: 0.2s; font-size: 0.95rem;
+            font-weight: 600; border-radius: 10px; transition: 0.2s; font-size: 0.95rem; cursor: pointer;
         }
-        .nav-item svg { width: 18px; height: 18px; stroke: currentColor; stroke-width: 2.2; fill: none; }
+        .nav-item svg { width: 18px; height: 18px; stroke: currentColor; stroke-width: 2.2; fill: none; flex-shrink: 0; }
         .nav-item:hover { background: #F1F5F9; color: var(--navy-dark); }
         .nav-item.active { background: rgba(37, 99, 235, 0.1); color: var(--blue-primary); }
-        .nav-right { display: flex; align-items: center; gap: 15px; }
+
+        .nav-right { display: flex; align-items: center; gap: 20px; }
         .user-details { text-align: right; line-height: 1.2; }
         .user-details .name { font-weight: 700; font-size: 0.95rem; color: var(--navy-dark); }
-        .user-details .role { font-size: 0.75rem; color: var(--blue-primary); font-weight: 700; text-transform: uppercase; }
+        .user-details .role { font-size: 0.75rem; color: var(--blue-primary); font-weight: 800; text-transform: uppercase; }
+        
         .btn-logout {
-            background: rgba(239, 68, 68, 0.1); color: var(--alert-red); border: none; padding: 8px 12px; border-radius: 8px; cursor: pointer;
-            font-weight: 700; transition: 0.2s; font-size: 0.9rem; display: flex; align-items: center; gap: 6px;
+            background: #FEF2F2; color: var(--alert-red); border: none; padding: 10px 16px; border-radius: 10px; cursor: pointer;
+            font-weight: 700; font-size: 0.9rem; display: flex; align-items: center; gap: 6px; transition: 0.2s; text-decoration: none; font-family: var(--font-ui);
         }
-        .btn-logout:hover { background: var(--alert-red); color: #FFF; }
-        .mobile-toggle { display: none; background: none; border: none; cursor: pointer; color: var(--navy-dark); }
+        .btn-logout:hover { background: var(--alert-red); color: #FFF; box-shadow: 0 4px 10px rgba(239, 68, 68, 0.2); }
+        .btn-logout svg { width: 18px; height: 18px; stroke: currentColor; stroke-width: 2.5; fill: none; flex-shrink: 0;}
 
         /* ================= MAIN CONTENT ================= */
-        .main-container { max-width: 1200px; margin: 0 auto; padding: 40px 24px; width: 100%; flex: 1; }
+        .main-container { max-width: 1200px; margin: 0 auto; padding: 40px 24px; width: 100%; flex: 1;}
         .page-header { margin-bottom: 30px; border-left: 5px solid var(--blue-primary); padding-left: 15px;}
-        .page-header h1 { font-size: 2rem; font-weight: 700; color: var(--navy-dark); margin-bottom: 6px; }
-        .page-header p { color: var(--text-muted); font-size: 1rem; }
+        .page-header h1 { font-size: 2rem; font-weight: 700; color: var(--navy-dark); margin-bottom: 8px;}
+        .page-header p { color: var(--text-muted); font-size: 1.05rem; }
 
         /* TABS */
-        .tabs-container { display: flex; gap: 10px; margin-bottom: 25px; background: #E2E8F0; padding: 6px; border-radius: 14px; width: fit-content; overflow-x: auto;}
+        .tabs-container { display: flex; gap: 10px; margin-bottom: 25px; background: #E2E8F0; padding: 6px; border-radius: 14px; width: fit-content; overflow-x: auto; max-width: 100%;}
         .tab-btn {
-            background: transparent; border: none; padding: 10px 24px; border-radius: 10px; font-size: 0.95rem; font-weight: 700;
-            font-family: var(--font-ui); color: var(--text-muted); cursor: pointer; transition: 0.2s; display: flex; align-items: center; gap: 8px; white-space: nowrap;
+            background: transparent; border: none; padding: 12px 24px; border-radius: 10px;
+            font-size: 1rem; font-weight: 700; font-family: var(--font-ui); color: var(--text-muted);
+            cursor: pointer; transition: 0.2s; display: flex; align-items: center; gap: 8px; white-space: nowrap;
         }
-        .tab-btn svg { width: 20px; height: 20px; stroke: currentColor; stroke-width: 2.5; fill: none; }
+        .tab-btn svg { width: 20px; height: 20px; stroke: currentColor; stroke-width: 2.5; fill: none; flex-shrink: 0;}
         .tab-btn:hover { color: var(--navy-dark); }
         .tab-btn.active { background: var(--bg-white); color: var(--blue-primary); box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+
         .tab-content { display: none; animation: fadeIn 0.3s ease; }
         .tab-content.active { display: block; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* CARDS */
+        /* CARDS & UI */
         .data-card {
             background: var(--bg-white); border: 1px solid var(--border-color); border-radius: 20px;
-            padding: 24px; margin-bottom: 16px; display: flex; justify-content: space-between; align-items: center;
-            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.02); transition: 0.3s; gap: 20px;
+            padding: 25px; margin-bottom: 16px; display: flex; justify-content: space-between; align-items: flex-start;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.02); transition: 0.3s; gap: 20px;
         }
-        .data-card:hover { border-color: var(--blue-primary); box-shadow: 0 8px 15px rgba(37,99,235,0.08); transform: translateY(-2px);}
+        .data-card:hover { border-color: var(--blue-primary); transform: translateY(-2px); }
         
         .info-group { flex: 1; }
-        .info-group .tag { display: inline-block; padding: 4px 12px; border-radius: 20px; font-size: 0.85rem; font-weight: 800; margin-bottom: 8px;}
+        .tag { display: inline-block; padding: 4px 12px; border-radius: 20px; font-size: 0.85rem; font-weight: 800; margin-bottom: 8px;}
         .tag.blue { background: #EFF6FF; color: var(--blue-primary); }
         .tag.red { background: #FEF2F2; color: var(--alert-red); }
         .tag.yellow { background: #FFFBEB; color: var(--warning-yellow); }
         .tag.green { background: #ECFDF5; color: var(--success-green); }
 
-        .info-group h3 { font-size: 1.25rem; font-weight: 700; color: var(--navy-dark); margin-bottom: 4px;}
+        .info-group h3 { font-size: 1.3rem; font-weight: 700; color: var(--navy-dark); margin-bottom: 4px;}
         .info-group p { font-size: 0.95rem; color: var(--text-muted); font-weight: 500;}
-        .info-desc { margin-top: 10px; padding: 12px; background: #F8FAFC; border-radius: 10px; font-size: 0.95rem; color: var(--navy-dark); border: 1px solid var(--border-color);}
+        .info-desc { margin-top: 12px; padding: 15px; background: #F8FAFC; border-radius: 12px; font-size: 1rem; color: var(--navy-dark); border: 1px solid var(--border-color); white-space: pre-wrap; line-height: 1.5;}
 
         .action-group { display: flex; gap: 10px; flex-wrap: wrap; justify-content: flex-end; }
-        .btn-act { border: none; padding: 10px 18px; border-radius: 10px; font-weight: 700; font-family: var(--font-ui); font-size: 0.95rem; cursor: pointer; transition: 0.2s; display: flex; align-items: center; gap: 6px; box-shadow: 0 2px 5px rgba(0,0,0,0.05);}
-        .btn-blue { background: var(--blue-primary); color: #FFF; }
-        .btn-green { background: var(--success-green); color: #FFF; }
-        .btn-yellow { background: var(--warning-yellow); color: #FFF; }
-        .btn-red-outline { background: #FFF; color: var(--alert-red); border: 1.5px solid var(--alert-red); }
-        .btn-act:hover { transform: translateY(-2px); opacity: 0.9; box-shadow: 0 4px 10px rgba(0,0,0,0.1);}
+        .btn-act { border: none; padding: 12px 20px; border-radius: 10px; font-weight: 700; font-family: var(--font-ui); font-size: 0.95rem; cursor: pointer; transition: 0.2s; display: flex; align-items: center; gap: 6px; }
+        .btn-blue { background: var(--blue-primary); color: #FFF; box-shadow: 0 4px 10px rgba(37, 99, 235, 0.2);}
+        .btn-green { background: var(--success-green); color: #FFF; box-shadow: 0 4px 10px rgba(16, 185, 129, 0.2);}
+        .btn-yellow { background: var(--warning-yellow); color: #FFF; box-shadow: 0 4px 10px rgba(245, 158, 11, 0.2);}
+        .btn-red-outline { background: #FEF2F2; color: var(--alert-red); border: 1px solid #FCA5A5; }
+        .btn-act:hover { transform: translateY(-2px); opacity: 0.9; }
+        .btn-act svg { width: 18px; height: 18px; stroke: currentColor; stroke-width: 2.5; fill: none; flex-shrink: 0;}
 
-        /* FORM (Announcements) */
+        /* FORM */
         .form-card { background: var(--bg-white); border: 1px solid var(--border-color); border-radius: 20px; padding: 30px; margin-bottom: 30px;}
-        .form-group { margin-bottom: 20px; }
+        .form-group { position: relative; margin-bottom: 20px; }
         .form-group label { display: block; font-weight: 700; color: var(--navy-dark); margin-bottom: 8px; font-size: 0.95rem;}
         .form-control { width: 100%; padding: 14px 16px; border: 1.5px solid var(--border-color); border-radius: 12px; font-size: 1rem; font-family: var(--font-ui); color: var(--navy-dark); background: #FFF; outline: none; transition: 0.2s; }
         .form-control:focus { border-color: var(--blue-primary); box-shadow: 0 0 0 3px rgba(37,99,235,0.1); }
-        textarea.form-control { resize: vertical; min-height: 100px; }
+        textarea.form-control { resize: vertical; min-height: 120px; line-height: 1.5;}
 
-        /* CUSTOM SELECT (ทำเอง) */
+        /* CUSTOM SELECT (ทำเอง 100%) */
         .custom-select { position: relative; width: 100%; }
         .select-selected {
             width: 100%; padding: 14px 40px 14px 16px; border: 1.5px solid var(--border-color); border-radius: 12px;
-            font-size: 1rem; font-family: var(--font-ui); color: var(--navy-dark); font-weight: 600; background: #FFF; cursor: pointer; transition: 0.2s;
+            font-size: 1rem; font-family: var(--font-ui); color: var(--navy-dark); font-weight: 600; background: #FFF; cursor: pointer; transition: 0.3s;
             background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2364748B' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
             background-repeat: no-repeat; background-position: right 1rem center; background-size: 1.2em; display: flex; align-items: center;
         }
-        .select-selected.active { border-color: var(--blue-primary); box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1); 
+        .select-selected.active { border-color: var(--blue-primary); box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1); 
             background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%232563EB' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='18 15 12 9 6 15'%3e%3c/polyline%3e%3c/svg%3e"); }
         .select-items {
             position: absolute; background-color: #FFF; top: calc(100% + 5px); left: 0; right: 0; z-index: 99;
-            border: 1px solid var(--border-color); border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); overflow: hidden;
+            border: 1px solid var(--border-color); border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); overflow: hidden; display: none;
         }
-        .select-hide { display: none; }
+        .select-items.show { display: block; }
         .select-items div { padding: 12px 16px; cursor: pointer; font-size: 0.95rem; border-bottom: 1px solid #F8FAFC; transition: 0.1s;}
         .select-items div:hover { background-color: #EFF6FF; color: var(--blue-primary); font-weight: 700;}
 
         /* MODALS & TOAST */
-        .custom-modal { position: fixed; inset: 0; background: rgba(15,23,42,0.6); backdrop-filter: blur(4px); z-index: 9999; display: none; justify-content: center; align-items: center; padding: 20px; }
-        .custom-modal.show { display: flex; animation: fadeIn 0.2s; }
-        .modal-box { background: #FFF; padding: 30px; border-radius: 24px; width: 100%; max-width: 400px; text-align: center; box-shadow: 0 20px 60px rgba(0,0,0,0.2); }
-        .modal-btns { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 25px; }
+        .custom-modal-overlay {
+            position: fixed; inset: 0; background: rgba(15, 23, 42, 0.4); backdrop-filter: blur(3px);
+            z-index: 9999; display: flex; justify-content: center; align-items: center; opacity: 0; pointer-events: none; transition: 0.3s;
+        }
+        .custom-modal-overlay.show { opacity: 1; pointer-events: auto; }
+        .modal-box { background: #FFF; padding: 30px; border-radius: 20px; width: 100%; max-width: 400px; box-shadow: 0 20px 50px rgba(0,0,0,0.15); transform: scale(0.9); transition: 0.3s; text-align: center;}
+        .custom-modal-overlay.show .modal-box { transform: scale(1); }
+        .modal-btns { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 25px; }
 
-        #smart-toast { position: fixed; top: -100px; left: 50%; transform: translateX(-50%); background: #FFF; padding: 14px 24px; border-radius: 50px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); z-index: 10000; transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); display: flex; align-items: center; gap: 10px; font-weight: 700; font-size: 0.95rem; color: var(--navy-dark); border: 1px solid var(--border-color); }
+        #smart-toast {
+            position: fixed; top: -100px; left: 50%; transform: translateX(-50%); background: #FFF; padding: 14px 24px; border-radius: 50px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1); z-index: 10000; transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            display: flex; align-items: center; gap: 10px; font-weight: 700; font-size: 0.95rem; color: var(--navy-dark); border: 1px solid var(--border-color);
+        }
         #smart-toast.show { top: 20px; }
         .toast-icon svg { width: 20px; height: 20px; fill: none; stroke-width: 2.5; }
 
-        @media (max-width: 1000px) {
-            .nav-links { display: none; position: absolute; top: 70px; left: 0; width: 100%; background: #FFF; flex-direction: column; padding: 20px; border-bottom: 1px solid var(--border-color); box-shadow: 0 10px 15px rgba(0,0,0,0.05);}
-            .nav-links.active { display: flex; }
+        /* ================= MOBILE RESPONSIVE ================= */
+        @media (max-width: 1024px) { 
+            .nav-links {
+                position: fixed; top: 70px; left: -100%; width: 280px; height: calc(100vh - 70px);
+                background: var(--bg-white); flex-direction: column; padding: 20px; gap: 5px;
+                box-shadow: 4px 0 15px rgba(0,0,0,0.05); transition: 0.4s ease; z-index: 1999;
+                border-right: 1px solid var(--border-color);
+            }
+            .nav-links.show { left: 0; }
+            .nav-item { padding: 14px 20px; border-radius: 12px; font-size: 1.05rem; }
             .mobile-toggle { display: block; }
             .user-details { display: none; }
+            .nav-left { gap: 15px; }
+            .btn-logout span { display: none; }
+            .btn-logout { padding: 10px; }
+            
             .data-card { flex-direction: column; align-items: flex-start; }
             .action-group { width: 100%; border-top: 1px solid var(--border-color); padding-top: 15px; justify-content: flex-start;}
         }
@@ -165,12 +196,12 @@
 
     <div id="smart-toast"><div class="toast-icon" id="toast-icon-container"></div><span id="toast-msg"></span></div>
 
-    <div class="custom-modal" id="confirm-modal">
+    <div class="custom-modal-overlay" id="confirm-modal">
         <div class="modal-box">
             <h3 id="confirm-title" style="margin-bottom: 10px; color:var(--navy-dark);">ยืนยันการทำรายการ</h3>
             <p id="confirm-desc" style="color: var(--text-muted); font-size: 0.95rem;">คุณต้องการดำเนินการต่อใช่หรือไม่?</p>
             <div class="modal-btns">
-                <button class="btn-act" style="background:#F1F5F9; color:var(--navy-dark); justify-content:center;" onclick="closeModal('confirm-modal')">ยกเลิก</button>
+                <button class="btn-act" style="background:#F1F5F9; color:var(--text-muted); justify-content:center;" onclick="closeModal('confirm-modal')">ยกเลิก</button>
                 <button class="btn-act btn-blue" id="btn-do-confirm" style="justify-content:center;">ยืนยัน</button>
             </div>
         </div>
@@ -178,7 +209,11 @@
 
     <nav class="top-navbar">
         <div class="nav-left">
+            <button class="mobile-toggle" id="mobile-menu-btn">
+                <svg viewBox="0 0 24 24"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+            </button>
             <a href="dashboard.html" class="brand">PAK PHANANG<br><span>Prestige Hall</span></a>
+            
             <div class="nav-links" id="nav-links">
                 <a href="dashboard.html" class="nav-item">
                     <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg> ภาพรวมระบบ
@@ -197,13 +232,12 @@
                 </a>
             </div>
         </div>
+
         <div class="nav-right">
-            <div class="user-details"><div class="name" id="display-name">...</div><div class="role" id="display-role">ADMIN</div></div>
+            <div class="user-details"><div class="name" id="display-name">กำลังโหลด...</div><div class="role" id="display-role">ADMIN</div></div>
             <button class="btn-logout" id="logout-btn">
-                ออกระบบ <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="3" fill="none"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
-            </button>
-            <button class="mobile-toggle" id="mobile-toggle">
-                <svg viewBox="0 0 24 24" width="28" height="28" stroke="currentColor" stroke-width="2.5" fill="none"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+                <span>ออกระบบ</span>
+                <svg viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
             </button>
         </div>
     </nav>
@@ -250,15 +284,15 @@
                     </div>
                     <div class="form-group">
                         <label>เนื้อหาประกาศ</label>
-                        <textarea id="ann-content" class="form-control" placeholder="รายละเอียด..." required></textarea>
+                        <textarea id="ann-content" class="form-control" placeholder="รายละเอียดประกาศ..." required></textarea>
                     </div>
-                    <button type="submit" class="btn-act btn-blue" id="btn-save-ann" style="width: 100%; justify-content: center; padding: 14px; font-size: 1.1rem;">
-                        <svg viewBox="0 0 24 24" width="20" height="20"><path d="M22 2L11 13"></path><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg> โพสต์ประกาศ
+                    <button type="submit" class="btn-act btn-blue" id="btn-save-ann" style="width: 100%; justify-content: center; padding: 16px; margin-top: 10px;">
+                        <svg viewBox="0 0 24 24"><path d="M22 2L11 13"></path><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg> โพสต์ประกาศ
                     </button>
                 </form>
             </div>
             
-            <h3 style="color: var(--navy-dark); margin-bottom: 15px; font-size: 1.1rem;">ประกาศที่เผยแพร่อยู่</h3>
+            <h3 style="color: var(--navy-dark); margin-bottom: 15px; font-size: 1.1rem; padding-left: 5px;">ประกาศที่เผยแพร่อยู่</h3>
             <div id="announce-list"></div>
         </div>
 
@@ -274,6 +308,7 @@
         function toast(msg, type = 'success') {
             const t = document.getElementById('smart-toast');
             t.style.borderColor = type === 'success' ? 'var(--success-green)' : 'var(--alert-red)';
+            t.style.color = type === 'success' ? 'var(--success-green)' : 'var(--alert-red)';
             document.getElementById('toast-msg').innerText = msg;
             
             const icon = document.getElementById('toast-icon-container');
@@ -323,12 +358,13 @@
         // INIT & LOAD DATA
         // ==========================================
         async function init() {
-            document.getElementById('mobile-toggle').addEventListener('click', () => { document.getElementById('nav-links').classList.toggle('show'); });
+            // Navbar
+            document.getElementById('mobile-menu-btn').addEventListener('click', () => { document.getElementById('nav-links').classList.toggle('show'); });
             document.getElementById('logout-btn').addEventListener('click', () => { localStorage.removeItem('admin_user_data'); window.location.href = 'index.html'; });
 
             const admin = JSON.parse(localStorage.getItem('admin_user_data'));
             if(admin) {
-                document.getElementById('display-name').innerText = admin.first_name + " " + admin.last_name;
+                document.getElementById('display-name').innerText = `${admin.first_name} ${admin.last_name}`;
                 document.getElementById('display-role').innerText = admin.role;
                 if(admin.role === 'PRESIDENT') document.getElementById('nav-settings').style.display = 'flex';
             }
@@ -354,51 +390,35 @@
                 renderMaint(maintData, tenants);
                 renderAnnouncements(annData);
 
-            } catch(e) {
-                toast("เกิดข้อผิดพลาดในการโหลดข้อมูล", "error");
-            }
+            } catch(e) { toast("เกิดข้อผิดพลาดในการโหลดข้อมูล", "error"); }
         }
 
         function formatDate(ds) {
             if(!ds) return '-'; const d = new Date(ds);
-            return `${d.getDate()}/${d.getMonth()+1}/${d.getFullYear()+543} เวลา ${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')} น.`;
+            return `${String(d.getDate()).padStart(2,'0')}/${String(d.getMonth()+1).padStart(2,'0')}/${d.getFullYear()+543} เวลา ${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')} น.`;
         }
 
         // ==========================================
-        // RENDER MAINTENANCE (ไม่มีอีโมจิ)
+        // RENDER MAINTENANCE
         // ==========================================
         function renderMaint(data, tenants) {
             const list = document.getElementById('maint-list');
-            if(data.length === 0) {
-                list.innerHTML = `<div class="data-card" style="justify-content:center; color:var(--text-muted);">ไม่มีรายการแจ้งซ่อม</div>`; return;
-            }
+            if(data.length === 0) { list.innerHTML = `<div class="data-card" style="justify-content:center; color:var(--text-muted);">ไม่มีรายการแจ้งซ่อม</div>`; return; }
 
             list.innerHTML = data.map(m => {
                 const tName = (tenants.find(t => t.room_number === m.room_number) || {}).full_name || 'ไม่ระบุชื่อ';
                 
-                let statusTag = '';
-                let actions = '';
+                let statusTag = ''; let actions = '';
                 
-                // ถอดอีโมจิออก เปลี่ยนเป็น Text + SVG Icon ในปุ่ม
                 if(m.status === 'PENDING') {
                     statusTag = `<span class="tag red">รอดำเนินการ</span>`;
-                    actions = `
-                        <button class="btn-act btn-yellow" onclick="actionMaint('${m.id}', 'IN_PROGRESS')">
-                            <svg viewBox="0 0 24 24"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"></path></svg> 
-                            รับเรื่องซ่อม
-                        </button>
-                    `;
+                    actions = `<button class="btn-act btn-yellow" onclick="actionMaint('${m.id}', 'IN_PROGRESS')"><svg viewBox="0 0 24 24"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"></path></svg> รับเรื่องซ่อม</button>`;
                 } else if(m.status === 'IN_PROGRESS') {
                     statusTag = `<span class="tag yellow">ช่างกำลังซ่อมแซม</span>`;
-                    actions = `
-                        <button class="btn-act btn-green" onclick="actionMaint('${m.id}', 'COMPLETED')">
-                            <svg viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
-                            ซ่อมเสร็จสิ้น
-                        </button>
-                    `;
+                    actions = `<button class="btn-act btn-green" onclick="actionMaint('${m.id}', 'COMPLETED')"><svg viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg> ซ่อมเสร็จสิ้น</button>`;
                 } else {
                     statusTag = `<span class="tag green">เสร็จสิ้นแล้ว</span>`;
-                    actions = `<span style="color:var(--text-muted); font-weight:600; font-size:0.9rem;">ปิดงานแล้ว</span>`;
+                    actions = `<span style="color:var(--success-green); font-weight:700; font-size:0.95rem; display:flex; align-items:center; gap:6px;"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg> ปิดงานแล้ว</span>`;
                 }
 
                 return `
@@ -407,9 +427,7 @@
                         ${statusTag}
                         <h3>ห้อง ${m.room_number} <span style="font-size:1rem; color:var(--text-muted); font-weight:500;">(${tName})</span></h3>
                         <p>แจ้งเมื่อ: ${formatDate(m.created_at)}</p>
-                        <div class="info-desc">
-                            <strong style="color:var(--blue-primary);">ปัญหาที่พบ:</strong> ${m.issue_description}
-                        </div>
+                        <div class="info-desc"><strong style="color:var(--blue-primary);">ปัญหาที่พบ:</strong> ${m.issue_description}</div>
                     </div>
                     <div class="action-group">${actions}</div>
                 </div>`;
@@ -417,13 +435,11 @@
         }
 
         // ==========================================
-        // RENDER ANNOUNCEMENTS (ไม่มีอีโมจิ)
+        // RENDER ANNOUNCEMENTS
         // ==========================================
         function renderAnnouncements(data) {
             const list = document.getElementById('announce-list');
-            if(data.length === 0) {
-                list.innerHTML = `<div class="data-card" style="justify-content:center; color:var(--text-muted);">ยังไม่มีประกาศที่เผยแพร่อยู่</div>`; return;
-            }
+            if(data.length === 0) { list.innerHTML = `<div class="data-card" style="justify-content:center; color:var(--text-muted);">ยังไม่มีประกาศที่เผยแพร่อยู่</div>`; return; }
 
             list.innerHTML = data.map(a => {
                 const priorityTag = a.priority === 'HIGH' ? `<span class="tag red">ด่วนมาก</span>` : `<span class="tag blue">ทั่วไป</span>`;
@@ -437,8 +453,7 @@
                     </div>
                     <div class="action-group">
                         <button class="btn-act btn-red-outline" onclick="actionAnnounce('${a.id}')">
-                            <svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
-                            ลบประกาศ
+                            <svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg> ลบประกาศ
                         </button>
                     </div>
                 </div>`;
@@ -453,7 +468,9 @@
         function actionMaint(id, status) {
             currentAction = { type: 'MAINT', id, status };
             document.getElementById('confirm-title').innerText = status === 'IN_PROGRESS' ? 'ยืนยันการรับเรื่อง?' : 'ยืนยันซ่อมเสร็จสิ้น?';
+            document.getElementById('confirm-title').style.color = 'var(--navy-dark)';
             document.getElementById('confirm-desc').innerText = 'ระบบจะอัปเดตสถานะให้ลูกบ้านทราบ';
+            document.getElementById('btn-do-confirm').style.background = 'var(--blue-primary)';
             document.getElementById('confirm-modal').classList.add('show');
         }
 
@@ -461,7 +478,7 @@
             currentAction = { type: 'ANNOUNCE_DEL', id };
             document.getElementById('confirm-title').innerText = 'ยืนยันลบประกาศ?';
             document.getElementById('confirm-title').style.color = 'var(--alert-red)';
-            document.getElementById('confirm-desc').innerText = 'ประกาศนี้จะถูกนำออกจากระบบลูกบ้านทันที';
+            document.getElementById('confirm-desc').innerText = 'ประกาศนี้จะถูกนำออกจากระบบของลูกบ้านทันที';
             document.getElementById('btn-do-confirm').style.background = 'var(--alert-red)';
             document.getElementById('confirm-modal').classList.add('show');
         }
@@ -479,19 +496,14 @@
                 } else if(currentAction.type === 'ANNOUNCE_DEL') {
                     await fetch(`${SB_URL}/announcements?id=eq.${currentAction.id}`, {
                         method: 'PATCH', headers: { 'Content-Type': 'application/json', 'apikey': SB_KEY, 'Authorization': `Bearer ${SB_KEY}` },
-                        body: JSON.stringify({ is_active: false }) // ซ่อนประกาศ
+                        body: JSON.stringify({ is_active: false })
                     });
                 }
                 toast("ทำรายการสำเร็จเรียบร้อย", "success");
                 closeModal('confirm-modal');
                 await fetchData();
-            } catch(e) {
-                toast("เกิดข้อผิดพลาด", "error");
-            } finally {
-                btn.disabled = false; btn.innerText = 'ยืนยัน';
-                document.getElementById('confirm-title').style.color = 'var(--navy-dark)';
-                btn.style.background = 'var(--blue-primary)';
-            }
+            } catch(e) { toast("เกิดข้อผิดพลาด", "error"); } 
+            finally { btn.disabled = false; btn.innerText = 'ยืนยัน'; }
         });
 
         // FORM SUBMIT (ANNOUNCEMENT)
@@ -514,14 +526,11 @@
                 
                 toast("โพสต์ประกาศสำเร็จ!", "success");
                 document.getElementById('announce-form').reset();
-                document.getElementById('display-ann-priority').innerText = 'ทั่วไป (Normal)'; // รีเซ็ต dropdown
+                document.getElementById('display-ann-priority').innerText = 'ทั่วไป (Normal)'; 
                 document.getElementById('ann-priority').value = 'NORMAL';
                 await fetchData();
-            } catch(err) {
-                toast("บันทึกไม่สำเร็จ ตรวจสอบตาราง announcements ในฐานข้อมูล", "error");
-            } finally {
-                btn.disabled = false; btn.innerHTML = `<svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none"><path d="M22 2L11 13"></path><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg> โพสต์ประกาศ`;
-            }
+            } catch(err) { toast("บันทึกไม่สำเร็จ", "error"); } 
+            finally { btn.disabled = false; btn.innerHTML = `<svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none"><path d="M22 2L11 13"></path><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg> โพสต์ประกาศ`; }
         });
 
         init();

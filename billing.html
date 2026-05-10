@@ -8,6 +8,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Anuphan:wght@300;400;500;600;700&family=Audiowide&display=swap" rel="stylesheet">
     
     <script>
+        // 🔒 ป้องกันคนข้ามหน้า (Check Session)
         (function() {
             try {
                 const sessionStr = localStorage.getItem('admin_user_data');
@@ -25,66 +26,80 @@
         :root {
             --font-ui: 'Anuphan', sans-serif;
             --font-logo: 'Audiowide', cursive;
+            
             --bg-body: #F8FAFC;
             --bg-white: #FFFFFF;
             --navy-dark: #0F172A;
+            --navy-light: #1E293B;
             --blue-primary: #2563EB;
             --blue-hover: #1D4ED8;
+            --blue-light: #EFF6FF;
+            
             --text-main: #0F172A;
             --text-muted: #64748B;
             --border-color: #E2E8F0;
+            
             --alert-red: #EF4444;
             --success-green: #10B981;
             --warning-yellow: #F59E0B;
         }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: var(--font-ui); background-color: var(--bg-body); color: var(--text-main); -webkit-font-smoothing: antialiased; min-height: 100vh; display: flex; flex-direction: column; }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: var(--font-ui); }
+        body { background-color: var(--bg-body); color: var(--text-main); -webkit-font-smoothing: antialiased; overflow-x: hidden; display: flex; flex-direction: column; min-height: 100vh;}
 
-        /* ================= TOP NAVBAR ================= */
+        /* ================= UNIVERSAL TOP NAVBAR (มาตรฐานเดียวกับทุกหน้า) ================= */
         .top-navbar {
             background: var(--bg-white); border-bottom: 1px solid var(--border-color); padding: 0 24px; height: 70px;
-            display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 100; box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 2000; box-shadow: 0 1px 5px rgba(0,0,0,0.03);
         }
-        .nav-left { display: flex; align-items: center; gap: 40px; }
-        .brand { font-family: var(--font-logo); font-size: 1.4rem; color: var(--navy-dark); line-height: 1.1; letter-spacing: 0.5px; text-decoration: none;}
-        .brand span { font-family: var(--font-ui); display: block; font-size: 0.8rem; color: var(--blue-primary); letter-spacing: 0; font-weight: 700;}
-        .nav-links { display: flex; gap: 8px; }
+        
+        .nav-left { display: flex; align-items: center; gap: 20px; }
+        .mobile-toggle { display: none; background: none; border: none; cursor: pointer; color: var(--navy-dark); padding: 5px; border-radius: 8px; transition: 0.2s; }
+        .mobile-toggle:hover { background: #F1F5F9; }
+        .mobile-toggle svg { width: 28px; height: 28px; stroke: currentColor; stroke-width: 2.5; fill: none; display: block;}
+        
+        .brand { font-family: var(--font-logo); font-size: 1.4rem; color: var(--navy-dark); line-height: 1.1; text-decoration: none; letter-spacing: 0.5px;}
+        .brand span { font-family: var(--font-ui); display: block; font-size: 0.8rem; color: var(--blue-primary); font-weight: 700; letter-spacing: 0;}
+
+        .nav-links { display: flex; gap: 5px; }
         .nav-item {
             display: flex; align-items: center; gap: 8px; padding: 10px 16px; color: var(--text-muted); text-decoration: none;
-            font-weight: 600; border-radius: 8px; transition: 0.2s; font-size: 0.95rem;
+            font-weight: 600; border-radius: 10px; transition: 0.2s; font-size: 0.95rem; cursor: pointer;
         }
-        .nav-item svg { width: 18px; height: 18px; stroke: currentColor; stroke-width: 2; fill: none; }
+        .nav-item svg { width: 18px; height: 18px; stroke: currentColor; stroke-width: 2.2; fill: none; flex-shrink: 0; }
         .nav-item:hover { background: #F1F5F9; color: var(--navy-dark); }
         .nav-item.active { background: rgba(37, 99, 235, 0.1); color: var(--blue-primary); }
+
         .nav-right { display: flex; align-items: center; gap: 20px; }
-        .user-profile { display: flex; align-items: center; gap: 12px; text-align: right; }
+        .user-details { text-align: right; line-height: 1.2; }
         .user-details .name { font-weight: 700; font-size: 0.95rem; color: var(--navy-dark); }
-        .user-details .role { font-size: 0.75rem; color: var(--blue-primary); font-weight: 700; text-transform: uppercase; }
+        .user-details .role { font-size: 0.75rem; color: var(--blue-primary); font-weight: 800; text-transform: uppercase; }
+        
         .btn-logout {
-            background: rgba(239, 68, 68, 0.1); color: var(--alert-red); border: none; padding: 8px 12px; border-radius: 8px;
-            cursor: pointer; display: flex; align-items: center; gap: 6px; font-weight: 600; font-family: var(--font-ui); transition: 0.2s;
+            background: #FEF2F2; color: var(--alert-red); border: none; padding: 10px 16px; border-radius: 10px; cursor: pointer;
+            font-weight: 700; font-size: 0.9rem; display: flex; align-items: center; gap: 6px; transition: 0.2s; text-decoration: none; font-family: var(--font-ui);
         }
-        .btn-logout:hover { background: var(--alert-red); color: #FFF; }
-        .btn-logout svg { width: 16px; height: 16px; stroke: currentColor; stroke-width: 2; fill: none; }
-        .mobile-toggle { display: none; background: none; border: none; cursor: pointer; color: var(--navy-dark); }
-        .mobile-toggle svg { width: 28px; height: 28px; stroke: currentColor; stroke-width: 2; fill: none; }
+        .btn-logout:hover { background: var(--alert-red); color: #FFF; box-shadow: 0 4px 10px rgba(239, 68, 68, 0.2); }
+        .btn-logout svg { width: 18px; height: 18px; stroke: currentColor; stroke-width: 2.5; fill: none; flex-shrink: 0;}
 
         /* ================= MAIN CONTENT ================= */
-        .main-container { max-width: 1200px; margin: 0 auto; padding: 40px 24px; width: 100%; flex: 1; }
+        .main-container { max-width: 1200px; margin: 0 auto; padding: 40px 24px; width: 100%; flex: 1;}
+        
         .page-header { margin-bottom: 30px; border-left: 5px solid var(--blue-primary); padding-left: 15px;}
-        .page-header h1 { font-size: 2rem; font-weight: 700; color: var(--navy-dark); margin-bottom: 6px; }
-        .page-header p { color: var(--text-muted); font-size: 1rem; }
+        .page-header h1 { font-size: 2rem; font-weight: 700; color: var(--navy-dark); margin-bottom: 8px;}
+        .page-header p { color: var(--text-muted); font-size: 1.05rem; }
 
         /* TABS */
-        .tabs-container { display: flex; gap: 10px; margin-bottom: 25px; background: #E2E8F0; padding: 6px; border-radius: 14px; width: fit-content; overflow-x: auto;}
+        .tabs-container { display: flex; gap: 10px; margin-bottom: 25px; background: #E2E8F0; padding: 6px; border-radius: 14px; width: fit-content; overflow-x: auto; max-width: 100%;}
         .tab-btn {
-            background: transparent; border: none; padding: 12px 24px; border-radius: 10px; font-size: 0.95rem; font-weight: 700;
-            font-family: var(--font-ui); color: var(--text-muted); cursor: pointer; transition: 0.2s; display: flex; align-items: center; gap: 8px; white-space: nowrap;
+            background: transparent; border: none; padding: 12px 24px; border-radius: 10px;
+            font-size: 1rem; font-weight: 700; font-family: var(--font-ui); color: var(--text-muted);
+            cursor: pointer; transition: 0.2s; display: flex; align-items: center; gap: 8px; white-space: nowrap;
         }
-        .tab-btn svg { width: 20px; height: 20px; stroke: currentColor; stroke-width: 2.5; fill: none; }
+        .tab-btn svg { width: 20px; height: 20px; stroke: currentColor; stroke-width: 2.5; fill: none; flex-shrink: 0;}
         .tab-btn:hover { color: var(--navy-dark); }
         .tab-btn.active { background: var(--bg-white); color: var(--blue-primary); box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+
         .tab-content { display: none; animation: fadeIn 0.3s ease; }
         .tab-content.active { display: block; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
@@ -93,35 +108,38 @@
         .bill-card {
             background: var(--bg-white); border: 1px solid var(--border-color); border-radius: 20px;
             padding: 24px; margin-bottom: 16px; display: flex; justify-content: space-between; align-items: center;
-            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.02); transition: 0.2s;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.02); transition: 0.3s;
         }
         .bill-card:hover { border-color: var(--blue-primary); box-shadow: 0 8px 15px rgba(37,99,235,0.08); transform: translateY(-2px);}
-        .bill-info { display: flex; flex-direction: column; gap: 4px; }
-        .bill-info .room-badge { display: inline-block; background: #EFF6FF; color: var(--blue-primary); padding: 4px 12px; border-radius: 20px; font-size: 0.85rem; font-weight: 800; width: fit-content; margin-bottom: 6px;}
-        .bill-info h3 { font-size: 1.25rem; font-weight: 700; color: var(--navy-dark); }
+        
+        .bill-info { display: flex; flex-direction: column; gap: 6px; }
+        .bill-info .room-badge { display: inline-block; background: #EFF6FF; color: var(--blue-primary); padding: 4px 12px; border-radius: 20px; font-size: 0.85rem; font-weight: 800; width: fit-content; margin-bottom: 4px;}
+        .bill-info h3 { font-size: 1.3rem; font-weight: 700; color: var(--navy-dark); }
         .bill-info p { font-size: 0.95rem; color: var(--text-muted); font-weight: 500;}
+        
         .bill-right { text-align: right; }
         .amount-text { font-size: 1.6rem; font-weight: 800; color: var(--navy-dark); margin-bottom: 12px;}
         .amount-text.unpaid { color: var(--alert-red); }
         .amount-text.paid { color: var(--success-green); }
 
-        .btn-group { display: flex; gap: 10px; justify-content: flex-end; }
-        .btn-act { border: none; padding: 10px 18px; border-radius: 10px; font-weight: 700; font-family: var(--font-ui); font-size: 0.95rem; cursor: pointer; transition: 0.2s; display: flex; align-items: center; gap: 6px; box-shadow: 0 2px 5px rgba(0,0,0,0.05);}
-        .btn-blue { background: var(--blue-primary); color: #FFF; }
-        .btn-green { background: var(--success-green); color: #FFF; }
-        .btn-red { background: var(--alert-red); color: #FFF; }
-        .btn-outline { background: #FFF; color: var(--navy-dark); border: 1px solid var(--border-color); }
-        .btn-act:hover { transform: translateY(-2px); opacity: 0.9; box-shadow: 0 4px 10px rgba(0,0,0,0.1);}
+        .btn-group { display: flex; gap: 10px; justify-content: flex-end; flex-wrap: wrap; }
+        .btn-act { border: none; padding: 10px 18px; border-radius: 10px; font-weight: 700; font-family: var(--font-ui); font-size: 0.95rem; cursor: pointer; transition: 0.2s; display: flex; align-items: center; justify-content: center; gap: 6px;}
+        .btn-blue { background: var(--blue-primary); color: #FFF; box-shadow: 0 4px 10px rgba(37, 99, 235, 0.2);}
+        .btn-green { background: var(--success-green); color: #FFF; box-shadow: 0 4px 10px rgba(16, 185, 129, 0.2);}
+        .btn-red-outline { background: #FEF2F2; color: var(--alert-red); border: 1.5px solid #FCA5A5; }
+        .btn-act:hover { transform: translateY(-2px); opacity: 0.9; }
+        .btn-act svg { width: 18px; height: 18px; stroke: currentColor; stroke-width: 2.5; fill: none; flex-shrink: 0;}
 
-        /* SEARCH & CUSTOM SELECT */
-        .toolbar { display: flex; gap: 15px; margin-bottom: 20px; }
+        /* SEARCH & FILTER */
+        .toolbar { display: flex; gap: 15px; margin-bottom: 20px; align-items: center;}
         .search-box { flex: 1; padding: 14px 20px; border: 1.5px solid var(--border-color); border-radius: 12px; font-size: 1rem; font-family: var(--font-ui); outline: none; transition: 0.2s; }
         .search-box:focus { border-color: var(--blue-primary); box-shadow: 0 0 0 4px rgba(37,99,235,0.1); }
-        
-        .custom-select { position: relative; width: 100%; min-width: 200px; }
+
+        /* CUSTOM SELECT (ทำเอง 100%) */
+        .custom-select { position: relative; width: 100%; min-width: 220px; }
         .select-selected {
             width: 100%; padding: 14px 40px 14px 16px; border: 1.5px solid var(--border-color); border-radius: 12px;
-            font-size: 1rem; font-family: var(--font-ui); color: var(--navy-dark); font-weight: 600; background: #FFF; cursor: pointer; transition: 0.2s;
+            font-size: 1rem; font-family: var(--font-ui); color: var(--navy-dark); font-weight: 600; background: #FFF; cursor: pointer; transition: 0.3s;
             background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2364748B' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
             background-repeat: no-repeat; background-position: right 1rem center; background-size: 1.2em; display: flex; align-items: center;
         }
@@ -129,67 +147,91 @@
             background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%232563EB' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='18 15 12 9 6 15'%3e%3c/polyline%3e%3c/svg%3e"); }
         .select-items {
             position: absolute; background-color: #FFF; top: calc(100% + 5px); left: 0; right: 0; z-index: 99;
-            border: 1px solid var(--border-color); border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); max-height: 220px; overflow-y: auto;
+            border: 1px solid var(--border-color); border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); max-height: 250px; overflow-y: auto; display: none;
         }
-        .select-hide { display: none; }
-        .select-items div { padding: 12px 16px; cursor: pointer; font-size: 0.95rem; border-bottom: 1px solid var(--bg-body); transition: 0.1s;}
-        .select-items div:hover { background-color: #EFF6FF; color: var(--blue-primary); font-weight: 700; padding-left: 20px;}
+        .select-items.show { display: block; }
+        .select-items div { padding: 12px 16px; cursor: pointer; font-size: 0.95rem; border-bottom: 1px solid #F8FAFC; transition: 0.1s;}
+        .select-items div:hover { background-color: #EFF6FF; color: var(--blue-primary); font-weight: 700;}
 
         /* REPORT TABLE */
         .report-header { display: flex; justify-content: space-between; align-items: center; background: #FFF; padding: 20px; border-radius: 20px; border: 1px solid var(--border-color); margin-bottom: 20px;}
-        .table-wrapper { background: #FFF; border: 1px solid var(--border-color); border-radius: 20px; overflow: hidden; }
-        table { width: 100%; border-collapse: collapse; text-align: left; }
+        .table-wrapper { background: #FFF; border: 1px solid var(--border-color); border-radius: 20px; overflow: hidden; overflow-x: auto; }
+        table { width: 100%; border-collapse: collapse; text-align: left; min-width: 600px;}
         th { padding: 16px 24px; background: #F8FAFC; color: var(--navy-dark); font-weight: 700; border-bottom: 1px solid var(--border-color); font-size: 0.95rem;}
         td { padding: 16px 24px; border-bottom: 1px solid var(--border-color); font-size: 1rem; }
         .t-footer { background: #F8FAFC; font-weight: 800; font-size: 1.1rem; }
         .print-header { display: none; text-align: center; margin-bottom: 30px; }
 
-        /* MODALS */
-        .custom-modal { position: fixed; inset: 0; background: rgba(15,23,42,0.6); backdrop-filter: blur(4px); z-index: 9999; display: none; justify-content: center; align-items: center; padding: 20px; }
-        .custom-modal.show { display: flex; animation: fadeIn 0.2s; }
-        .modal-box { background: #FFF; padding: 30px; border-radius: 24px; width: 100%; max-width: 450px; text-align: center; box-shadow: 0 20px 60px rgba(0,0,0,0.2); }
+        /* MODALS & TOAST */
+        .custom-modal-overlay {
+            position: fixed; inset: 0; background: rgba(15, 23, 42, 0.4); backdrop-filter: blur(3px);
+            z-index: 9999; display: flex; justify-content: center; align-items: center; opacity: 0; pointer-events: none; transition: 0.3s;
+        }
+        .custom-modal-overlay.show { opacity: 1; pointer-events: auto; }
+        .modal-box { background: #FFF; padding: 30px; border-radius: 20px; width: 100%; max-width: 420px; box-shadow: 0 20px 50px rgba(0,0,0,0.15); transform: scale(0.9); transition: 0.3s; text-align: center;}
+        .custom-modal-overlay.show .modal-box { transform: scale(1); }
         .slip-preview { width: 100%; max-height: 60vh; object-fit: contain; border-radius: 12px; margin-bottom: 20px; border: 1px solid var(--border-color); background: #F8FAFC; }
+        
         .form-group-modal { text-align: left; margin-bottom: 15px; }
         .form-group-modal label { display: block; font-weight: 700; color: var(--navy-dark); margin-bottom: 8px; font-size: 0.95rem;}
 
-        #smart-toast { position: fixed; top: -100px; left: 50%; transform: translateX(-50%); background: #FFF; padding: 16px 32px; border-radius: 50px; box-shadow: 0 10px 40px rgba(0,0,0,0.15); z-index: 10000; transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); display: flex; align-items: center; gap: 12px; font-weight: 700; font-size: 1.05rem; }
-        #smart-toast.show { top: 30px; }
+        #smart-toast {
+            position: fixed; top: -100px; left: 50%; transform: translateX(-50%);
+            background: #FFF; padding: 14px 24px; border-radius: 50px; box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            z-index: 10000; transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); border: 1px solid var(--border-color);
+            display: flex; align-items: center; gap: 10px; font-weight: 700; font-size: 0.95rem; color: var(--navy-dark);
+        }
+        #smart-toast.show { top: 20px; }
+        .toast-icon svg { width: 20px; height: 20px; fill: none; stroke-width: 2.5; }
 
-        /* RESPONSIVE */
-        @media (max-width: 1000px) {
-            .nav-links { display: none; position: absolute; top: 70px; left: 0; width: 100%; background: #FFF; flex-direction: column; padding: 20px; border-bottom: 1px solid var(--border-color); box-shadow: 0 10px 15px rgba(0,0,0,0.05);}
-            .nav-links.active { display: flex; }
+        /* ================= MOBILE RESPONSIVE ================= */
+        @media (max-width: 1024px) { 
+            .nav-links {
+                position: fixed; top: 70px; left: -100%; width: 280px; height: calc(100vh - 70px);
+                background: var(--bg-white); flex-direction: column; padding: 20px; gap: 5px;
+                box-shadow: 4px 0 15px rgba(0,0,0,0.05); transition: 0.4s ease; z-index: 1999;
+                border-right: 1px solid var(--border-color);
+            }
+            .nav-links.show { left: 0; }
+            .nav-item { padding: 14px 20px; border-radius: 12px; font-size: 1.05rem; }
             .mobile-toggle { display: block; }
             .user-details { display: none; }
-            .bill-card { flex-direction: column; align-items: flex-start; }
-            .bill-right { width: 100%; border-top: 1px solid var(--border-color); margin-top: 15px; padding-top: 15px; text-align: left; }
-            .toolbar { flex-direction: column; }
+            .nav-left { gap: 15px; }
+            .btn-logout span { display: none; }
+            .btn-logout { padding: 10px; }
+            
+            .bill-card { flex-direction: column; align-items: flex-start; gap: 15px; }
+            .bill-right { width: 100%; border-top: 1px solid var(--border-color); padding-top: 15px; text-align: left; }
+            .btn-group { justify-content: flex-start; }
+            .toolbar { flex-direction: column; align-items: stretch; }
+            .report-header { flex-direction: column; gap: 15px; align-items: stretch;}
         }
 
+        /* ================= PRINT STYLES ================= */
         @media print {
             body { background: #FFF; }
             .top-navbar, .tabs-container, .page-header, .report-header, .btn-logout, .bill-card { display: none !important; }
             .main-container { padding: 0; max-width: 100%; }
             .table-wrapper { border: none; display: block !important;}
             .print-header { display: block; }
-            #report-unpaid { display: block !important; }
+            #tab-report { display: block !important; }
             th { background: #EEE !important; -webkit-print-color-adjust: exact; }
         }
     </style>
 </head>
 <body>
 
-    <div id="smart-toast"><span id="toast-msg"></span></div>
+    <div id="smart-toast"><div class="toast-icon" id="toast-icon-container"></div><span id="toast-msg"></span></div>
 
-    <div class="custom-modal" id="slip-modal">
+    <div class="custom-modal-overlay" id="slip-modal">
         <div class="modal-box">
             <h3 style="margin-bottom:20px; color:var(--navy-dark);">หลักฐานการโอนเงิน</h3>
             <img src="" id="img-preview" class="slip-preview">
-            <button class="btn-act btn-outline" style="width:100%; justify-content:center;" onclick="closeModal('slip-modal')">ปิดหน้าต่าง</button>
+            <button class="btn-act" style="width:100%; background:#F1F5F9; color:var(--navy-dark); justify-content:center;" onclick="closeModal('slip-modal')">ปิดหน้าต่าง</button>
         </div>
     </div>
 
-    <div class="custom-modal" id="pay-modal">
+    <div class="custom-modal-overlay" id="pay-modal">
         <div class="modal-box">
             <h3 style="color: var(--navy-dark); margin-bottom: 5px;" id="pay-title">บันทึกรับชำระเงิน</h3>
             <p style="color: var(--text-muted); font-size: 0.95rem; margin-bottom: 20px;">ห้อง: <strong id="pay-room" style="color:var(--navy-dark);"></strong></p>
@@ -202,7 +244,7 @@
             <div class="form-group-modal" id="fg-pay-month">
                 <label>ชำระสำหรับงวดเดือน</label>
                 <div class="custom-select">
-                    <div class="select-selected" id="display-pay-month"></div>
+                    <div class="select-selected" id="display-pay-month">เลือกเดือน</div>
                     <div class="select-items select-hide" id="options-pay-month"></div>
                     <input type="hidden" id="pay-month">
                 </div>
@@ -221,15 +263,30 @@
             </div>
             
             <div style="display: flex; gap: 10px; margin-top: 25px;">
-                <button class="btn-act btn-outline" style="flex:1; justify-content:center;" onclick="closeModal('pay-modal')">ยกเลิก</button>
+                <button class="btn-act" style="flex:1; justify-content:center; background:#F1F5F9; color:var(--text-muted);" onclick="closeModal('pay-modal')">ยกเลิก</button>
                 <button class="btn-act btn-blue" style="flex:1; justify-content:center;" id="btn-do-pay">บันทึกรับชำระ</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="custom-modal-overlay" id="confirm-modal">
+        <div class="modal-box">
+            <h3 id="confirm-title" style="margin-bottom: 10px; color:var(--navy-dark);">ยืนยันการทำรายการ</h3>
+            <p style="color: var(--text-muted); font-size: 0.95rem; margin-bottom: 25px;">ห้อง: <strong id="confirm-room" style="color:var(--navy-dark);"></strong></p>
+            <div style="display:flex; gap:10px;">
+                <button class="btn-act" style="flex:1; background:#F1F5F9; color:var(--text-muted); justify-content:center;" onclick="closeModal('confirm-modal')">ยกเลิก</button>
+                <button class="btn-act" id="btn-do-confirm" style="flex:1; background:var(--blue-primary); color:#FFF; justify-content:center;">ยืนยัน</button>
             </div>
         </div>
     </div>
 
     <nav class="top-navbar">
         <div class="nav-left">
+            <button class="mobile-toggle" id="mobile-menu-btn">
+                <svg viewBox="0 0 24 24"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+            </button>
             <a href="dashboard.html" class="brand">PAK PHANANG<br><span>Prestige Hall</span></a>
+            
             <div class="nav-links" id="nav-links">
                 <a href="dashboard.html" class="nav-item">
                     <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg> ภาพรวมระบบ
@@ -241,20 +298,19 @@
                     <svg viewBox="0 0 24 24"><rect x="2" y="5" width="20" height="14" rx="2" ry="2"></rect><line x1="2" y1="10" x2="22" y2="10"></line></svg> รับชำระเงิน/บิล
                 </a>
                 <a href="maintenance.html" class="nav-item">
-                    <svg viewBox="0 0 24 24"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"></path></svg> แจ้งซ่อม
+                    <svg viewBox="0 0 24 24"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"></path></svg> แจ้งซ่อม/ประกาศ
                 </a>
                 <a href="settings.html" class="nav-item" id="nav-settings" style="display: none;">
                     <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"></circle></svg> ตั้งค่าระบบ
                 </a>
             </div>
         </div>
+
         <div class="nav-right">
-            <div class="user-details"><div class="name" id="display-name">...</div><div class="role" id="display-role">ADMIN</div></div>
-            <button class="btn-logout" id="logout-btn">
-                ออกระบบ <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="3" fill="none"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
-            </button>
-            <button class="mobile-toggle" id="mobile-toggle">
-                <svg viewBox="0 0 24 24" width="28" height="28" stroke="currentColor" stroke-width="2.5" fill="none"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+            <div class="user-details"><div class="name" id="display-name">กำลังโหลด...</div><div class="role" id="display-role">ADMIN</div></div>
+            <button class="btn-logout" id="btn-logout">
+                <span>ออกระบบ</span>
+                <svg viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
             </button>
         </div>
     </nav>
@@ -262,7 +318,7 @@
     <main class="main-container">
         <div class="page-header">
             <h1>ระบบรับชำระเงิน และออกรายงาน</h1>
-            <p>เรียกเก็บเงิน ตรวจสอบสลิป และตรวจสอบประวัติการชำระเงิน</p>
+            <p>เรียกเก็บเงิน ตรวจสอบสลิป และดูประวัติการชำระเงินของลูกบ้าน</p>
         </div>
 
         <div class="tabs-container">
@@ -276,7 +332,7 @@
                 <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg> ประวัติการชำระ
             </button>
             <button class="tab-btn" onclick="switchTab('tab-report', this)">
-                <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg> รายงานยอดค้าง
+                <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg> รายงานยอดค้าง
             </button>
         </div>
 
@@ -284,7 +340,7 @@
             <div class="toolbar">
                 <input type="text" id="search-collect" class="search-box" placeholder="ค้นหาเลขห้อง หรือ ชื่อ..." onkeyup="filterCollect()">
             </div>
-            <div id="collect-list"><p style="text-align:center; padding:40px; color:var(--text-muted);">กำลังโหลดข้อมูล...</p></div>
+            <div id="collect-list"><p style="text-align:center; padding:40px; color:var(--text-muted);">กำลังโหลดข้อมูลผู้เช่า...</p></div>
         </div>
 
         <div id="tab-slip" class="tab-content">
@@ -292,11 +348,11 @@
         </div>
 
         <div id="tab-history" class="tab-content">
-            <div class="toolbar" style="max-width: 300px;">
-                <div class="custom-select" id="fg-history-month">
-                    <div class="select-selected" id="display-history-month">ทุกเดือน</div>
+            <div class="toolbar">
+                <div class="custom-select" style="max-width: 300px;">
+                    <div class="select-selected" id="display-history-month">ทุกเดือน (ประวัติทั้งหมด)</div>
                     <div class="select-items select-hide" id="options-history-month"></div>
-                    <input type="hidden" id="history-month" value="ALL" onchange="renderHistory()">
+                    <input type="hidden" id="history-month" value="ALL">
                 </div>
             </div>
             <div id="history-list"></div>
@@ -304,19 +360,21 @@
 
         <div id="tab-report" class="tab-content">
             <div class="report-header">
-                <div style="display: flex; align-items: center; gap: 15px;">
-                    <span style="font-weight:700; color:var(--navy-dark);">สถานะยอดค้าง:</span>
-                    <div class="custom-select" style="min-width: 250px;" id="fg-report-type">
+                <div style="display: flex; align-items: center; gap: 15px; width: 100%;">
+                    <span style="font-weight:700; color:var(--navy-dark); white-space:nowrap;">สถานะยอดค้าง:</span>
+                    <div class="custom-select" style="flex:1; max-width: 300px;">
                         <div class="select-selected" id="display-report-type">รวมทุกประเภทค้างชำระ</div>
                         <div class="select-items select-hide" id="options-report-type">
                             <div data-val="ALL">รวมทุกประเภทค้างชำระ</div>
                             <div data-val="MONTHLY">เฉพาะค่าเช่ารายเดือน</div>
                             <div data-val="INITIAL">เฉพาะยอดยกมา/แรกเข้า</div>
                         </div>
-                        <input type="hidden" id="report-type" value="ALL" onchange="renderReport()">
+                        <input type="hidden" id="report-type" value="ALL">
                     </div>
                 </div>
-                <button class="btn-act btn-blue" onclick="window.print()">พิมพ์รายงาน</button>
+                <button class="btn-act btn-blue" onclick="window.print()" style="white-space:nowrap;">
+                    <svg viewBox="0 0 24 24"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg> พิมพ์รายงาน
+                </button>
             </div>
 
             <div class="print-header">
@@ -346,8 +404,15 @@
 
         function toast(msg, type = 'success') {
             const t = document.getElementById('smart-toast');
+            t.style.borderColor = type === 'success' ? 'var(--success-green)' : 'var(--alert-red)';
             t.style.color = type === 'success' ? 'var(--success-green)' : 'var(--alert-red)';
-            t.innerText = msg; t.classList.add('show');
+            document.getElementById('toast-msg').innerText = msg;
+            const icon = document.getElementById('toast-icon-container');
+            icon.style.color = type === 'success' ? 'var(--success-green)' : 'var(--alert-red)';
+            icon.innerHTML = type === 'success' 
+                ? `<svg viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>` 
+                : `<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>`;
+            t.classList.add('show');
             setTimeout(() => t.classList.remove('show'), 3000);
         }
 
@@ -360,7 +425,7 @@
         function closeModal(id) { document.getElementById(id).classList.remove('show'); }
 
         // --- Custom Select Logic ---
-        function initCustomSelect(idName) {
+        function initCustomSelect(idName, callback) {
             const display = document.getElementById(`display-${idName}`);
             const options = document.getElementById(`options-${idName}`);
             const hidden = document.getElementById(idName);
@@ -375,7 +440,7 @@
                     display.innerText = e.target.innerText;
                     hidden.value = e.target.getAttribute('data-val');
                     options.classList.add('select-hide'); display.classList.remove('active');
-                    hidden.dispatchEvent(new Event('change')); 
+                    if(callback) callback(); 
                 }
             });
         }
@@ -400,21 +465,25 @@
         // INIT & LOAD DATA
         // ==========================================
         async function init() {
-            document.getElementById('mobile-toggle').addEventListener('click', () => { document.getElementById('nav-links').classList.toggle('show'); });
-            document.getElementById('logout-btn').addEventListener('click', () => { localStorage.removeItem('admin_user_data'); window.location.href = 'index.html'; });
+            // Navbar Mobile Toggle
+            document.getElementById('mobile-menu-btn').addEventListener('click', () => { document.getElementById('nav-links').classList.toggle('show'); });
+            
+            // Logout
+            document.getElementById('btn-logout').addEventListener('click', () => { localStorage.removeItem('admin_user_data'); window.location.href = 'index.html'; });
 
+            // Session
             const admin = JSON.parse(localStorage.getItem('admin_user_data'));
             if(admin) {
-                document.getElementById('display-name').innerText = admin.first_name + " " + admin.last_name;
+                document.getElementById('display-name').innerText = `${admin.first_name} ${admin.last_name}`;
                 document.getElementById('display-role').innerText = admin.role;
                 if(admin.role === 'PRESIDENT') document.getElementById('nav-settings').style.display = 'flex';
             }
 
-            // Init Custom Selects
-            initCustomSelect('pay-month');
+            // ตั้งค่า Custom Selects
             initCustomSelect('pay-method');
-            initCustomSelect('history-month');
-            initCustomSelect('report-type');
+            initCustomSelect('pay-month');
+            initCustomSelect('history-month', renderHistory);
+            initCustomSelect('report-type', renderReport);
 
             const thaiMonths = ["มกราคม", "กุมภาพันธ์", "มีนาคม", "เมษายน", "พฤษภาคม", "มิถุนายน", "กรกฎาคม", "สิงหาคม", "กันยายน", "ตุลาคม", "พฤศจิกายน", "ธันวาคม"];
             const now = new Date();
@@ -428,8 +497,8 @@
             }
             populateCustomOptions('pay-month', monthOpts, 'text', 'val');
 
-            // สร้างตัวเลือกเดือนสำหรับ History (ย้อนหลัง)
-            let histOpts = [{val: 'ALL', text: 'ทุกเดือน'}];
+            // สร้างตัวเลือกเดือนสำหรับ History (ย้อนหลัง 6 เดือน)
+            let histOpts = [{val: 'ALL', text: 'ทุกเดือน (ประวัติทั้งหมด)'}];
             for(let i=0; i<6; i++) {
                 const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
                 histOpts.push({ val: `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`, text: `${thaiMonths[d.getMonth()]} ${d.getFullYear()+543}`});
@@ -441,7 +510,6 @@
 
         async function fetchData() {
             try {
-                // ดึง 2 ตารางแยกกัน (ตัดปัญหา Join table แอดวานซ์)
                 const [tRes, bRes] = await Promise.all([
                     fetch(`${SB_URL}/dorm_tenants?status=eq.ACTIVE&order=room_number.asc`, { headers: { 'apikey': SB_KEY, 'Authorization': `Bearer ${SB_KEY}` } }),
                     fetch(`${SB_URL}/billing_statements?order=created_at.desc`, { headers: { 'apikey': SB_KEY, 'Authorization': `Bearer ${SB_KEY}` } })
@@ -459,7 +527,7 @@
 
             } catch(e) {
                 toast("เกิดข้อผิดพลาดในการโหลดข้อมูล", "error");
-                document.getElementById('collect-list').innerHTML = `<p style="text-align:center; color:red;">ไม่สามารถดึงข้อมูลได้</p>`;
+                document.getElementById('collect-list').innerHTML = `<p style="text-align:center; color:var(--alert-red);">ไม่สามารถดึงข้อมูลได้</p>`;
             }
         }
 
@@ -471,7 +539,7 @@
         }
         function formatDate(ds) {
             if(!ds) return '-'; const d = new Date(ds);
-            return `${d.getDate()}/${d.getMonth()+1}/${d.getFullYear()+543}`;
+            return `${String(d.getDate()).padStart(2,'0')}/${String(d.getMonth()+1).padStart(2,'0')}/${d.getFullYear()+543}`;
         }
 
         // ==========================================
@@ -489,15 +557,15 @@
                 const rent = parseFloat(t.monthly_rent) || 0;
                 const debt = parseFloat(t.initial_debt) || 0;
                 
-                let btns = `<button class="btn-act btn-blue" onclick="openPayModal('${t.id}', '${t.room_number}', ${rent}, 'MONTHLY')">รับชำระค่าเช่า</button>`;
-                if(debt > 0) btns += `<button class="btn-act btn-red-outline" onclick="openPayModal('${t.id}', '${t.room_number}', ${debt}, 'INITIAL')">รับชำระยอดยกมา</button>`;
+                let btns = `<button class="btn-act btn-blue" onclick="openPayModal('${t.id}', '${t.room_number}', ${rent}, 'MONTHLY')"><svg viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"></line><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg> รับชำระค่าเช่า</button>`;
+                if(debt > 0) btns += `<button class="btn-act btn-red-outline" onclick="openPayModal('${t.id}', '${t.room_number}', ${debt}, 'INITIAL')"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg> รับชำระยอดยกมา</button>`;
 
                 return `
                 <div class="bill-card collect-item" data-search="${t.room_number} ${t.full_name.toLowerCase()}">
                     <div class="bill-info">
                         <span class="room-badge">ห้อง ${t.room_number}</span>
                         <h3>คุณ${t.full_name}</h3>
-                        <p style="color:var(--text-muted); font-size:0.85rem;">อัตราค่าเช่า: ฿${rent.toLocaleString()} / ยอดยกมา: ฿${debt.toLocaleString()}</p>
+                        <p>อัตราค่าเช่า: ฿${rent.toLocaleString()} / ยอดยกมา: ฿${debt.toLocaleString()}</p>
                     </div>
                     <div class="bill-right">
                         <div class="btn-group">${btns}</div>
@@ -526,11 +594,11 @@
                 <div class="bill-card">
                     <div class="bill-info"><span class="room-badge">ห้อง ${b.room_number}</span><h3>คุณ${tenant.full_name}</h3><p>ชำระงวด: ${formatMonth(b.billing_month)}</p></div>
                     <div class="bill-right">
-                        <div class="amount-text">฿${parseFloat(b.amount_due).toLocaleString()}</div>
+                        <div class="amount-text">฿${parseFloat(b.amount_due).toLocaleString('en-US', {minimumFractionDigits:2})}</div>
                         <div class="btn-group">
-                            <button class="btn-act btn-outline" onclick="openSlip('${b.slip_image_url}')">ดูสลิป</button>
-                            <button class="btn-act btn-green" onclick="handleSlip('${b.id}', 'PAID')">รับยอด</button>
-                            <button class="btn-act btn-red-outline" onclick="handleSlip('${b.id}', 'UNPAID')">ปฏิเสธ</button>
+                            <button class="btn-act btn-outline" onclick="openSlip('${b.slip_image_url}')"><svg viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg> ดูสลิป</button>
+                            <button class="btn-act btn-green" onclick="actionConfirm('${b.id}', 'APPROVE', '${b.room_number}', '${b.amount_due}')"><svg viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg> รับยอด</button>
+                            <button class="btn-act btn-red-outline" onclick="actionConfirm('${b.id}', 'REJECT', '${b.room_number}', '${b.amount_due}')"><svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg> ปฏิเสธ</button>
                         </div>
                     </div>
                 </div>`;
@@ -544,15 +612,18 @@
             let history = allBills.filter(b => b.payment_status === 'PAID');
             if(filter !== 'ALL') history = history.filter(b => b.billing_month === filter);
 
-            if(history.length === 0) { list.innerHTML = `<div class="bill-card" style="justify-content:center; color:var(--text-muted);">ไม่มีประวัติการชำระ</div>`; return; }
+            if(history.length === 0) { list.innerHTML = `<div class="bill-card" style="justify-content:center; color:var(--text-muted);">ไม่มีประวัติการชำระในระบบ</div>`; return; }
 
             list.innerHTML = history.map(b => {
                 const tenant = activeTenants.find(t => t.room_number === b.room_number) || { full_name: 'ไม่พบชื่อ' };
                 const method = b.payment_method === 'CASH' ? 'เงินสด' : 'เงินโอน';
                 return `
-                <div class="bill-card" style="padding:15px 24px;">
-                    <div class="bill-info"><div style="font-weight:700; color:var(--navy-dark); font-size:1.1rem;">ห้อง ${b.room_number} : คุณ${tenant.full_name}</div><p style="font-size:0.85rem;">งวด: ${formatMonth(b.billing_month)} | ชำระเมื่อ: ${formatDate(b.paid_at)} (${method})</p></div>
-                    <div class="bill-right"><div class="amount-text" style="color:var(--success-green); font-size:1.4rem; margin:0;">+ ฿${parseFloat(b.amount_due).toLocaleString()}</div></div>
+                <div class="bill-card" style="padding:20px 24px;">
+                    <div class="bill-info">
+                        <div style="font-weight:700; color:var(--navy-dark); font-size:1.15rem;">ห้อง ${b.room_number} : คุณ${tenant.full_name}</div>
+                        <p style="font-size:0.9rem;">งวด: ${formatMonth(b.billing_month)} | ชำระเมื่อ: ${formatDate(b.paid_at)} (${method})</p>
+                    </div>
+                    <div class="bill-right"><div class="amount-text paid" style="margin:0;">+ ฿${parseFloat(b.amount_due).toLocaleString('en-US', {minimumFractionDigits:2})}</div></div>
                 </div>`;
             }).join('');
         }
@@ -561,10 +632,7 @@
         function renderReport() {
             const tbody = document.getElementById('report-body');
             const typeFilter = document.getElementById('report-type').value;
-            let total = 0;
-            let rows = '';
-
-            // รวบรวมยอดค้างทั้งหมด
+            let total = 0; let rows = '';
             let unpaidList = [];
 
             // 1. ค้างรายเดือน
@@ -581,11 +649,10 @@
                 });
             }
 
-            // เรียงและสร้างแถว
             unpaidList.sort((a, b) => a.room.localeCompare(b.room));
             
             if(unpaidList.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="4" style="text-align:center; padding:30px;">ไม่มีข้อมูลค้างชำระ</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="4" style="text-align:center; padding:30px;">เยี่ยมมาก! ไม่มีข้อมูลค้างชำระ</td></tr>`;
                 document.getElementById('grand-total').innerText = '฿0.00'; return;
             }
 
@@ -606,7 +673,6 @@
         
         function openPayModal(tenantId, room, amount, type) {
             currentPayData = { tenantId, room, amount, type };
-            
             document.getElementById('pay-room').innerText = room;
             document.getElementById('pay-amount').value = amount;
             
@@ -615,14 +681,12 @@
                 monthDiv.style.display = 'none'; // ซ่อนเดือนถ้ารับยอดยกมา
             } else {
                 monthDiv.style.display = 'block';
-                // เลือกดรอปดาวน์อันแรกเป็นค่าปริยาย
                 const firstMonth = document.getElementById('options-pay-month').firstChild;
                 if(firstMonth) {
                     document.getElementById('display-pay-month').innerText = firstMonth.innerText;
                     document.getElementById('pay-month').value = firstMonth.getAttribute('data-val');
                 }
             }
-            
             document.getElementById('pay-modal').classList.add('show');
         }
 
@@ -639,18 +703,16 @@
 
             try {
                 if(currentPayData.type === 'INITIAL') {
-                    // รับชำระยอดยกมา -> หักลบจากตาราง dorm_tenants
+                    // รับชำระยอดยกมา
                     const tenant = activeTenants.find(t => t.id === currentPayData.tenantId);
                     const newDebt = Math.max(0, parseFloat(tenant.initial_debt) - amt);
-                    
                     const res = await fetch(`${SB_URL}/dorm_tenants?id=eq.${currentPayData.tenantId}`, {
                         method: 'PATCH', headers: { 'Content-Type': 'application/json', 'apikey': SB_KEY, 'Authorization': `Bearer ${SB_KEY}` },
                         body: JSON.stringify({ initial_debt: newDebt })
                     });
                     if(!res.ok) throw new Error();
                 } else {
-                    // รับชำระรายเดือน -> บันทึกเข้าตาราง billing_statements
-                    // เช็คก่อนว่ามีบิลเดือนนี้ที่ยัง UNPAID อยู่ไหม ถ้ามีให้ PATCH ถ้าไม่มีให้ POST
+                    // รับชำระรายเดือน
                     const checkRes = await fetch(`${SB_URL}/billing_statements?room_number=eq.${currentPayData.room}&billing_month=eq.${month}`, { headers: { 'apikey': SB_KEY, 'Authorization': `Bearer ${SB_KEY}` } });
                     const existing = await checkRes.json();
 
@@ -672,20 +734,52 @@
             finally { btn.disabled = false; btn.innerText = 'บันทึกรับชำระ'; }
         });
 
-        async function handleSlip(id, status) {
+        // สลิป Approve / Reject
+        let confirmActionData = {};
+        function actionConfirm(id, type, room, amount) {
+            confirmActionData = { id, type };
+            document.getElementById('confirm-room').innerText = room;
+            document.getElementById('confirm-amount').innerText = `฿${parseFloat(amount).toLocaleString()}`;
+            
+            const title = document.getElementById('confirm-title');
+            const btn = document.getElementById('btn-do-confirm');
+            
+            if(type === 'APPROVE') {
+                title.innerText = 'ยืนยันรับยอดโอน?'; title.style.color = 'var(--navy-dark)';
+                btn.innerText = 'ยืนยันรับยอด'; btn.style.background = 'var(--success-green)';
+            } else if (type === 'REJECT') {
+                title.innerText = 'ปฏิเสธสลิปนี้?'; title.style.color = 'var(--alert-red)';
+                btn.innerText = 'ปฏิเสธสลิป'; btn.style.background = 'var(--alert-red)';
+            }
+            document.getElementById('confirm-modal').classList.add('show');
+        }
+
+        document.getElementById('btn-do-confirm').addEventListener('click', async () => {
+            if(!confirmActionData.id) return;
+            const btn = document.getElementById('btn-do-confirm');
+            btn.disabled = true; btn.innerText = 'ประมวลผล...';
+
             try {
-                const payload = { payment_status: status, paid_at: status === 'PAID' ? new Date().toISOString() : null };
-                if(status === 'UNPAID') payload.slip_image_url = null; // ปฏิเสธให้ลบรูป
-                
-                const res = await fetch(`${SB_URL}/billing_statements?id=eq.${id}`, { method: 'PATCH', headers: { 'Content-Type': 'application/json', 'apikey': SB_KEY, 'Authorization': `Bearer ${SB_KEY}` }, body: JSON.stringify(payload) });
+                let payload = {};
+                if(confirmActionData.type === 'APPROVE') payload = { payment_status: 'PAID', paid_at: new Date().toISOString() };
+                else if(confirmActionData.type === 'REJECT') payload = { payment_status: 'UNPAID', slip_image_url: null };
+
+                const res = await fetch(`${SB_URL}/billing_statements?id=eq.${confirmActionData.id}`, {
+                    method: 'PATCH', headers: { 'Content-Type': 'application/json', 'apikey': SB_KEY, 'Authorization': `Bearer ${SB_KEY}` }, body: JSON.stringify(payload)
+                });
                 if(!res.ok) throw new Error();
                 
                 toast('ทำรายการสำเร็จ', 'success');
+                closeModal('confirm-modal');
                 await fetchData();
             } catch(e) { toast('เกิดข้อผิดพลาด', 'error'); }
-        }
+            finally { btn.disabled = false; }
+        });
 
-        function openSlip(url) { document.getElementById('img-preview').src = url || ''; document.getElementById('slip-modal').classList.add('show'); }
+        function openSlip(url) {
+            document.getElementById('img-preview').src = url || 'https://via.placeholder.com/400x600?text=No+Image';
+            document.getElementById('slip-modal').classList.add('show');
+        }
 
         init();
     </script>
