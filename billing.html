@@ -3,12 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>รับชำระเงิน/บิล - Pak Phanang Prestige Hall</title>
+    <title>จัดการการเงิน - Pak Phanang Prestige Hall</title>
     
     <link href="https://fonts.googleapis.com/css2?family=Anuphan:wght@300;400;500;600;700&family=Audiowide&display=swap" rel="stylesheet">
     
     <script>
-        // 🔒 ป้องกันคนข้ามหน้า (Check Session)
         (function() {
             try {
                 const sessionStr = localStorage.getItem('admin_user_data');
@@ -26,762 +25,468 @@
         :root {
             --font-ui: 'Anuphan', sans-serif;
             --font-logo: 'Audiowide', cursive;
-            
-            --bg-body: #F8FAFC;
+            --navy-primary: #0F172A; 
+            --blue-accent: #2563EB; 
+            --bg-light: #F8FAFC;
             --bg-white: #FFFFFF;
-            --navy-dark: #0F172A;
-            --navy-light: #1E293B;
-            --blue-primary: #2563EB;
-            --blue-hover: #1D4ED8;
-            --blue-light: #EFF6FF;
-            
-            --text-main: #0F172A;
-            --text-muted: #64748B;
+            --text-main: #1E293B;
+            --text-gray: #64748B;
             --border-color: #E2E8F0;
-            
             --alert-red: #EF4444;
             --success-green: #10B981;
             --warning-yellow: #F59E0B;
         }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: var(--font-ui); }
-        body { background-color: var(--bg-body); color: var(--text-main); -webkit-font-smoothing: antialiased; overflow-x: hidden; display: flex; flex-direction: column; min-height: 100vh;}
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: var(--font-ui); background-color: var(--bg-light); color: var(--text-main); -webkit-font-smoothing: antialiased; display: flex; flex-direction: column; min-height: 100vh; overflow-x: hidden; }
 
-        /* ================= UNIVERSAL TOP NAVBAR (มาตรฐานเดียวกับทุกหน้า) ================= */
+        /* ================= TOP NAVBAR ================= */
         .top-navbar {
-            background: var(--bg-white); border-bottom: 1px solid var(--border-color); padding: 0 24px; height: 70px;
-            display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 2000; box-shadow: 0 1px 5px rgba(0,0,0,0.03);
+            background: var(--bg-white); border-bottom: 1px solid var(--border-color); padding: 0 30px; height: 75px;
+            display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 2000; box-shadow: 0 2px 10px rgba(0,0,0,0.03);
         }
+        .brand { font-family: var(--font-logo); font-size: 1.4rem; color: var(--navy-primary); line-height: 1.1; letter-spacing: 0.5px; text-decoration: none;}
+        .brand span { font-family: var(--font-ui); display: block; font-size: 0.8rem; color: var(--blue-accent); font-weight: 800;}
         
-        .nav-left { display: flex; align-items: center; gap: 20px; }
-        .mobile-toggle { display: none; background: none; border: none; cursor: pointer; color: var(--navy-dark); padding: 5px; border-radius: 8px; transition: 0.2s; }
-        .mobile-toggle:hover { background: #F1F5F9; }
-        .mobile-toggle svg { width: 28px; height: 28px; stroke: currentColor; stroke-width: 2.5; fill: none; display: block;}
-        
-        .brand { font-family: var(--font-logo); font-size: 1.4rem; color: var(--navy-dark); line-height: 1.1; text-decoration: none; letter-spacing: 0.5px;}
-        .brand span { font-family: var(--font-ui); display: block; font-size: 0.8rem; color: var(--blue-primary); font-weight: 700; letter-spacing: 0;}
-
         .nav-links { display: flex; gap: 5px; }
-        .nav-item {
-            display: flex; align-items: center; gap: 8px; padding: 10px 16px; color: var(--text-muted); text-decoration: none;
-            font-weight: 600; border-radius: 10px; transition: 0.2s; font-size: 0.95rem; cursor: pointer;
-        }
-        .nav-item svg { width: 18px; height: 18px; stroke: currentColor; stroke-width: 2.2; fill: none; flex-shrink: 0; }
-        .nav-item:hover { background: #F1F5F9; color: var(--navy-dark); }
-        .nav-item.active { background: rgba(37, 99, 235, 0.1); color: var(--blue-primary); }
+        .nav-item { display: flex; align-items: center; gap: 8px; padding: 10px 16px; color: var(--text-gray); text-decoration: none; font-weight: 700; border-radius: 12px; transition: 0.2s; font-size: 0.95rem; cursor: pointer; }
+        .nav-item svg { width: 18px; height: 18px; stroke: currentColor; stroke-width: 2.5; fill: none; }
+        .nav-item:hover { background: #F1F5F9; color: var(--navy-primary); }
+        .nav-item.active { background: rgba(37, 99, 235, 0.1); color: var(--blue-accent); }
 
-        .nav-right { display: flex; align-items: center; gap: 20px; }
-        .user-details { text-align: right; line-height: 1.2; }
-        .user-details .name { font-weight: 700; font-size: 0.95rem; color: var(--navy-dark); }
-        .user-details .role { font-size: 0.75rem; color: var(--blue-primary); font-weight: 800; text-transform: uppercase; }
-        
-        .btn-logout {
-            background: #FEF2F2; color: var(--alert-red); border: none; padding: 10px 16px; border-radius: 10px; cursor: pointer;
-            font-weight: 700; font-size: 0.9rem; display: flex; align-items: center; gap: 6px; transition: 0.2s; text-decoration: none; font-family: var(--font-ui);
-        }
-        .btn-logout:hover { background: var(--alert-red); color: #FFF; box-shadow: 0 4px 10px rgba(239, 68, 68, 0.2); }
-        .btn-logout svg { width: 18px; height: 18px; stroke: currentColor; stroke-width: 2.5; fill: none; flex-shrink: 0;}
+        .btn-logout { background: #FEF2F2; color: var(--alert-red); border: none; padding: 10px 18px; border-radius: 12px; cursor: pointer; font-weight: 700; font-size: 0.95rem; display: flex; align-items: center; gap: 8px; transition: 0.2s; font-family: var(--font-ui); }
+        .btn-logout:hover { background: var(--alert-red); color: #FFF; box-shadow: 0 4px 10px rgba(239,68,68,0.2); }
 
         /* ================= MAIN CONTENT ================= */
-        .main-container { max-width: 1200px; margin: 0 auto; padding: 40px 24px; width: 100%; flex: 1;}
+        .main-container { max-width: 1250px; margin: 40px auto; padding: 0 20px; width: 100%; flex: 1;}
+        .page-header { margin-bottom: 35px; border-left: 5px solid var(--blue-accent); padding-left: 20px;}
+        .page-header h1 { font-size: 2rem; font-weight: 800; color: var(--navy-primary); margin-bottom: 5px;}
         
-        .page-header { margin-bottom: 30px; border-left: 5px solid var(--blue-primary); padding-left: 15px;}
-        .page-header h1 { font-size: 2rem; font-weight: 700; color: var(--navy-dark); margin-bottom: 8px;}
-        .page-header p { color: var(--text-muted); font-size: 1.05rem; }
+        /* SUMMARY ROW */
+        .summary-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; margin-bottom: 30px; }
+        .summary-card { background: var(--bg-white); padding: 25px; border-radius: 20px; border: 1px solid var(--border-color); display: flex; align-items: center; gap: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.02);}
+        .sum-icon { width: 55px; height: 55px; border-radius: 15px; display: flex; justify-content: center; align-items: center; }
+        .sum-icon svg { width: 28px; height: 28px; stroke: currentColor; stroke-width: 2; fill: none; }
+        .sum-val h3 { font-size: 1.8rem; font-weight: 800; color: var(--navy-primary); }
+        .sum-val p { font-size: 0.85rem; color: var(--text-gray); font-weight: 800; text-transform: uppercase; }
+
+        /* CONTROL PANEL */
+        .control-panel { background: var(--bg-white); padding: 25px; border-radius: 20px; border: 1px solid var(--border-color); margin-bottom: 25px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 20px; }
+        .search-box { flex: 1; min-width: 300px; position: relative; }
+        .search-box input { width: 100%; padding: 15px 20px; border-radius: 12px; border: 2px solid var(--border-color); outline: none; font-family: var(--font-ui); font-size: 1rem; font-weight: 600; transition: 0.3s; }
+        .search-box input:focus { border-color: var(--blue-accent); box-shadow: 0 0 0 5px rgba(37,99,235,0.08); }
+
+        .btn-gen-bill { background: var(--navy-primary); color: #FFF; border: none; padding: 15px 25px; border-radius: 12px; font-weight: 800; cursor: pointer; transition: 0.3s; display: flex; align-items: center; gap: 10px; font-family: var(--font-ui); font-size: 1rem; }
+        .btn-gen-bill:hover { background: var(--blue-accent); transform: translateY(-2px); box-shadow: 0 10px 20px rgba(37,99,235,0.2); }
 
         /* TABS */
-        .tabs-container { display: flex; gap: 10px; margin-bottom: 25px; background: #E2E8F0; padding: 6px; border-radius: 14px; width: fit-content; overflow-x: auto; max-width: 100%;}
-        .tab-btn {
-            background: transparent; border: none; padding: 12px 24px; border-radius: 10px;
-            font-size: 1rem; font-weight: 700; font-family: var(--font-ui); color: var(--text-muted);
-            cursor: pointer; transition: 0.2s; display: flex; align-items: center; gap: 8px; white-space: nowrap;
-        }
-        .tab-btn svg { width: 20px; height: 20px; stroke: currentColor; stroke-width: 2.5; fill: none; flex-shrink: 0;}
-        .tab-btn:hover { color: var(--navy-dark); }
-        .tab-btn.active { background: var(--bg-white); color: var(--blue-primary); box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+        .tabs { display: flex; gap: 10px; margin-bottom: 20px; padding: 6px; background: #E2E8F0; border-radius: 15px; width: fit-content; }
+        .tab-btn { background: transparent; border: none; padding: 12px 25px; border-radius: 10px; font-weight: 800; font-family: var(--font-ui); color: var(--text-gray); cursor: pointer; transition: 0.2s; }
+        .tab-btn.active { background: var(--bg-white); color: var(--blue-accent); box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
 
-        .tab-content { display: none; animation: fadeIn 0.3s ease; }
-        .tab-content.active { display: block; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        /* BILL CARDS */
+        .bill-card { background: var(--bg-white); border: 1px solid var(--border-color); border-radius: 20px; padding: 25px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: flex-start; transition: 0.3s; position: relative; overflow: hidden; }
+        .bill-card:hover { border-color: var(--blue-accent); box-shadow: 0 10px 30px rgba(0,0,0,0.05); }
+        .bill-card.is-ai::before { content: 'AI VERIFIED'; position: absolute; top: 0; right: 0; background: var(--navy-primary); color: #FFF; font-size: 0.65rem; font-weight: 900; padding: 6px 15px; border-radius: 0 0 0 15px; letter-spacing: 1px; }
 
-        /* CARDS & UI */
-        .bill-card {
-            background: var(--bg-white); border: 1px solid var(--border-color); border-radius: 20px;
-            padding: 24px; margin-bottom: 16px; display: flex; justify-content: space-between; align-items: center;
-            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.02); transition: 0.3s;
-        }
-        .bill-card:hover { border-color: var(--blue-primary); box-shadow: 0 8px 15px rgba(37,99,235,0.08); transform: translateY(-2px);}
+        .room-num { background: #EFF6FF; color: var(--blue-accent); padding: 5px 15px; border-radius: 10px; font-weight: 900; font-size: 0.9rem; display: inline-block; margin-bottom: 10px; }
+        .bill-main h3 { font-size: 1.3rem; font-weight: 800; color: var(--navy-primary); margin-bottom: 5px; }
+        .bill-main p { color: var(--text-gray); font-size: 0.9rem; font-weight: 600; }
+
+        /* AI INFO BOX */
+        .ai-info-box { background: #F8FAFC; border: 1px solid var(--border-color); border-radius: 12px; padding: 15px; margin-top: 15px; display: grid; grid-template-columns: 1fr 1fr; gap: 10px; font-size: 0.85rem; }
+        .ai-label { color: var(--text-gray); font-weight: 800; font-size: 0.75rem; text-transform: uppercase; display: block; margin-bottom: 2px;}
+        .ai-val { color: var(--navy-primary); font-weight: 700; }
+
+        .bill-actions { text-align: right; min-width: 250px; }
+        .amt-text { font-size: 1.8rem; font-weight: 900; margin-bottom: 15px; color: var(--navy-primary); }
+        .amt-text.red { color: var(--alert-red); }
+
+        .btn-group { display: flex; gap: 10px; justify-content: flex-end; }
+        .btn-act { border: none; padding: 10px 16px; border-radius: 10px; font-weight: 800; font-family: var(--font-ui); cursor: pointer; transition: 0.2s; display: flex; align-items: center; gap: 8px; font-size: 0.9rem; }
         
-        .bill-info { display: flex; flex-direction: column; gap: 6px; }
-        .bill-info .room-badge { display: inline-block; background: #EFF6FF; color: var(--blue-primary); padding: 4px 12px; border-radius: 20px; font-size: 0.85rem; font-weight: 800; width: fit-content; margin-bottom: 4px;}
-        .bill-info h3 { font-size: 1.3rem; font-weight: 700; color: var(--navy-dark); }
-        .bill-info p { font-size: 0.95rem; color: var(--text-muted); font-weight: 500;}
+        .btn-confirm { background: var(--success-green); color: #FFF; }
+        .btn-confirm:hover { background: #059669; }
         
-        .bill-right { text-align: right; }
-        .amount-text { font-size: 1.6rem; font-weight: 800; color: var(--navy-dark); margin-bottom: 12px;}
-        .amount-text.unpaid { color: var(--alert-red); }
-        .amount-text.paid { color: var(--success-green); }
+        .btn-reject { background: #FEF2F2; color: var(--alert-red); }
+        .btn-reject:hover { background: var(--alert-red); color: #FFF; }
+        
+        .btn-view { background: #F1F5F9; color: var(--navy-primary); border: 1px solid var(--border-color); }
+        .btn-view:hover { background: #E2E8F0; }
+        
+        .btn-remind { background: #FFF; border: 1.5px solid var(--warning-yellow); color: var(--warning-yellow); }
+        .btn-remind:hover { background: var(--warning-yellow); color: #FFF; }
 
-        .btn-group { display: flex; gap: 10px; justify-content: flex-end; flex-wrap: wrap; }
-        .btn-act { border: none; padding: 10px 18px; border-radius: 10px; font-weight: 700; font-family: var(--font-ui); font-size: 0.95rem; cursor: pointer; transition: 0.2s; display: flex; align-items: center; justify-content: center; gap: 6px;}
-        .btn-blue { background: var(--blue-primary); color: #FFF; box-shadow: 0 4px 10px rgba(37, 99, 235, 0.2);}
-        .btn-green { background: var(--success-green); color: #FFF; box-shadow: 0 4px 10px rgba(16, 185, 129, 0.2);}
-        .btn-red-outline { background: #FEF2F2; color: var(--alert-red); border: 1.5px solid #FCA5A5; }
-        .btn-act:hover { transform: translateY(-2px); opacity: 0.9; }
-        .btn-act svg { width: 18px; height: 18px; stroke: currentColor; stroke-width: 2.5; fill: none; flex-shrink: 0;}
+        /* MODALS */
+        .modal { position: fixed; inset: 0; background: rgba(15,23,42,0.9); z-index: 9999; display: none; justify-content: center; align-items: center; padding: 30px; backdrop-filter: blur(5px); }
+        .modal.show { display: flex; }
+        .modal-box { background: var(--bg-white); padding: 35px; border-radius: 20px; width: 100%; max-width: 500px; position: relative; }
+        .modal-img { max-width: 90%; max-height: 90vh; border-radius: 15px; box-shadow: 0 25px 50px rgba(0,0,0,0.5); display: block; margin: 0 auto;}
+        
+        .close-modal { position: absolute; top: 20px; right: 20px; color: var(--text-gray); cursor: pointer; transition: 0.2s;}
+        .close-modal:hover { color: var(--alert-red); }
+        .close-modal-img { position: absolute; top: 30px; right: 30px; color: #FFF; cursor: pointer; }
 
-        /* SEARCH & FILTER */
-        .toolbar { display: flex; gap: 15px; margin-bottom: 20px; align-items: center;}
-        .search-box { flex: 1; padding: 14px 20px; border: 1.5px solid var(--border-color); border-radius: 12px; font-size: 1rem; font-family: var(--font-ui); outline: none; transition: 0.2s; }
-        .search-box:focus { border-color: var(--blue-primary); box-shadow: 0 0 0 4px rgba(37,99,235,0.1); }
+        .form-control { width: 100%; padding: 15px; border: 2px solid var(--border-color); border-radius: 12px; font-family: var(--font-ui); font-size: 1rem; outline: none; transition: 0.3s; margin-top: 15px; margin-bottom: 20px; resize: vertical; min-height: 120px; background: #F8FAFC;}
+        .form-control:focus { border-color: var(--blue-accent); background: #FFF;}
 
-        /* CUSTOM SELECT (ทำเอง 100%) */
-        .custom-select { position: relative; width: 100%; min-width: 220px; }
-        .select-selected {
-            width: 100%; padding: 14px 40px 14px 16px; border: 1.5px solid var(--border-color); border-radius: 12px;
-            font-size: 1rem; font-family: var(--font-ui); color: var(--navy-dark); font-weight: 600; background: #FFF; cursor: pointer; transition: 0.3s;
-            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2364748B' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
-            background-repeat: no-repeat; background-position: right 1rem center; background-size: 1.2em; display: flex; align-items: center;
-        }
-        .select-selected.active { border-color: var(--blue-primary); box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1); 
-            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%232563EB' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='18 15 12 9 6 15'%3e%3c/polyline%3e%3c/svg%3e"); }
-        .select-items {
-            position: absolute; background-color: #FFF; top: calc(100% + 5px); left: 0; right: 0; z-index: 99;
-            border: 1px solid var(--border-color); border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); max-height: 250px; overflow-y: auto; display: none;
-        }
+        /* TOAST */
+        #smart-toast { position: fixed; top: -100px; left: 50%; transform: translateX(-50%); background: #FFF; padding: 15px 30px; border-radius: 50px; box-shadow: 0 10px 40px rgba(0,0,0,0.15); z-index: 10000; transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); font-weight: 800; border: 2px solid var(--border-color); display: flex; align-items: center; gap: 12px; color: var(--navy-primary); }
+        #smart-toast.show { top: 30px; }
+
+        /* CUSTOM SELECT */
+        .custom-select { position: relative; min-width: 200px; cursor: pointer; }
+        .select-current { background: #FFF; border: 2px solid var(--border-color); padding: 12px 20px; border-radius: 12px; font-weight: 800; display: flex; justify-content: space-between; align-items: center; color: var(--navy-primary);}
+        .select-items { position: absolute; top: 105%; left: 0; right: 0; background: #FFF; border: 1.5px solid var(--border-color); border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); z-index: 100; display: none; overflow: hidden; }
+        .select-items div { padding: 12px 20px; border-bottom: 1px solid var(--bg-light); transition: 0.2s; font-weight: 600; color: var(--text-main);}
+        .select-items div:hover { background: #EFF6FF; color: var(--blue-accent); }
         .select-items.show { display: block; }
-        .select-items div { padding: 12px 16px; cursor: pointer; font-size: 0.95rem; border-bottom: 1px solid #F8FAFC; transition: 0.1s;}
-        .select-items div:hover { background-color: #EFF6FF; color: var(--blue-primary); font-weight: 700;}
 
-        /* REPORT TABLE */
-        .report-header { display: flex; justify-content: space-between; align-items: center; background: #FFF; padding: 20px; border-radius: 20px; border: 1px solid var(--border-color); margin-bottom: 20px;}
-        .table-wrapper { background: #FFF; border: 1px solid var(--border-color); border-radius: 20px; overflow: hidden; overflow-x: auto; }
-        table { width: 100%; border-collapse: collapse; text-align: left; min-width: 600px;}
-        th { padding: 16px 24px; background: #F8FAFC; color: var(--navy-dark); font-weight: 700; border-bottom: 1px solid var(--border-color); font-size: 0.95rem;}
-        td { padding: 16px 24px; border-bottom: 1px solid var(--border-color); font-size: 1rem; }
-        .t-footer { background: #F8FAFC; font-weight: 800; font-size: 1.1rem; }
-        .print-header { display: none; text-align: center; margin-bottom: 30px; }
-
-        /* MODALS & TOAST */
-        .custom-modal-overlay {
-            position: fixed; inset: 0; background: rgba(15, 23, 42, 0.4); backdrop-filter: blur(3px);
-            z-index: 9999; display: flex; justify-content: center; align-items: center; opacity: 0; pointer-events: none; transition: 0.3s;
-        }
-        .custom-modal-overlay.show { opacity: 1; pointer-events: auto; }
-        .modal-box { background: #FFF; padding: 30px; border-radius: 20px; width: 100%; max-width: 420px; box-shadow: 0 20px 50px rgba(0,0,0,0.15); transform: scale(0.9); transition: 0.3s; text-align: center;}
-        .custom-modal-overlay.show .modal-box { transform: scale(1); }
-        .slip-preview { width: 100%; max-height: 60vh; object-fit: contain; border-radius: 12px; margin-bottom: 20px; border: 1px solid var(--border-color); background: #F8FAFC; }
-        
-        .form-group-modal { text-align: left; margin-bottom: 15px; }
-        .form-group-modal label { display: block; font-weight: 700; color: var(--navy-dark); margin-bottom: 8px; font-size: 0.95rem;}
-
-        #smart-toast {
-            position: fixed; top: -100px; left: 50%; transform: translateX(-50%);
-            background: #FFF; padding: 14px 24px; border-radius: 50px; box-shadow: 0 4px 20px rgba(0,0,0,0.1);
-            z-index: 10000; transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); border: 1px solid var(--border-color);
-            display: flex; align-items: center; gap: 10px; font-weight: 700; font-size: 0.95rem; color: var(--navy-dark);
-        }
-        #smart-toast.show { top: 20px; }
-        .toast-icon svg { width: 20px; height: 20px; fill: none; stroke-width: 2.5; }
-
-        /* ================= MOBILE RESPONSIVE ================= */
-        @media (max-width: 1024px) { 
-            .nav-links {
-                position: fixed; top: 70px; left: -100%; width: 280px; height: calc(100vh - 70px);
-                background: var(--bg-white); flex-direction: column; padding: 20px; gap: 5px;
-                box-shadow: 4px 0 15px rgba(0,0,0,0.05); transition: 0.4s ease; z-index: 1999;
-                border-right: 1px solid var(--border-color);
-            }
-            .nav-links.show { left: 0; }
-            .nav-item { padding: 14px 20px; border-radius: 12px; font-size: 1.05rem; }
-            .mobile-toggle { display: block; }
-            .user-details { display: none; }
-            .nav-left { gap: 15px; }
-            .btn-logout span { display: none; }
-            .btn-logout { padding: 10px; }
-            
-            .bill-card { flex-direction: column; align-items: flex-start; gap: 15px; }
-            .bill-right { width: 100%; border-top: 1px solid var(--border-color); padding-top: 15px; text-align: left; }
-            .btn-group { justify-content: flex-start; }
-            .toolbar { flex-direction: column; align-items: stretch; }
-            .report-header { flex-direction: column; gap: 15px; align-items: stretch;}
-        }
-
-        /* ================= PRINT STYLES ================= */
-        @media print {
-            body { background: #FFF; }
-            .top-navbar, .tabs-container, .page-header, .report-header, .btn-logout, .bill-card { display: none !important; }
-            .main-container { padding: 0; max-width: 100%; }
-            .table-wrapper { border: none; display: block !important;}
-            .print-header { display: block; }
-            #tab-report { display: block !important; }
-            th { background: #EEE !important; -webkit-print-color-adjust: exact; }
+        @media (max-width: 900px) {
+            .nav-links { display: none; }
+            .bill-card { flex-direction: column; gap: 20px; }
+            .bill-actions { width: 100%; text-align: left; border-top: 1px solid var(--border-color); padding-top: 20px; }
+            .btn-group { justify-content: flex-start; flex-wrap: wrap;}
+            .ai-info-box { grid-template-columns: 1fr; }
         }
     </style>
 </head>
 <body>
 
-    <div id="smart-toast"><div class="toast-icon" id="toast-icon-container"></div><span id="toast-msg"></span></div>
+    <div id="smart-toast"><span id="toast-icon"></span><span id="toast-msg"></span></div>
 
-    <div class="custom-modal-overlay" id="slip-modal">
-        <div class="modal-box">
-            <h3 style="margin-bottom:20px; color:var(--navy-dark);">หลักฐานการโอนเงิน</h3>
-            <img src="" id="img-preview" class="slip-preview">
-            <button class="btn-act" style="width:100%; background:#F1F5F9; color:var(--navy-dark); justify-content:center;" onclick="closeModal('slip-modal')">ปิดหน้าต่าง</button>
-        </div>
+    <div class="modal" id="slip-modal" onclick="this.classList.remove('show')">
+        <div class="close-modal-img"><svg viewBox="0 0 24 24" width="35" height="35" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></div>
+        <img src="" class="modal-img" id="modal-img">
     </div>
 
-    <div class="custom-modal-overlay" id="pay-modal">
+    <div class="modal" id="reject-modal">
         <div class="modal-box">
-            <h3 style="color: var(--navy-dark); margin-bottom: 5px;" id="pay-title">บันทึกรับชำระเงิน</h3>
-            <p style="color: var(--text-muted); font-size: 0.95rem; margin-bottom: 20px;">ห้อง: <strong id="pay-room" style="color:var(--navy-dark);"></strong></p>
-            
-            <div class="form-group-modal">
-                <label>จำนวนเงิน (บาท)</label>
-                <input type="number" id="pay-amount" class="search-box" style="width: 100%;" inputmode="numeric">
+            <div class="close-modal" onclick="closeModal('reject-modal')">
+                <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
             </div>
-            
-            <div class="form-group-modal" id="fg-pay-month">
-                <label>ชำระสำหรับงวดเดือน</label>
-                <div class="custom-select">
-                    <div class="select-selected" id="display-pay-month">เลือกเดือน</div>
-                    <div class="select-items select-hide" id="options-pay-month"></div>
-                    <input type="hidden" id="pay-month">
-                </div>
-            </div>
-
-            <div class="form-group-modal" id="fg-pay-method">
-                <label>วิธีการชำระเงิน</label>
-                <div class="custom-select">
-                    <div class="select-selected" id="display-pay-method">เงินสด</div>
-                    <div class="select-items select-hide" id="options-pay-method">
-                        <div data-val="CASH">เงินสด</div>
-                        <div data-val="TRANSFER">เงินโอน</div>
-                    </div>
-                    <input type="hidden" id="pay-method" value="CASH">
-                </div>
-            </div>
-            
-            <div style="display: flex; gap: 10px; margin-top: 25px;">
-                <button class="btn-act" style="flex:1; justify-content:center; background:#F1F5F9; color:var(--text-muted);" onclick="closeModal('pay-modal')">ยกเลิก</button>
-                <button class="btn-act btn-blue" style="flex:1; justify-content:center;" id="btn-do-pay">บันทึกรับชำระ</button>
-            </div>
-        </div>
-    </div>
-
-    <div class="custom-modal-overlay" id="confirm-modal">
-        <div class="modal-box">
-            <h3 id="confirm-title" style="margin-bottom: 10px; color:var(--navy-dark);">ยืนยันการทำรายการ</h3>
-            <p style="color: var(--text-muted); font-size: 0.95rem; margin-bottom: 25px;">ห้อง: <strong id="confirm-room" style="color:var(--navy-dark);"></strong></p>
-            <div style="display:flex; gap:10px;">
-                <button class="btn-act" style="flex:1; background:#F1F5F9; color:var(--text-muted); justify-content:center;" onclick="closeModal('confirm-modal')">ยกเลิก</button>
-                <button class="btn-act" id="btn-do-confirm" style="flex:1; background:var(--blue-primary); color:#FFF; justify-content:center;">ยืนยัน</button>
+            <h3 style="color: var(--navy-primary); font-size: 1.3rem; font-weight: 800; border-bottom: 2px solid var(--border-color); padding-bottom: 15px; margin-bottom: 15px;">ระบุสาเหตุการไม่อนุมัติ</h3>
+            <p style="color: var(--text-gray); font-size: 0.9rem;">ระบบจะส่งรายการนี้กลับไปให้ลูกบ้านดำเนินการแก้ไขใหม่</p>
+            <textarea id="reject-reason" class="form-control" placeholder="ระบุเหตุผล เช่น ยอดเงินไม่ตรงกับบิล, ภาพสลิปเบลอ, โอนผิดบัญชี..."></textarea>
+            <div style="display: flex; gap: 15px; justify-content: flex-end;">
+                <button class="btn-act btn-view" onclick="closeModal('reject-modal')">ยกเลิก</button>
+                <button class="btn-act btn-reject" onclick="submitReject()">ยืนยันการตีกลับ</button>
             </div>
         </div>
     </div>
 
     <nav class="top-navbar">
-        <div class="nav-left">
-            <button class="mobile-toggle" id="mobile-menu-btn">
-                <svg viewBox="0 0 24 24"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
-            </button>
-            <a href="dashboard.html" class="brand">PAK PHANANG<br><span>Prestige Hall</span></a>
-            
-            <div class="nav-links" id="nav-links">
-                <a href="dashboard.html" class="nav-item">
-                    <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg> ภาพรวมระบบ
-                </a>
-                <a href="tenant_manage.html" class="nav-item">
-                    <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle></svg> จัดการผู้เช่า
-                </a>
-                <a href="billing.html" class="nav-item active">
-                    <svg viewBox="0 0 24 24"><rect x="2" y="5" width="20" height="14" rx="2" ry="2"></rect><line x1="2" y1="10" x2="22" y2="10"></line></svg> รับชำระเงิน/บิล
-                </a>
-                <a href="maintenance.html" class="nav-item">
-                    <svg viewBox="0 0 24 24"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"></path></svg> แจ้งซ่อม/ประกาศ
-                </a>
-                <a href="settings.html" class="nav-item" id="nav-settings" style="display: none;">
-                    <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"></circle></svg> ตั้งค่าระบบ
-                </a>
-            </div>
+        <a href="dashboard.html" class="brand">PAK PHANANG<br><span>Prestige Hall</span></a>
+        <div class="nav-links">
+            <a href="dashboard.html" class="nav-item"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg> ภาพรวม</a>
+            <a href="tenant_manage.html" class="nav-item"><svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle></svg> ผู้เช่า</a>
+            <a href="billing.html" class="nav-item active"><svg viewBox="0 0 24 24"><rect x="2" y="5" width="20" height="14" rx="2" ry="2"></rect><line x1="2" y1="10" x2="22" y2="10"></line></svg> การเงิน/บิล</a>
+            <a href="maintenance.html" class="nav-item"><svg viewBox="0 0 24 24"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"></path></svg> แจ้งซ่อม</a>
         </div>
-
-        <div class="nav-right">
-            <div class="user-details"><div class="name" id="display-name">กำลังโหลด...</div><div class="role" id="display-role">ADMIN</div></div>
-            <button class="btn-logout" id="btn-logout">
-                <span>ออกระบบ</span>
-                <svg viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
-            </button>
-        </div>
+        <button class="btn-logout" onclick="localStorage.removeItem('admin_user_data'); window.location.href='index.html';">
+            <svg viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+            ออกระบบ
+        </button>
     </nav>
 
     <main class="main-container">
         <div class="page-header">
-            <h1>ระบบรับชำระเงิน และออกรายงาน</h1>
-            <p>เรียกเก็บเงิน ตรวจสอบสลิป และดูประวัติการชำระเงินของลูกบ้าน</p>
+            <h1>ศูนย์จัดการการเงินและตรวจสอบบิล</h1>
+            <p style="color: var(--text-gray); font-weight: 600;">ตรวจสอบหลักฐานการโอนเงิน อนุมัติรายการ และบริหารจัดการยอดค้างชำระ</p>
         </div>
 
-        <div class="tabs-container">
-            <button class="tab-btn active" onclick="switchTab('tab-collect', this)">
-                <svg viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"></line><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg> รายการเรียกเก็บ / รับชำระ
-            </button>
-            <button class="tab-btn" onclick="switchTab('tab-slip', this)">
-                <svg viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg> ตรวจสอบสลิปโอนเงิน
-            </button>
-            <button class="tab-btn" onclick="switchTab('tab-history', this)">
-                <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg> ประวัติการชำระ
-            </button>
-            <button class="tab-btn" onclick="switchTab('tab-report', this)">
-                <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg> รายงานยอดค้าง
-            </button>
-        </div>
-
-        <div id="tab-collect" class="tab-content active">
-            <div class="toolbar">
-                <input type="text" id="search-collect" class="search-box" placeholder="ค้นหาเลขห้อง หรือ ชื่อ..." onkeyup="filterCollect()">
-            </div>
-            <div id="collect-list"><p style="text-align:center; padding:40px; color:var(--text-muted);">กำลังโหลดข้อมูลผู้เช่า...</p></div>
-        </div>
-
-        <div id="tab-slip" class="tab-content">
-            <div id="slip-list"></div>
-        </div>
-
-        <div id="tab-history" class="tab-content">
-            <div class="toolbar">
-                <div class="custom-select" style="max-width: 300px;">
-                    <div class="select-selected" id="display-history-month">ทุกเดือน (ประวัติทั้งหมด)</div>
-                    <div class="select-items select-hide" id="options-history-month"></div>
-                    <input type="hidden" id="history-month" value="ALL">
+        <div class="summary-row">
+            <div class="summary-card">
+                <div class="sum-icon" style="background: #EFF6FF; color: var(--blue-accent);">
+                    <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
                 </div>
+                <div class="sum-val"><p>ห้องทั้งหมดในระบบ</p><h3 id="stat-total">0</h3></div>
             </div>
-            <div id="history-list"></div>
+            <div class="summary-card">
+                <div class="sum-icon" style="background: #ECFDF5; color: var(--success-green);">
+                    <svg viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+                </div>
+                <div class="sum-val"><p>ชำระเสร็จสิ้น (งวดนี้)</p><h3 id="stat-paid" style="color: var(--success-green);">0</h3></div>
+            </div>
+            <div class="summary-card">
+                <div class="sum-icon" style="background: #FEF2F2; color: var(--alert-red);">
+                    <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                </div>
+                <div class="sum-val"><p>รอตรวจสอบ/ค้างชำระ (งวดนี้)</p><h3 id="stat-unpaid" style="color: var(--alert-red);">0</h3></div>
+            </div>
         </div>
 
-        <div id="tab-report" class="tab-content">
-            <div class="report-header">
-                <div style="display: flex; align-items: center; gap: 15px; width: 100%;">
-                    <span style="font-weight:700; color:var(--navy-dark); white-space:nowrap;">สถานะยอดค้าง:</span>
-                    <div class="custom-select" style="flex:1; max-width: 300px;">
-                        <div class="select-selected" id="display-report-type">รวมทุกประเภทค้างชำระ</div>
-                        <div class="select-items select-hide" id="options-report-type">
-                            <div data-val="ALL">รวมทุกประเภทค้างชำระ</div>
-                            <div data-val="MONTHLY">เฉพาะค่าเช่ารายเดือน</div>
-                            <div data-val="INITIAL">เฉพาะยอดยกมา/แรกเข้า</div>
-                        </div>
-                        <input type="hidden" id="report-type" value="ALL">
+        <div class="control-panel">
+            <div style="display: flex; align-items: center; gap: 15px;">
+                <span style="font-weight: 800; font-size: 0.95rem; color: var(--navy-primary);">แสดงข้อมูลงวด:</span>
+                <div class="custom-select" id="month-picker">
+                    <div class="select-current" id="selected-month-text">กำลังโหลด... 
+                        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
                     </div>
+                    <div class="select-items" id="month-list"></div>
                 </div>
-                <button class="btn-act btn-blue" onclick="window.print()" style="white-space:nowrap;">
-                    <svg viewBox="0 0 24 24"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg> พิมพ์รายงาน
-                </button>
             </div>
-
-            <div class="print-header">
-                <h2 style="font-size: 1.8rem; color: #000; margin-bottom: 5px;">รายงานสรุปยอดค้างชำระหอพัก PAK PHANANG</h2>
-                <p style="color: #555; font-size: 1.1rem;" id="print-date">ข้อมูล ณ วันที่: </p>
+            <div class="search-box">
+                <input type="text" id="search-input" placeholder="ค้นหาข้อมูลด้วย หมายเลขห้อง หรือ ชื่อผู้เช่า..." onkeyup="renderList()">
             </div>
-
-            <div class="table-wrapper">
-                <table>
-                    <thead><tr><th width="15%">ห้องพัก</th><th width="35%">ชื่อผู้เช่า</th><th width="25%">รายละเอียดค้างชำระ</th><th width="25%" style="text-align:right;">จำนวนเงิน (บาท)</th></tr></thead>
-                    <tbody id="report-body"></tbody>
-                    <tfoot><tr class="t-footer"><td colspan="3" style="text-align:right;">รวมยอดค้างทั้งสิ้น:</td><td id="grand-total" style="text-align:right; color:var(--alert-red); font-size:1.3rem;">฿0.00</td></tr></tfoot>
-                </table>
-            </div>
+            <button class="btn-gen-bill" onclick="generateMonthlyBills()">
+                <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="12" y1="18" x2="12" y2="12"></line><line x1="9" y1="15" x2="15" y2="15"></line></svg>
+                สร้างรายการเก็บเงินรอบใหม่
+            </button>
         </div>
+
+        <div class="tabs">
+            <button class="tab-btn active" onclick="switchTab('PENDING', this)">รอตรวจสอบสลิป (<span id="count-pending">0</span>)</button>
+            <button class="tab-btn" onclick="switchTab('UNPAID', this)">ค้างชำระ (<span id="count-unpaid-tab">0</span>)</button>
+            <button class="tab-btn" onclick="switchTab('PAID', this)">ชำระเรียบร้อย (<span id="count-paid-tab">0</span>)</button>
+        </div>
+
+        <div id="bill-container">
+            <p style="text-align: center; padding: 100px; color: var(--text-gray); font-weight: 700;">กำลังรวบรวมข้อมูล...</p>
+        </div>
+
     </main>
 
     <script>
-        // ==========================================
-        // CONFIG & UTILS & CUSTOM SELECT
-        // ==========================================
         const SB_URL = 'https://vnlqxtxifgchrouongpu.supabase.co/rest/v1';
         const SB_KEY = 'sb_publishable_jBw7w_gyrLx7B0oSHAtWOw_nVTHTzxl';
-
-        let activeTenants = []; 
+        
+        let allTenants = [];
         let allBills = [];
+        let currentMonth = '';
+        let currentTab = 'PENDING';
+        let currentRejectId = null;
 
         function toast(msg, type = 'success') {
             const t = document.getElementById('smart-toast');
-            t.style.borderColor = type === 'success' ? 'var(--success-green)' : 'var(--alert-red)';
-            t.style.color = type === 'success' ? 'var(--success-green)' : 'var(--alert-red)';
+            const icon = document.getElementById('toast-icon');
+            t.style.borderColor = (type === 'success') ? 'var(--success-green)' : 'var(--alert-red)';
+            icon.innerHTML = (type === 'success') 
+                ? `<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="var(--success-green)" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>` 
+                : `<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="var(--alert-red)" stroke-width="2.5"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>`;
             document.getElementById('toast-msg').innerText = msg;
-            const icon = document.getElementById('toast-icon-container');
-            icon.style.color = type === 'success' ? 'var(--success-green)' : 'var(--alert-red)';
-            icon.innerHTML = type === 'success' 
-                ? `<svg viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>` 
-                : `<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>`;
             t.classList.add('show');
             setTimeout(() => t.classList.remove('show'), 3000);
         }
 
-        function switchTab(id, btn) {
-            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
-            document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
-            document.getElementById(id).classList.add('active'); btn.classList.add('active');
-        }
-
         function closeModal(id) { document.getElementById(id).classList.remove('show'); }
 
-        // --- Custom Select Logic ---
-        function initCustomSelect(idName, callback) {
-            const display = document.getElementById(`display-${idName}`);
-            const options = document.getElementById(`options-${idName}`);
-            const hidden = document.getElementById(idName);
-
-            display.addEventListener('click', function(e) {
-                e.stopPropagation(); closeAllSelect(this);
-                options.classList.toggle('select-hide'); display.classList.toggle('active');
-            });
-
-            options.addEventListener('click', function(e) {
-                if(e.target && e.target.nodeName === "DIV") {
-                    display.innerText = e.target.innerText;
-                    hidden.value = e.target.getAttribute('data-val');
-                    options.classList.add('select-hide'); display.classList.remove('active');
-                    if(callback) callback(); 
-                }
-            });
-        }
-        function closeAllSelect(except) {
-            document.querySelectorAll('.select-items').forEach(el => { if(el.previousElementSibling !== except) el.classList.add('select-hide'); });
-            document.querySelectorAll('.select-selected').forEach(el => { if(el !== except) el.classList.remove('active'); });
-        }
-        document.addEventListener('click', closeAllSelect);
-
-        function populateCustomOptions(idName, dataArray, textKey, valKey) {
-            const optionsBox = document.getElementById(`options-${idName}`);
-            optionsBox.innerHTML = '';
-            dataArray.forEach(item => {
-                const div = document.createElement('div');
-                div.setAttribute('data-val', valKey ? item[valKey] : item);
-                div.innerText = textKey ? item[textKey] : item;
-                optionsBox.appendChild(div);
-            });
-        }
-
-        // ==========================================
-        // INIT & LOAD DATA
-        // ==========================================
-        async function init() {
-            // Navbar Mobile Toggle
-            document.getElementById('mobile-menu-btn').addEventListener('click', () => { document.getElementById('nav-links').classList.toggle('show'); });
-            
-            // Logout
-            document.getElementById('btn-logout').addEventListener('click', () => { localStorage.removeItem('admin_user_data'); window.location.href = 'index.html'; });
-
-            // Session
-            const admin = JSON.parse(localStorage.getItem('admin_user_data'));
-            if(admin) {
-                document.getElementById('display-name').innerText = `${admin.first_name} ${admin.last_name}`;
-                document.getElementById('display-role').innerText = admin.role;
-                if(admin.role === 'PRESIDENT') document.getElementById('nav-settings').style.display = 'flex';
-            }
-
-            // ตั้งค่า Custom Selects
-            initCustomSelect('pay-method');
-            initCustomSelect('pay-month');
-            initCustomSelect('history-month', renderHistory);
-            initCustomSelect('report-type', renderReport);
-
-            const thaiMonths = ["มกราคม", "กุมภาพันธ์", "มีนาคม", "เมษายน", "พฤษภาคม", "มิถุนายน", "กรกฎาคม", "สิงหาคม", "กันยายน", "ตุลาคม", "พฤศจิกายน", "ธันวาคม"];
+        // --- เตรียมตัวเลือกเดือน ---
+        function initMonthPicker() {
             const now = new Date();
-            document.getElementById('print-date').innerText = `ข้อมูล ณ วันที่: ${now.getDate()} ${thaiMonths[now.getMonth()]} ${now.getFullYear()+543}`;
+            currentMonth = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}`;
+            const months = ["ม.ค.", "ก.พ.", "มี.ค.", "เม.ย.", "พ.ค.", "มิ.ย.", "ก.ค.", "ส.ค.", "ก.ย.", "ต.ค.", "พ.ย.", "ธ.ค."];
+            const picker = document.getElementById('month-list');
+            const displayText = document.getElementById('selected-month-text');
 
-            // สร้างตัวเลือกเดือนสำหรับ Modal จ่ายเงิน (ปัจจุบัน + ล่วงหน้า 2 เดือน)
-            let monthOpts = [];
-            for(let i=0; i<3; i++) {
-                const d = new Date(now.getFullYear(), now.getMonth() + i, 1);
-                monthOpts.push({ val: `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`, text: `${thaiMonths[d.getMonth()]} ${d.getFullYear()+543}`});
-            }
-            populateCustomOptions('pay-month', monthOpts, 'text', 'val');
-
-            // สร้างตัวเลือกเดือนสำหรับ History (ย้อนหลัง 6 เดือน)
-            let histOpts = [{val: 'ALL', text: 'ทุกเดือน (ประวัติทั้งหมด)'}];
+            let optionsHtml = '';
             for(let i=0; i<6; i++) {
                 const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
-                histOpts.push({ val: `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`, text: `${thaiMonths[d.getMonth()]} ${d.getFullYear()+543}`});
+                const val = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`;
+                const text = `${months[d.getMonth()]} ${d.getFullYear()+543}`;
+                
+                if(val === currentMonth) {
+                    displayText.innerHTML = `${text} <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg>`;
+                }
+                optionsHtml += `<div onclick="selectMonth('${val}', '${text}')">${text}</div>`;
             }
-            populateCustomOptions('history-month', histOpts, 'text', 'val');
+            picker.innerHTML = optionsHtml;
 
-            await fetchData();
+            document.getElementById('month-picker').onclick = (e) => { e.stopPropagation(); picker.classList.toggle('show'); };
+            window.onclick = () => picker.classList.remove('show');
         }
 
+        function selectMonth(val, text) {
+            currentMonth = val;
+            document.getElementById('selected-month-text').innerHTML = `${text} <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg>`;
+            document.getElementById('month-list').classList.remove('show');
+            fetchData();
+        }
+
+        // --- ดึงข้อมูลจากฐานข้อมูล ---
         async function fetchData() {
             try {
+                const headers = { 'apikey': SB_KEY, 'Authorization': `Bearer ${SB_KEY}` };
                 const [tRes, bRes] = await Promise.all([
-                    fetch(`${SB_URL}/dorm_tenants?status=eq.ACTIVE&order=room_number.asc`, { headers: { 'apikey': SB_KEY, 'Authorization': `Bearer ${SB_KEY}` } }),
-                    fetch(`${SB_URL}/billing_statements?order=created_at.desc`, { headers: { 'apikey': SB_KEY, 'Authorization': `Bearer ${SB_KEY}` } })
+                    fetch(`${SB_URL}/dorm_tenants?status=eq.ACTIVE`, { headers }),
+                    fetch(`${SB_URL}/billing_statements?order=created_at.desc`, { headers })
                 ]);
-                
-                if(!tRes.ok || !bRes.ok) throw new Error('Fetch failed');
-
-                activeTenants = await tRes.json();
+                allTenants = await tRes.json();
                 allBills = await bRes.json();
-                
-                renderCollect();
-                renderSlips();
-                renderHistory();
-                renderReport();
+                updateStats();
+                renderList();
+            } catch(e) { toast("โหลดข้อมูลล้มเหลว", "error"); }
+        }
 
-            } catch(e) {
-                toast("เกิดข้อผิดพลาดในการโหลดข้อมูล", "error");
-                document.getElementById('collect-list').innerHTML = `<p style="text-align:center; color:var(--alert-red);">ไม่สามารถดึงข้อมูลได้</p>`;
+        function updateStats() {
+            const billsThisMonth = allBills.filter(b => b.billing_month === currentMonth);
+            document.getElementById('stat-total').innerText = allTenants.length;
+            document.getElementById('stat-paid').innerText = billsThisMonth.filter(b => b.payment_status === 'PAID').length;
+            document.getElementById('stat-unpaid').innerText = billsThisMonth.filter(b => b.payment_status === 'UNPAID' || b.payment_status === 'PENDING_VERIFICATION').length;
+
+            document.getElementById('count-pending').innerText = allBills.filter(b => b.payment_status === 'PENDING_VERIFICATION').length;
+            document.getElementById('count-unpaid-tab').innerText = billsThisMonth.filter(b => b.payment_status === 'UNPAID').length;
+            document.getElementById('count-paid-tab').innerText = billsThisMonth.filter(b => b.payment_status === 'PAID').length;
+        }
+
+        function switchTab(status, btn) {
+            currentTab = status;
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            renderList();
+        }
+
+        function renderList() {
+            const container = document.getElementById('bill-container');
+            const search = document.getElementById('search-input').value.toLowerCase();
+            
+            let filtered = [];
+            if(currentTab === 'PENDING') {
+                filtered = allBills.filter(b => b.payment_status === 'PENDING_VERIFICATION');
+            } else {
+                filtered = allBills.filter(b => b.payment_status === currentTab && b.billing_month === currentMonth);
             }
-        }
 
-        function formatMonth(ym) {
-            if(!ym || ym === 'INITIAL') return 'ยอดยกมา / แรกเข้า';
-            const [y, m] = ym.split('-');
-            const thaiMonths = ["ม.ค.", "ก.พ.", "มี.ค.", "เม.ย.", "พ.ค.", "มิ.ย.", "ก.ค.", "ส.ค.", "ก.ย.", "ต.ค.", "พ.ย.", "ธ.ค."];
-            return `${thaiMonths[parseInt(m)-1]} ${parseInt(y)+543}`;
-        }
-        function formatDate(ds) {
-            if(!ds) return '-'; const d = new Date(ds);
-            return `${String(d.getDate()).padStart(2,'0')}/${String(d.getMonth()+1).padStart(2,'0')}/${d.getFullYear()+543}`;
-        }
-
-        // ==========================================
-        // RENDER UI TABS
-        // ==========================================
-        
-        // TAB 1: รายการเรียกเก็บ (โชว์ทุกคนที่มีอยู่)
-        function renderCollect() {
-            const list = document.getElementById('collect-list');
-            if(activeTenants.length === 0) {
-                list.innerHTML = `<div class="bill-card" style="justify-content:center;">ไม่มีข้อมูลผู้เช่าในระบบ</div>`; return;
+            if(search) {
+                filtered = filtered.filter(b => b.room_number.includes(search));
             }
 
-            list.innerHTML = activeTenants.map(t => {
-                const rent = parseFloat(t.monthly_rent) || 0;
-                const debt = parseFloat(t.initial_debt) || 0;
+            if(filtered.length === 0) {
+                container.innerHTML = `<p style="text-align:center; padding:80px; color:var(--text-gray); font-weight:700;">ไม่พบรายการข้อมูลในหมวดหมู่นี้</p>`;
+                return;
+            }
+
+            container.innerHTML = filtered.map(b => {
+                const t = allTenants.find(x => x.room_number === b.room_number) || { full_name: 'ไม่พบข้อมูลผู้เช่า' };
+                const ai = b.ai_metadata; 
                 
-                let btns = `<button class="btn-act btn-blue" onclick="openPayModal('${t.id}', '${t.room_number}', ${rent}, 'MONTHLY')"><svg viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"></line><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg> รับชำระค่าเช่า</button>`;
-                if(debt > 0) btns += `<button class="btn-act btn-red-outline" onclick="openPayModal('${t.id}', '${t.room_number}', ${debt}, 'INITIAL')"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg> รับชำระยอดยกมา</button>`;
+                let aiHtml = '';
+                if(ai && currentTab === 'PENDING') {
+                    const isMatch = parseFloat(ai.amount.amount) === parseFloat(b.amount_due);
+                    const matchColor = isMatch ? 'var(--success-green)' : 'var(--alert-red)';
+                    const matchText = isMatch ? 'ยอดตรงกัน' : 'ตรวจสอบยอดเงิน';
+                    aiHtml = `
+                        <div class="ai-info-box" style="border-color: ${matchColor};">
+                            <div><span class="ai-label">ชื่อผู้โอน (ข้อมูลจากสลิป)</span><span class="ai-val">${ai.sender.account.name.th || 'ไม่สามารถระบุได้'}</span></div>
+                            <div><span class="ai-label">ยอดเงินที่โอน</span><span class="ai-val" style="color:${matchColor}">฿${parseFloat(ai.amount.amount).toLocaleString()} (${matchText})</span></div>
+                            <div><span class="ai-label">เข้าบัญชี</span><span class="ai-val">${ai.receiver.account.name.th || 'ไม่สามารถระบุได้'}</span></div>
+                            <div><span class="ai-label">วันเวลาที่ทำรายการ</span><span class="ai-val">${new Date(ai.date).toLocaleString('th-TH')}</span></div>
+                        </div>`;
+                }
+
+                let rejectNote = '';
+                if (b.reject_reason && currentTab === 'UNPAID') {
+                    rejectNote = `<div style="margin-top: 10px; color: var(--alert-red); font-size: 0.85rem; font-weight: 700; background: #FEF2F2; padding: 8px 12px; border-radius: 8px; border-left: 3px solid var(--alert-red);">หมายเหตุการตีกลับ: ${b.reject_reason}</div>`;
+                }
+
+                let actions = '';
+                if(b.payment_status === 'PENDING_VERIFICATION') {
+                    actions = `
+                        <button class="btn-act btn-view" onclick="viewSlip('${b.slip_image_url}')">ดูหลักฐานสลิป</button>
+                        <button class="btn-act btn-reject" onclick="openRejectModal('${b.id}')">ตีกลับรายการ</button>
+                        <button class="btn-act btn-confirm" onclick="updateStatus('${b.id}', 'PAID')">อนุมัติยอดเงิน</button>
+                    `;
+                } else if(b.payment_status === 'UNPAID') {
+                    actions = `
+                        <button class="btn-act btn-remind" onclick="copyRemindText('${b.room_number}', '${t.full_name}', '${b.amount_due}')">แจ้งยอดค้างชำระ</button>
+                        <button class="btn-act btn-confirm" onclick="updateStatus('${b.id}', 'PAID', 'CASH')">บันทึกรับเงินสด</button>
+                    `;
+                }
 
                 return `
-                <div class="bill-card collect-item" data-search="${t.room_number} ${t.full_name.toLowerCase()}">
-                    <div class="bill-info">
-                        <span class="room-badge">ห้อง ${t.room_number}</span>
-                        <h3>คุณ${t.full_name}</h3>
-                        <p>อัตราค่าเช่า: ฿${rent.toLocaleString()} / ยอดยกมา: ฿${debt.toLocaleString()}</p>
-                    </div>
-                    <div class="bill-right">
-                        <div class="btn-group">${btns}</div>
-                    </div>
-                </div>`;
-            }).join('');
-        }
-
-        function filterCollect() {
-            const q = document.getElementById('search-collect').value.toLowerCase();
-            document.querySelectorAll('.collect-item').forEach(item => {
-                item.style.display = item.getAttribute('data-search').includes(q) ? 'flex' : 'none';
-            });
-        }
-
-        // TAB 2: ตรวจสลิป
-        function renderSlips() {
-            const list = document.getElementById('slip-list');
-            const pending = allBills.filter(b => b.payment_status === 'PENDING_VERIFICATION');
-
-            if(pending.length === 0) { list.innerHTML = `<div class="bill-card" style="justify-content:center; color:var(--text-muted);">ไม่มีรายการสลิปรอตรวจสอบ</div>`; return; }
-
-            list.innerHTML = pending.map(b => {
-                const tenant = activeTenants.find(t => t.room_number === b.room_number) || { full_name: 'ไม่พบชื่อ' };
-                return `
-                <div class="bill-card">
-                    <div class="bill-info"><span class="room-badge">ห้อง ${b.room_number}</span><h3>คุณ${tenant.full_name}</h3><p>ชำระงวด: ${formatMonth(b.billing_month)}</p></div>
-                    <div class="bill-right">
-                        <div class="amount-text">฿${parseFloat(b.amount_due).toLocaleString('en-US', {minimumFractionDigits:2})}</div>
-                        <div class="btn-group">
-                            <button class="btn-act btn-outline" onclick="openSlip('${b.slip_image_url}')"><svg viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg> ดูสลิป</button>
-                            <button class="btn-act btn-green" onclick="actionConfirm('${b.id}', 'APPROVE', '${b.room_number}', '${b.amount_due}')"><svg viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg> รับยอด</button>
-                            <button class="btn-act btn-red-outline" onclick="actionConfirm('${b.id}', 'REJECT', '${b.room_number}', '${b.amount_due}')"><svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg> ปฏิเสธ</button>
+                    <div class="bill-card ${ai?'is-ai':''}">
+                        <div class="bill-main" style="width: 100%;">
+                            <span class="room-num">ห้อง ${b.room_number}</span>
+                            <h3>ผู้เช่า: คุณ${t.full_name}</h3>
+                            <p>ประจำงวด: ${b.billing_month === 'INITIAL' ? 'รายการแรกเข้า / ยอดยกมา' : b.billing_month}</p>
+                            ${aiHtml}
+                            ${rejectNote}
+                        </div>
+                        <div class="bill-actions">
+                            <div class="amt-text ${b.payment_status === 'PAID' ? '' : 'red'}">฿${parseFloat(b.amount_due).toLocaleString('en-US', {minimumFractionDigits: 2})}</div>
+                            <div class="btn-group">${actions}</div>
                         </div>
                     </div>
-                </div>`;
+                `;
             }).join('');
         }
 
-        // TAB 3: ประวัติ
-        function renderHistory() {
-            const list = document.getElementById('history-list');
-            const filter = document.getElementById('history-month').value;
-            let history = allBills.filter(b => b.payment_status === 'PAID');
-            if(filter !== 'ALL') history = history.filter(b => b.billing_month === filter);
-
-            if(history.length === 0) { list.innerHTML = `<div class="bill-card" style="justify-content:center; color:var(--text-muted);">ไม่มีประวัติการชำระในระบบ</div>`; return; }
-
-            list.innerHTML = history.map(b => {
-                const tenant = activeTenants.find(t => t.room_number === b.room_number) || { full_name: 'ไม่พบชื่อ' };
-                const method = b.payment_method === 'CASH' ? 'เงินสด' : 'เงินโอน';
-                return `
-                <div class="bill-card" style="padding:20px 24px;">
-                    <div class="bill-info">
-                        <div style="font-weight:700; color:var(--navy-dark); font-size:1.15rem;">ห้อง ${b.room_number} : คุณ${tenant.full_name}</div>
-                        <p style="font-size:0.9rem;">งวด: ${formatMonth(b.billing_month)} | ชำระเมื่อ: ${formatDate(b.paid_at)} (${method})</p>
-                    </div>
-                    <div class="bill-right"><div class="amount-text paid" style="margin:0;">+ ฿${parseFloat(b.amount_due).toLocaleString('en-US', {minimumFractionDigits:2})}</div></div>
-                </div>`;
-            }).join('');
+        // --- ระบบตีกลับ (Reject) ---
+        function openRejectModal(id) {
+            currentRejectId = id;
+            document.getElementById('reject-reason').value = '';
+            document.getElementById('reject-modal').classList.add('show');
         }
 
-        // TAB 4: รายงานยอดค้าง
-        function renderReport() {
-            const tbody = document.getElementById('report-body');
-            const typeFilter = document.getElementById('report-type').value;
-            let total = 0; let rows = '';
-            let unpaidList = [];
-
-            // 1. ค้างรายเดือน
-            if(typeFilter === 'ALL' || typeFilter === 'MONTHLY') {
-                allBills.filter(b => b.payment_status === 'UNPAID').forEach(b => {
-                    unpaidList.push({ room: b.room_number, desc: `ค่าเช่างวด ${formatMonth(b.billing_month)}`, amt: parseFloat(b.amount_due) });
-                });
-            }
-
-            // 2. ค้างยกมา
-            if(typeFilter === 'ALL' || typeFilter === 'INITIAL') {
-                activeTenants.filter(t => parseFloat(t.initial_debt) > 0).forEach(t => {
-                    unpaidList.push({ room: t.room_number, desc: `ยอดยกมา / แรกเข้า`, amt: parseFloat(t.initial_debt) });
-                });
-            }
-
-            unpaidList.sort((a, b) => a.room.localeCompare(b.room));
+        async function submitReject() {
+            const reason = document.getElementById('reject-reason').value.trim();
+            if(!reason) { toast("กรุณาระบุสาเหตุการตีกลับข้อมูล", "error"); return; }
             
-            if(unpaidList.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="4" style="text-align:center; padding:30px;">เยี่ยมมาก! ไม่มีข้อมูลค้างชำระ</td></tr>`;
-                document.getElementById('grand-total').innerText = '฿0.00'; return;
-            }
-
-            unpaidList.forEach(item => {
-                const tenant = activeTenants.find(t => t.room_number === item.room) || { full_name: '-' };
-                total += item.amt;
-                rows += `<tr><td style="font-weight:700;">${item.room}</td><td>${tenant.full_name}</td><td>${item.desc}</td><td style="text-align:right; color:var(--alert-red); font-weight:700;">฿${item.amt.toLocaleString('en-US', {minimumFractionDigits:2})}</td></tr>`;
-            });
-
-            tbody.innerHTML = rows;
-            document.getElementById('grand-total').innerText = `฿${total.toLocaleString('en-US', {minimumFractionDigits:2})}`;
-        }
-
-        // ==========================================
-        // PAY & SLIP ACTIONS
-        // ==========================================
-        let currentPayData = {};
-        
-        function openPayModal(tenantId, room, amount, type) {
-            currentPayData = { tenantId, room, amount, type };
-            document.getElementById('pay-room').innerText = room;
-            document.getElementById('pay-amount').value = amount;
-            
-            const monthDiv = document.getElementById('fg-pay-month');
-            if(type === 'INITIAL') {
-                monthDiv.style.display = 'none'; // ซ่อนเดือนถ้ารับยอดยกมา
-            } else {
-                monthDiv.style.display = 'block';
-                const firstMonth = document.getElementById('options-pay-month').firstChild;
-                if(firstMonth) {
-                    document.getElementById('display-pay-month').innerText = firstMonth.innerText;
-                    document.getElementById('pay-month').value = firstMonth.getAttribute('data-val');
-                }
-            }
-            document.getElementById('pay-modal').classList.add('show');
-        }
-
-        document.getElementById('btn-do-pay').addEventListener('click', async () => {
-            const btn = document.getElementById('btn-do-pay');
-            const amt = parseFloat(document.getElementById('pay-amount').value);
-            const method = document.getElementById('pay-method').value;
-            const month = document.getElementById('pay-month').value;
-
-            if(!amt || amt <= 0) { toast('กรุณาระบุจำนวนเงิน', 'error'); return; }
-            if(currentPayData.type === 'MONTHLY' && !month) { toast('กรุณาเลือกงวดเดือน', 'error'); return; }
-
-            btn.disabled = true; btn.innerText = 'บันทึก...';
-
             try {
-                if(currentPayData.type === 'INITIAL') {
-                    // รับชำระยอดยกมา
-                    const tenant = activeTenants.find(t => t.id === currentPayData.tenantId);
-                    const newDebt = Math.max(0, parseFloat(tenant.initial_debt) - amt);
-                    const res = await fetch(`${SB_URL}/dorm_tenants?id=eq.${currentPayData.tenantId}`, {
-                        method: 'PATCH', headers: { 'Content-Type': 'application/json', 'apikey': SB_KEY, 'Authorization': `Bearer ${SB_KEY}` },
-                        body: JSON.stringify({ initial_debt: newDebt })
-                    });
-                    if(!res.ok) throw new Error();
-                } else {
-                    // รับชำระรายเดือน
-                    const checkRes = await fetch(`${SB_URL}/billing_statements?room_number=eq.${currentPayData.room}&billing_month=eq.${month}`, { headers: { 'apikey': SB_KEY, 'Authorization': `Bearer ${SB_KEY}` } });
-                    const existing = await checkRes.json();
+                // อัปเดตสถานะกลับเป็น UNPAID และบันทึกสาเหตุ
+                await fetch(`${SB_URL}/billing_statements?id=eq.${currentRejectId}`, {
+                    method: 'PATCH',
+                    headers: { 'Content-Type': 'application/json', 'apikey': SB_KEY, 'Authorization': `Bearer ${SB_KEY}` },
+                    body: JSON.stringify({ 
+                        payment_status: 'UNPAID', 
+                        reject_reason: reason,
+                        slip_image_url: null, // ลบลิงก์รูปเดิมออก
+                        ai_metadata: null     // ลบข้อมูล AI เดิมออก
+                    })
+                });
+                toast("ตีกลับรายการเรียบร้อยแล้ว", "success");
+                closeModal('reject-modal');
+                fetchData();
+            } catch(e) { toast("ดำเนินการไม่สำเร็จ", "error"); }
+        }
 
-                    const payload = { room_number: currentPayData.room, amount_due: amt, billing_month: month, payment_status: 'PAID', payment_method: method, paid_at: new Date().toISOString() };
+        // --- อนุมัติยอด ---
+        async function updateStatus(id, status, method = 'TRANSFER') {
+            if(!confirm("ยืนยันการทำรายการนี้ใช่หรือไม่?")) return;
+            try {
+                await fetch(`${SB_URL}/billing_statements?id=eq.${id}`, {
+                    method: 'PATCH',
+                    headers: { 'Content-Type': 'application/json', 'apikey': SB_KEY, 'Authorization': `Bearer ${SB_KEY}` },
+                    body: JSON.stringify({ payment_status: status, payment_method: method, paid_at: new Date() })
+                });
+                toast("บันทึกข้อมูลเรียบร้อย", "success");
+                fetchData();
+            } catch(e) { toast("ไม่สามารถบันทึกได้", "error"); }
+        }
 
-                    let res;
-                    if(existing.length > 0) {
-                        res = await fetch(`${SB_URL}/billing_statements?id=eq.${existing[0].id}`, { method: 'PATCH', headers: { 'Content-Type': 'application/json', 'apikey': SB_KEY, 'Authorization': `Bearer ${SB_KEY}` }, body: JSON.stringify(payload) });
-                    } else {
-                        res = await fetch(`${SB_URL}/billing_statements`, { method: 'POST', headers: { 'Content-Type': 'application/json', 'apikey': SB_KEY, 'Authorization': `Bearer ${SB_KEY}` }, body: JSON.stringify(payload) });
+        // --- สร้างบิล ---
+        async function generateMonthlyBills() {
+            if(!confirm(`ระบบจะสร้างรายการเก็บเงินประจำเดือน ${currentMonth} ให้ผู้เช่าทุกห้อง ยืนยันการดำเนินการ?`)) return;
+            try {
+                for (const t of allTenants) {
+                    const exists = allBills.find(b => b.room_number === t.room_number && b.billing_month === currentMonth);
+                    if (!exists) {
+                        await fetch(`${SB_URL}/billing_statements`, {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json', 'apikey': SB_KEY, 'Authorization': `Bearer ${SB_KEY}` },
+                            body: JSON.stringify({ room_number: t.room_number, billing_month: currentMonth, amount_due: t.monthly_rent, payment_status: 'UNPAID' })
+                        });
                     }
-                    if(!res.ok) throw new Error();
                 }
-
-                toast('บันทึกรับชำระเรียบร้อย', 'success');
-                closeModal('pay-modal');
-                await fetchData();
-            } catch(e) { toast('บันทึกไม่สำเร็จ', 'error'); }
-            finally { btn.disabled = false; btn.innerText = 'บันทึกรับชำระ'; }
-        });
-
-        // สลิป Approve / Reject
-        let confirmActionData = {};
-        function actionConfirm(id, type, room, amount) {
-            confirmActionData = { id, type };
-            document.getElementById('confirm-room').innerText = room;
-            document.getElementById('confirm-amount').innerText = `฿${parseFloat(amount).toLocaleString()}`;
-            
-            const title = document.getElementById('confirm-title');
-            const btn = document.getElementById('btn-do-confirm');
-            
-            if(type === 'APPROVE') {
-                title.innerText = 'ยืนยันรับยอดโอน?'; title.style.color = 'var(--navy-dark)';
-                btn.innerText = 'ยืนยันรับยอด'; btn.style.background = 'var(--success-green)';
-            } else if (type === 'REJECT') {
-                title.innerText = 'ปฏิเสธสลิปนี้?'; title.style.color = 'var(--alert-red)';
-                btn.innerText = 'ปฏิเสธสลิป'; btn.style.background = 'var(--alert-red)';
-            }
-            document.getElementById('confirm-modal').classList.add('show');
+                toast("ระบบได้สร้างรายการเก็บเงินสำเร็จ", "success");
+                fetchData();
+            } catch(e) { toast("พบข้อผิดพลาดในการสร้างรายการ", "error"); }
         }
 
-        document.getElementById('btn-do-confirm').addEventListener('click', async () => {
-            if(!confirmActionData.id) return;
-            const btn = document.getElementById('btn-do-confirm');
-            btn.disabled = true; btn.innerText = 'ประมวลผล...';
-
-            try {
-                let payload = {};
-                if(confirmActionData.type === 'APPROVE') payload = { payment_status: 'PAID', paid_at: new Date().toISOString() };
-                else if(confirmActionData.type === 'REJECT') payload = { payment_status: 'UNPAID', slip_image_url: null };
-
-                const res = await fetch(`${SB_URL}/billing_statements?id=eq.${confirmActionData.id}`, {
-                    method: 'PATCH', headers: { 'Content-Type': 'application/json', 'apikey': SB_KEY, 'Authorization': `Bearer ${SB_KEY}` }, body: JSON.stringify(payload)
-                });
-                if(!res.ok) throw new Error();
-                
-                toast('ทำรายการสำเร็จ', 'success');
-                closeModal('confirm-modal');
-                await fetchData();
-            } catch(e) { toast('เกิดข้อผิดพลาด', 'error'); }
-            finally { btn.disabled = false; }
-        });
-
-        function openSlip(url) {
-            document.getElementById('img-preview').src = url || 'https://via.placeholder.com/400x600?text=No+Image';
+        function viewSlip(url) {
+            if(!url) { toast("ไม่พบหลักฐานการโอนเงิน", "error"); return; }
+            document.getElementById('modal-img').src = url;
             document.getElementById('slip-modal').classList.add('show');
         }
 
-        init();
+        function copyRemindText(room, name, amt) {
+            const text = `แจ้งรายละเอียดค่าใช้จ่ายหอพัก Pak Phanang Prestige Hall\nห้อง: ${room} (${name})\nยอดที่ต้องชำระ: ฿${parseFloat(amt).toLocaleString()}\n\nสามารถตรวจสอบรายละเอียดและแนบหลักฐานการโอนเงินได้ผ่านระบบบริการลูกบ้านออนไลน์ค่ะ`;
+            navigator.clipboard.writeText(text);
+            toast("คัดลอกข้อความสำเร็จ", "success");
+        }
+
+        initMonthPicker();
+        fetchData();
     </script>
 </body>
 </html>

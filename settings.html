@@ -8,7 +8,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Anuphan:wght@300;400;500;600;700&family=Audiowide&display=swap" rel="stylesheet">
     
     <script>
-        // 🔒 Check Session & Role
+        // 🔒 Check Session & Role (เฉพาะ PRESIDENT เท่านั้น)
         (function() {
             try {
                 const sessionStr = localStorage.getItem('admin_user_data');
@@ -30,6 +30,7 @@
             --bg-white: #FFFFFF;
             --navy-dark: #0F172A;
             --blue-primary: #2563EB;
+            --blue-hover: #1D4ED8;
             --text-main: #0F172A;
             --text-muted: #64748B;
             --border-color: #E2E8F0;
@@ -41,37 +42,39 @@
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: var(--font-ui); }
         body { background-color: var(--bg-body); color: var(--text-main); -webkit-font-smoothing: antialiased; display: flex; flex-direction: column; min-height: 100vh; overflow-x: hidden; }
 
-        /* ================= TOP NAVBAR ================= */
+        /* ================= UNIVERSAL TOP NAVBAR ================= */
         .top-navbar {
             background: var(--bg-white); border-bottom: 1px solid var(--border-color); padding: 0 24px; height: 70px;
-            display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 1000; box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 2000; box-shadow: 0 1px 5px rgba(0,0,0,0.03);
         }
-        .nav-left { display: flex; align-items: center; gap: 30px; }
-        .brand { font-family: var(--font-logo); font-size: 1.4rem; color: var(--navy-dark); line-height: 1.1; text-decoration: none;}
-        .brand span { font-family: var(--font-ui); display: block; font-size: 0.8rem; color: var(--blue-primary); font-weight: 700;}
+        .nav-left { display: flex; align-items: center; gap: 20px; }
+        .mobile-toggle { display: none; background: none; border: none; cursor: pointer; color: var(--navy-dark); padding: 5px; border-radius: 8px; transition: 0.2s; }
+        .mobile-toggle:hover { background: #F1F5F9; }
+        .mobile-toggle svg { width: 28px; height: 28px; stroke: currentColor; stroke-width: 2.5; fill: none; display: block;}
+        
+        .brand { font-family: var(--font-logo); font-size: 1.4rem; color: var(--navy-dark); line-height: 1.1; text-decoration: none; letter-spacing: 0.5px;}
+        .brand span { font-family: var(--font-ui); display: block; font-size: 0.8rem; color: var(--blue-primary); font-weight: 700; letter-spacing: 0;}
 
-        /* Desktop Menu */
-        .nav-links { display: flex; gap: 8px; }
+        .nav-links { display: flex; gap: 5px; }
         .nav-item {
             display: flex; align-items: center; gap: 8px; padding: 10px 16px; color: var(--text-muted); text-decoration: none;
-            font-weight: 600; border-radius: 8px; transition: 0.2s; font-size: 0.95rem; cursor: pointer;
+            font-weight: 600; border-radius: 10px; transition: 0.2s; font-size: 0.95rem; cursor: pointer;
         }
-        .nav-item svg { width: 18px; height: 18px; stroke: currentColor; stroke-width: 2.2; fill: none; }
+        .nav-item svg { width: 18px; height: 18px; stroke: currentColor; stroke-width: 2.2; fill: none; flex-shrink: 0; }
         .nav-item:hover { background: #F1F5F9; color: var(--navy-dark); }
         .nav-item.active { background: rgba(37, 99, 235, 0.1); color: var(--blue-primary); }
 
-        .nav-right { display: flex; align-items: center; gap: 15px; }
+        .nav-right { display: flex; align-items: center; gap: 20px; }
         .user-details { text-align: right; line-height: 1.2; }
         .user-details .name { font-weight: 700; font-size: 0.95rem; color: var(--navy-dark); }
-        .user-details .role { font-size: 0.75rem; color: var(--blue-primary); font-weight: 700; text-transform: uppercase; }
+        .user-details .role { font-size: 0.75rem; color: var(--blue-primary); font-weight: 800; text-transform: uppercase; }
         
         .btn-logout {
-            background: #FEF2F2; color: var(--alert-red); border: none; padding: 8px 12px; border-radius: 8px; cursor: pointer;
-            font-weight: 700; transition: 0.2s; font-size: 0.9rem; display: flex; align-items: center; gap: 6px; z-index: 10; relative;
+            background: #FEF2F2; color: var(--alert-red); border: none; padding: 10px 16px; border-radius: 10px; cursor: pointer;
+            font-weight: 700; font-size: 0.9rem; display: flex; align-items: center; gap: 6px; transition: 0.2s; text-decoration: none;
         }
-        .btn-logout:hover { background: var(--alert-red); color: #FFF; }
-        
-        .mobile-toggle { display: none; background: none; border: none; cursor: pointer; color: var(--navy-dark); z-index: 1001; }
+        .btn-logout:hover { background: var(--alert-red); color: #FFF; box-shadow: 0 4px 10px rgba(239, 68, 68, 0.2); }
+        .btn-logout svg { width: 18px; height: 18px; stroke: currentColor; stroke-width: 2.5; fill: none; flex-shrink: 0;}
 
         /* ================= MAIN CONTENT ================= */
         .main-container { max-width: 1200px; margin: 0 auto; padding: 40px 24px; width: 100%; flex: 1; }
@@ -83,80 +86,78 @@
             background: transparent; border: none; padding: 10px 20px; border-radius: 8px; font-size: 0.95rem; font-weight: 700;
             color: var(--text-muted); cursor: pointer; transition: 0.2s; display: flex; align-items: center; gap: 8px; white-space: nowrap;
         }
+        .tab-btn svg { width: 18px; height: 18px; stroke: currentColor; stroke-width: 2.5; fill: none; flex-shrink: 0;}
         .tab-btn.active { background: var(--bg-white); color: var(--blue-primary); box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+
         .tab-content { display: none; animation: fadeIn 0.3s; }
         .tab-content.active { display: block; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* LAYOUT & FORM */
-        .split-layout { display: grid; grid-template-columns: 1fr 1.5fr; gap: 25px; align-items: start; }
-        .card { background: var(--bg-white); border: 1px solid var(--border-color); border-radius: 20px; padding: 25px; box-shadow: 0 4px 15px rgba(0,0,0,0.02); }
-        .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        /* CARDS & FORMS */
+        .card { background: var(--bg-white); border: 1px solid var(--border-color); border-radius: 20px; padding: 30px; box-shadow: 0 4px 15px rgba(0,0,0,0.02); margin-bottom: 25px;}
+        .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
         .form-group { position: relative; display: flex; flex-direction: column; }
         .form-group.full { grid-column: 1 / -1; }
-        .form-control { width: 100%; padding: 20px 15px 8px; border: 1.5px solid var(--border-color); border-radius: 10px; font-size: 1rem; color: var(--navy-dark); background: #F8FAFC; outline: none; transition: 0.3s; }
-        .form-control:focus { border-color: var(--blue-primary); background: #FFF; box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1); }
+        .form-control { width: 100%; padding: 22px 16px 8px; border: 1.5px solid var(--border-color); border-radius: 12px; font-size: 1.05rem; color: var(--navy-dark); background: #F8FAFC; outline: none; transition: 0.3s; }
+        .form-control:focus { border-color: var(--blue-primary); background: #FFF; box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1); }
         .form-control[readonly] { background: #EDF2F7; color: #64748B; cursor: not-allowed; }
         
-        .floating-label { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: var(--text-muted); font-size: 0.95rem; font-weight: 500; transition: 0.2s; pointer-events: none; }
-        .form-control:focus ~ .floating-label, .form-control:not(:placeholder-shown) ~ .floating-label, .form-group.has-value .floating-label { top: 12px; font-size: 0.75rem; font-weight: 700; color: var(--blue-primary); }
+        .floating-label { position: absolute; left: 16px; top: 50%; transform: translateY(-50%); color: var(--text-muted); font-size: 1rem; font-weight: 500; transition: 0.2s; pointer-events: none; }
+        .form-control:focus ~ .floating-label, .form-control:not(:placeholder-shown) ~ .floating-label, .form-group.has-value .floating-label { top: 14px; font-size: 0.75rem; font-weight: 700; color: var(--blue-primary); }
 
-        /* CUSTOM SELECT */
-        .custom-select { position: relative; width: 100%; }
-        .select-selected {
-            width: 100%; padding: 20px 35px 8px 15px; border: 1.5px solid var(--border-color); border-radius: 10px;
-            font-size: 1rem; color: transparent; background: #F8FAFC; cursor: pointer; transition: 0.3s; min-height: 50px;
-            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2364748B' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
-            background-repeat: no-repeat; background-position: right 12px center; background-size: 1em; display: flex; align-items: flex-end;
-        }
-        .form-group.has-value .select-selected { color: var(--navy-dark); }
-        .select-items { position: absolute; background: #FFF; top: calc(100% + 5px); left: 0; right: 0; z-index: 99; border: 1px solid var(--border-color); border-radius: 10px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); overflow: hidden; display: none; }
-        .select-items.show { display: block; }
-        .select-items div { padding: 12px 15px; cursor: pointer; font-size: 0.95rem; border-bottom: 1px solid #F8FAFC; transition: 0.1s;}
-        .select-items div:hover { background: #EFF6FF; color: var(--blue-primary); font-weight: 700; }
-
-        /* BUTTONS & TABLE */
-        .btn-main { width: 100%; border: none; padding: 14px; border-radius: 10px; font-weight: 700; font-size: 1rem; cursor: pointer; transition: 0.2s; display: flex; align-items: center; justify-content: center; gap: 8px;}
+        /* BUTTONS */
+        .btn-main { border: none; padding: 16px; border-radius: 12px; font-weight: 700; font-size: 1.05rem; cursor: pointer; transition: 0.2s; display: flex; align-items: center; justify-content: center; gap: 8px;}
         .btn-blue { background: var(--navy-dark); color: #FFF; box-shadow: 0 4px 10px rgba(15,23,42,0.15);}
         .btn-blue:hover { background: var(--blue-primary); transform: translateY(-2px); }
         
+        /* TABLE */
         .table-wrapper { border: 1px solid var(--border-color); border-radius: 16px; overflow-x: auto; }
-        table { width: 100%; border-collapse: collapse; min-width: 400px; }
-        th { padding: 14px 16px; background: #F8FAFC; color: var(--navy-dark); font-weight: 700; border-bottom: 1px solid var(--border-color); font-size: 0.9rem;}
-        td { padding: 14px 16px; border-bottom: 1px solid var(--border-color); font-size: 0.95rem; }
+        table { width: 100%; border-collapse: collapse; text-align: left; min-width: 500px;}
+        th { padding: 16px; background: #F8FAFC; color: var(--navy-dark); font-weight: 700; border-bottom: 1px solid var(--border-color); font-size: 0.95rem;}
+        td { padding: 16px; border-bottom: 1px solid var(--border-color); font-size: 0.95rem; vertical-align: middle;}
+        
         .role-badge { display: inline-block; padding: 4px 10px; border-radius: 6px; font-size: 0.75rem; font-weight: 800; }
         .role-president { background: #FEF2F2; color: var(--alert-red); }
         .role-admin { background: #EFF6FF; color: var(--blue-primary); }
 
-        .btn-icon { width: 32px; height: 32px; border-radius: 8px; border: none; display: inline-flex; justify-content: center; align-items: center; cursor: pointer; background: #F1F5F9; margin-left: 4px;}
-        .btn-icon.edit { color: var(--warning-yellow); }
-        .btn-icon.delete { color: var(--alert-red); }
-        .btn-icon:hover { transform: scale(1.1); }
+        .btn-icon { width: 34px; height: 34px; border-radius: 8px; border: none; display: inline-flex; justify-content: center; align-items: center; cursor: pointer; background: #F1F5F9; color: var(--text-muted); margin-left: 5px; transition: 0.2s;}
+        .btn-icon:hover { transform: scale(1.15); background: #E2E8F0; }
 
         /* TOAST & MODAL */
-        #smart-toast { position: fixed; top: -100px; left: 50%; transform: translateX(-50%); background: #FFF; padding: 14px 24px; border-radius: 50px; box-shadow: 0 4px 20px rgba(0,0,0,0.15); z-index: 10000; transition: 0.4s; display: flex; align-items: center; gap: 10px; font-weight: 700; font-size: 0.95rem; border: 1px solid var(--border-color); }
+        #smart-toast { position: fixed; top: -100px; left: 50%; transform: translateX(-50%); background: #FFF; padding: 14px 24px; border-radius: 50px; box-shadow: 0 10px 40px rgba(0,0,0,0.1); z-index: 10000; transition: 0.4s; display: flex; align-items: center; gap: 10px; font-weight: 700; font-size: 0.95rem; border: 1px solid var(--border-color); }
         #smart-toast.show { top: 20px; }
         
-        .modal-overlay { position: fixed; inset: 0; background: rgba(15,23,42,0.6); backdrop-filter: blur(2px); z-index: 9999; display: none; justify-content: center; align-items: center; padding: 20px;}
+        .modal-overlay { position: fixed; inset: 0; background: rgba(15, 23, 42, 0.4); backdrop-filter: blur(2px); z-index: 9999; display: none; justify-content: center; align-items: center; padding: 20px;}
         .modal-overlay.show { display: flex; animation: fadeIn 0.2s; }
-        .modal-box { background: #FFF; padding: 25px; border-radius: 20px; width: 100%; max-width: 350px; text-align: center; }
+        .modal-box { background: #FFF; padding: 30px; border-radius: 24px; width: 100%; max-width: 380px; text-align: center; }
 
-        /* ================= MOBILE RESPONSIVE ================= */
-        @media (max-width: 1000px) {
-            .split-layout { grid-template-columns: 1fr; }
+        /* CUSTOM SELECT */
+        .custom-select { position: relative; width: 100%; }
+        .select-selected {
+            width: 100%; padding: 22px 35px 8px 16px; border: 1.5px solid var(--border-color); border-radius: 10px;
+            font-size: 1rem; color: transparent; background: #F8FAFC; cursor: pointer; transition: 0.3s; min-height: 55px;
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2364748B' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+            background-repeat: no-repeat; background-position: right 12px center; background-size: 1.2em; display: flex; align-items: flex-end;
+        }
+        .form-group.has-value .select-selected { color: var(--navy-dark); }
+        .select-items { position: absolute; background: #FFF; top: calc(100% + 5px); left: 0; right: 0; z-index: 99; border: 1px solid var(--border-color); border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); overflow: hidden; display: none; }
+        .select-items.show { display: block; }
+        .select-items div { padding: 12px 16px; cursor: pointer; font-size: 0.95rem; border-bottom: 1px solid #F8FAFC; }
+        .select-items div:hover { background-color: #EFF6FF; color: var(--blue-primary); font-weight: 700; }
+
+        @media (max-width: 1024px) {
             .mobile-toggle { display: block; }
             .user-details { display: none; }
-            
-            /* ซ่อนเมนูแบบ Slide ด้านขวา */
             .nav-links {
-                position: fixed; top: 70px; right: -100%; width: 250px; height: calc(100vh - 70px);
-                background: #FFF; flex-direction: column; padding: 20px; gap: 5px;
-                box-shadow: -5px 0 15px rgba(0,0,0,0.05); transition: 0.3s; z-index: 999;
+                position: fixed; top: 70px; left: -100%; width: 280px; height: calc(100vh - 70px);
+                background: var(--bg-white); flex-direction: column; padding: 20px; gap: 5px;
+                box-shadow: 4px 0 15px rgba(0,0,0,0.05); transition: 0.4s ease; z-index: 1999; border-right: 1px solid var(--border-color);
             }
-            .nav-links.active { right: 0; }
-            .nav-item { padding: 14px 16px; border-radius: 10px; }
-        }
-        @media (max-width: 600px) {
+            .nav-links.show { left: 0; }
+            .nav-item { padding: 14px 20px; border-radius: 12px; font-size: 1.05rem; }
+            .nav-left { gap: 15px; }
+            .btn-logout span { display: none; }
+            .btn-logout { padding: 10px; }
             .form-grid { grid-template-columns: 1fr; }
         }
     </style>
@@ -170,109 +171,117 @@
             <h3 style="color:var(--alert-red); margin-bottom:10px;">ยืนยันการลบผู้ดูแล</h3>
             <p style="color:var(--text-muted); font-size:0.95rem; margin-bottom:20px;">ลบบัญชี <strong><span id="user-to-del"></span></strong> ใช่หรือไม่?</p>
             <div style="display:flex; gap:10px;">
-                <button class="btn-main" style="background:#F1F5F9; color:var(--navy-dark);" onclick="closeModal()">ยกเลิก</button>
-                <button class="btn-main" id="btn-do-delete" style="background:var(--alert-red); color:#FFF;">ลบบัญชี</button>
+                <button class="btn-main" style="flex:1; background:#F1F5F9; color:var(--navy-dark);" onclick="closeModal()">ยกเลิก</button>
+                <button class="btn-main" id="btn-do-delete" style="flex:1; background:var(--alert-red); color:#FFF;">ลบบัญชี</button>
             </div>
         </div>
     </div>
 
     <nav class="top-navbar">
         <div class="nav-left">
+            <button class="mobile-toggle" id="mobile-menu-btn">
+                <svg viewBox="0 0 24 24"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+            </button>
             <a href="dashboard.html" class="brand">PAK PHANANG<br><span>Prestige Hall</span></a>
-        </div>
-        
-        <div class="nav-links" id="nav-links">
-            <a href="dashboard.html" class="nav-item">ภาพรวมระบบ</a>
-            <a href="tenant_manage.html" class="nav-item">จัดการผู้เช่า</a>
-            <a href="billing.html" class="nav-item">รับชำระเงิน/บิล</a>
-            <a href="maintenance.html" class="nav-item">แจ้งซ่อมและประกาศ</a>
-            <a href="settings.html" class="nav-item active">ตั้งค่าระบบ</a>
+            
+            <div class="nav-links" id="nav-links">
+                <a href="dashboard.html" class="nav-item">
+                    <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg> ภาพรวมระบบ
+                </a>
+                <a href="tenant_manage.html" class="nav-item">
+                    <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle></svg> จัดการผู้เช่า
+                </a>
+                <a href="billing.html" class="nav-item">
+                    <svg viewBox="0 0 24 24"><rect x="2" y="5" width="20" height="14" rx="2" ry="2"></rect><line x1="2" y1="10" x2="22" y2="10"></line></svg> รับชำระเงิน/บิล
+                </a>
+                <a href="maintenance.html" class="nav-item">
+                    <svg viewBox="0 0 24 24"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"></path></svg> แจ้งซ่อมและประกาศ
+                </a>
+                <a href="settings.html" class="nav-item active" id="nav-settings">
+                    <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"></circle></svg> ตั้งค่าระบบ
+                </a>
+            </div>
         </div>
 
         <div class="nav-right">
-            <div class="user-details"><div class="name" id="display-name">Admin</div><div class="role">PRESIDENT</div></div>
-            <button class="btn-logout" id="logout-btn">ออกระบบ</button>
-            <button class="mobile-toggle" id="mobile-toggle">
-                <svg viewBox="0 0 24 24" width="28" height="28" stroke="currentColor" stroke-width="2.5" fill="none"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+            <div class="user-details"><div class="name" id="display-name">...</div><div class="role" id="display-role">ADMIN</div></div>
+            <button class="btn-logout" id="btn-logout">
+                <span>ออกระบบ</span>
+                <svg viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
             </button>
         </div>
     </nav>
 
     <main class="main-container">
         <div class="page-header">
-            <h1>ตั้งค่าระบบ</h1>
-            <p>จัดการสิทธิ์ผู้ใช้งาน และปรับปรุงความปลอดภัยของระบบ</p>
+            <h1>ตั้งค่าการทำงาน</h1>
+            <p>จัดการข้อมูลบัญชีรับเงิน และ สิทธิ์ผู้ดูแลระบบ</p>
         </div>
 
         <div class="tabs-wrapper">
-            <button class="tab-btn active" onclick="switchTab('tab-users', this)">จัดการผู้ดูแล (Admin)</button>
-            <button class="tab-btn" onclick="switchTab('tab-profile', this)">เปลี่ยนรหัสผ่านส่วนตัว</button>
+            <button class="tab-btn active" onclick="switchTab('tab-payment', this)"><svg viewBox="0 0 24 24"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect><line x1="1" y1="10" x2="23" y2="10"></line></svg> บัญชีรับเงิน (พร้อมเพย์)</button>
+            <button class="tab-btn" onclick="switchTab('tab-users', this)"><svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle></svg> จัดการผู้ดูแล</button>
+            <button class="tab-btn" onclick="switchTab('tab-profile', this)"><svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg> รหัสผ่านของฉัน</button>
         </div>
 
-        <div id="tab-users" class="tab-content active split-layout">
-            
-            <div class="card">
-                <h3 id="form-title" style="margin-bottom: 20px; color: var(--navy-dark);">เพิ่มบัญชีผู้ดูแลใหม่</h3>
-                <form id="admin-form">
-                    <input type="hidden" id="edit-id">
-                    <div class="form-grid">
-                        <div class="form-group full">
-                            <input type="text" id="inp-user" class="form-control" placeholder=" " required autocomplete="off">
-                            <label class="floating-label">Username <span>*</span></label>
-                        </div>
-                        <div class="form-group full">
-                            <input type="password" id="inp-pass" class="form-control" placeholder=" " required autocomplete="new-password">
-                            <label class="floating-label" id="lbl-pass">รหัสผ่าน <span>*</span></label>
-                        </div>
-                        <div class="form-group">
-                            <input type="text" id="inp-fname" class="form-control" placeholder=" " required>
-                            <label class="floating-label">ชื่อจริง <span>*</span></label>
-                        </div>
-                        <div class="form-group">
-                            <input type="text" id="inp-lname" class="form-control" placeholder=" " required>
-                            <label class="floating-label">นามสกุล <span>*</span></label>
-                        </div>
-                        <div class="form-group full" id="fg-role">
-                            <div class="custom-select">
-                                <div class="select-selected" id="disp-role">พนักงานดูแลทั่วไป (ADMIN)</div>
-                                <div class="select-items" id="opts-role">
-                                    <div data-val="ADMIN">พนักงานดูแลทั่วไป (ADMIN)</div>
-                                    <div data-val="PRESIDENT">ประธานกรรมการ (PRESIDENT)</div>
-                                </div>
-                                <input type="hidden" id="inp-role" value="ADMIN">
-                            </div>
-                            <label class="floating-label" style="top:12px; font-size:0.75rem; color:var(--blue-primary);">ระดับสิทธิ์ <span>*</span></label>
-                        </div>
+        <div id="tab-payment" class="tab-content active">
+            <div class="card" style="max-width: 600px;">
+                <h3 style="margin-bottom: 20px; color: var(--navy-dark);">ตั้งค่าข้อมูล PromptPay สำหรับลูกบ้าน</h3>
+                <form id="pay-config-form">
+                    <div class="form-group full" style="margin-bottom: 20px;">
+                        <input type="text" id="pp-number" class="form-control" placeholder=" " required>
+                        <label class="floating-label">หมายเลขพร้อมเพย์ (เบอร์โทร หรือ เลขบัตร)</label>
                     </div>
-                    <button type="submit" class="btn-main btn-blue" id="btn-save" style="margin-top:20px;">สร้างบัญชี</button>
-                    <button type="button" class="btn-main" id="btn-cancel" style="display:none; margin-top:10px; background:#F1F5F9; color:var(--navy-dark);" onclick="cancelEdit()">ยกเลิก</button>
+                    <div class="form-group full" style="margin-bottom: 25px;">
+                        <input type="text" id="pp-name" class="form-control" placeholder=" " required>
+                        <label class="floating-label">ชื่อบัญชีรับเงิน</label>
+                    </div>
+                    <button type="submit" class="btn-main btn-blue" id="btn-save-pp" style="width: 100%;">
+                        <svg viewBox="0 0 24 24" width="20" height="20"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg>
+                        บันทึกข้อมูลพร้อมเพย์
+                    </button>
                 </form>
             </div>
+        </div>
 
-            <div class="card" style="padding:0; overflow:hidden;">
-                <h3 style="padding: 20px; color: var(--navy-dark); border-bottom: 1px solid var(--border-color);">รายชื่อในระบบ</h3>
-                <div class="table-wrapper" style="border:none; border-radius:0;">
-                    <table>
-                        <thead><tr><th>ชื่อ-นามสกุล / Username</th><th>สิทธิ์</th><th style="text-align:right;">จัดการ</th></tr></thead>
-                        <tbody id="table-body"><tr><td colspan="3" style="text-align:center; padding:20px;">กำลังโหลด...</td></tr></tbody>
-                    </table>
+        <div id="tab-users" class="tab-content">
+            <div style="display: grid; grid-template-columns: 1fr 1.5fr; gap: 25px;" class="split-layout">
+                <div class="card">
+                    <h3 id="form-title" style="margin-bottom: 20px;">เพิ่มแอดมินใหม่</h3>
+                    <form id="admin-form">
+                        <input type="hidden" id="edit-id">
+                        <div class="form-grid">
+                            <div class="form-group full"><input type="text" id="inp-user" class="form-control" placeholder=" " required autocomplete="off"><label class="floating-label">Username</label></div>
+                            <div class="form-group full"><input type="password" id="inp-pass" class="form-control" placeholder=" " required autocomplete="new-password"><label class="floating-label" id="lbl-pass">รหัสผ่าน</label></div>
+                            <div class="form-group"><input type="text" id="inp-fname" class="form-control" placeholder=" " required><label class="floating-label">ชื่อจริง</label></div>
+                            <div class="form-group"><input type="text" id="inp-lname" class="form-control" placeholder=" " required><label class="floating-label">นามสกุล</label></div>
+                            <div class="form-group full" id="fg-role">
+                                <div class="custom-select">
+                                    <div class="select-selected" id="disp-role">ADMIN</div>
+                                    <div class="select-items" id="opts-role"><div data-val="ADMIN">ADMIN</div><div data-val="PRESIDENT">PRESIDENT</div></div>
+                                    <input type="hidden" id="inp-role" value="ADMIN">
+                                </div>
+                                <label class="floating-label" style="top:12px; font-size:0.75rem; color:var(--blue-primary);">ระดับสิทธิ์</label>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn-main btn-blue" id="btn-save" style="margin-top:20px; width: 100%;">บันทึกข้อมูล</button>
+                        <button type="button" class="btn-main" id="btn-cancel" style="display:none; margin-top:10px; background:#F1F5F9; color:var(--navy-dark); width: 100%;" onclick="cancelEdit()">ยกเลิก</button>
+                    </form>
+                </div>
+                <div class="card" style="padding:0; overflow:hidden;">
+                    <h3 style="padding: 20px; color: var(--navy-dark); border-bottom: 1px solid var(--border-color);">รายชื่อผู้ดูแลในระบบ</h3>
+                    <div class="table-wrapper" style="border:none; border-radius:0;"><table id="admin-table"><thead><tr><th>ชื่อ-นามสกุล</th><th>สิทธิ์</th><th style="text-align:right;">จัดการ</th></tr></thead><tbody id="table-body"></tbody></table></div>
                 </div>
             </div>
         </div>
 
         <div id="tab-profile" class="tab-content">
             <div class="card" style="max-width: 500px; margin: 0 auto;">
-                <h3 style="margin-bottom: 20px; color: var(--navy-dark);">เปลี่ยนรหัสผ่าน</h3>
+                <h3 style="margin-bottom: 20px;">เปลี่ยนรหัสผ่านส่วนตัว</h3>
                 <form id="pwd-form">
-                    <div class="form-group full" style="margin-bottom: 15px;">
-                        <input type="password" id="old-pwd" class="form-control" placeholder=" " required>
-                        <label class="floating-label">รหัสผ่านเดิม</label>
-                    </div>
-                    <div class="form-group full" style="margin-bottom: 20px;">
-                        <input type="password" id="new-pwd" class="form-control" placeholder=" " required>
-                        <label class="floating-label">รหัสผ่านใหม่</label>
-                    </div>
-                    <button type="submit" class="btn-main btn-blue" id="btn-pwd">อัปเดตรหัสผ่าน</button>
+                    <div class="form-group full" style="margin-bottom: 15px;"><input type="password" id="old-pwd" class="form-control" placeholder=" " required><label class="floating-label">รหัสผ่านเดิม</label></div>
+                    <div class="form-group full" style="margin-bottom: 20px;"><input type="password" id="new-pwd" class="form-control" placeholder=" " required><label class="floating-label">รหัสผ่านใหม่</label></div>
+                    <button type="submit" class="btn-main btn-blue" style="width: 100%;">อัปเดตรหัสผ่าน</button>
                 </form>
             </div>
         </div>
@@ -304,163 +313,114 @@
         const dispRole = document.getElementById('disp-role');
         const optsRole = document.getElementById('opts-role');
         const inpRole = document.getElementById('inp-role');
-        
         dispRole.addEventListener('click', (e) => { e.stopPropagation(); optsRole.classList.toggle('show'); });
         optsRole.addEventListener('click', (e) => {
             if(e.target.tagName === 'DIV') {
-                dispRole.innerText = e.target.innerText;
-                inpRole.value = e.target.getAttribute('data-val');
-                optsRole.classList.remove('show');
-                document.getElementById('fg-role').classList.add('has-value');
+                dispRole.innerText = e.target.innerText; inpRole.value = e.target.getAttribute('data-val');
+                optsRole.classList.remove('show'); document.getElementById('fg-role').classList.add('has-value');
             }
         });
-        document.addEventListener('click', () => optsRole.classList.remove('show'));
+        document.addEventListener('click', () => { optsRole.classList.remove('show'); });
 
-        // Init
         async function init() {
-            document.getElementById('mobile-toggle').addEventListener('click', () => { document.getElementById('nav-links').classList.toggle('active'); });
-            document.getElementById('logout-btn').addEventListener('click', () => { localStorage.removeItem('admin_user_data'); window.location.href = 'index.html'; });
+            document.getElementById('mobile-menu-btn').addEventListener('click', () => { document.getElementById('nav-links').classList.toggle('show'); });
+            document.getElementById('btn-logout').addEventListener('click', () => { localStorage.removeItem('admin_user_data'); window.location.href = 'index.html'; });
 
             currentUser = JSON.parse(localStorage.getItem('admin_user_data'));
-            if(currentUser) {
-                document.getElementById('display-name').innerText = currentUser.first_name || 'Admin';
-            }
-            document.getElementById('fg-role').classList.add('has-value');
+            if(currentUser) document.getElementById('display-name').innerText = currentUser.first_name;
+
+            await loadPromptPay();
             await loadUsers();
         }
 
-        // Load DB
+        // --- 🌟 จัดการพร้อมเพย์ ---
+        async function loadPromptPay() {
+            try {
+                const res = await fetch(`${SB_URL}/dorm_configs?id=eq.main_config`, { headers: { 'apikey': SB_KEY, 'Authorization': `Bearer ${SB_KEY}` } });
+                const data = await res.json();
+                if(data.length > 0) {
+                    document.getElementById('pp-number').value = data[0].promptpay_number;
+                    document.getElementById('pp-name').value = data[0].promptpay_name;
+                    // Trigger Floating Label
+                    document.getElementById('pp-number').dispatchEvent(new Event('change'));
+                    document.getElementById('pp-name').dispatchEvent(new Event('change'));
+                }
+            } catch(e) {}
+        }
+
+        document.getElementById('pay-config-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const btn = document.getElementById('btn-save-pp');
+            btn.disabled = true; btn.innerText = "กำลังบันทึก...";
+            try {
+                const num = document.getElementById('pp-number').value.trim();
+                const name = document.getElementById('pp-name').value.trim();
+                const res = await fetch(`${SB_URL}/dorm_configs?id=eq.main_config`, {
+                    method: 'PATCH',
+                    headers: { 'Content-Type': 'application/json', 'apikey': SB_KEY, 'Authorization': `Bearer ${SB_KEY}` },
+                    body: JSON.stringify({ promptpay_number: num, promptpay_name: name, updated_at: new Date() })
+                });
+                if(res.ok) toast("บันทึกข้อมูลพร้อมเพย์เรียบร้อย!", "success");
+            } catch(e) { toast("บันทึกไม่สำเร็จ", "error"); }
+            finally { btn.disabled = false; btn.innerHTML = '<svg viewBox="0 0 24 24" width="20" height="20"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg> บันทึกข้อมูลพร้อมเพย์'; }
+        });
+
+        // --- จัดการแอดมิน ---
         async function loadUsers() {
             try {
                 const res = await fetch(`${SB_URL}/admin_users?order=created_at.asc`, { headers: { 'apikey': SB_KEY, 'Authorization': `Bearer ${SB_KEY}` } });
-                if(!res.ok) throw new Error();
                 allUsers = await res.json();
-                
-                const tbody = document.getElementById('table-body');
-                tbody.innerHTML = allUsers.map(u => {
-                    const rClass = u.role === 'PRESIDENT' ? 'role-president' : 'role-admin';
-                    const fname = u.first_name || ''; const lname = u.last_name || '';
-                    
-                    let btns = `<button class="btn-icon edit" onclick="prepEdit('${u.id}')">✏️</button>`;
-                    if(u.username !== currentUser.username && u.username !== 'admin') {
-                        btns += `<button class="btn-icon delete" onclick="confirmDel('${u.id}', '${u.username}')">🗑️</button>`;
-                    }
-
-                    return `<tr>
-                        <td><strong>${fname} ${lname}</strong><br><span style="font-size:0.8rem; color:gray;">@${u.username}</span></td>
-                        <td><span class="role-badge ${rClass}">${u.role}</span></td>
-                        <td style="text-align:right;">${btns}</td>
-                    </tr>`;
-                }).join('');
-            } catch(e) { toast("โหลดข้อมูลล้มเหลว", "error"); }
+                document.getElementById('table-body').innerHTML = allUsers.map(u => `
+                    <tr><td><strong>${u.first_name} ${u.last_name}</strong><br><span style="color:gray; font-size:0.8rem;">@${u.username}</span></td>
+                    <td><span class="role-badge ${u.role==='PRESIDENT'?'role-president':'role-admin'}">${u.role}</span></td>
+                    <td style="text-align:right;">
+                        <button class="btn-icon" onclick="prepEdit('${u.id}')"><svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" fill="none"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg></button>
+                        ${(u.username!=='admin' && u.username!==currentUser.username)?`<button class="btn-icon" style="color:var(--alert-red);" onclick="confirmDel('${u.id}','${u.username}')"><svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" fill="none"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg></button>`:''}
+                    </td></tr>`).join('');
+            } catch(e) {}
         }
 
-        // Form Submit
         document.getElementById('admin-form').addEventListener('submit', async (e) => {
             e.preventDefault();
             const btn = document.getElementById('btn-save');
             const id = document.getElementById('edit-id').value;
-            const username = document.getElementById('inp-user').value.trim();
-            const password = document.getElementById('inp-pass').value.trim();
-            const first_name = document.getElementById('inp-fname').value.trim();
-            const last_name = document.getElementById('inp-lname').value.trim();
-            const role = document.getElementById('inp-role').value;
-
-            btn.disabled = true; btn.innerText = "กำลังบันทึก...";
+            const payload = { 
+                first_name: document.getElementById('inp-fname').value.trim(), 
+                last_name: document.getElementById('inp-lname').value.trim(),
+                role: document.getElementById('inp-role').value
+            };
+            const pass = document.getElementById('inp-pass').value.trim();
+            if(pass) payload.password = pass;
 
             try {
-                let payload = { first_name, last_name, role };
-                if (id) {
-                    if(password) payload.password = password;
-                    const res = await fetch(`${SB_URL}/admin_users?id=eq.${id}`, { method: 'PATCH', headers: { 'Content-Type': 'application/json', 'apikey': SB_KEY, 'Authorization': `Bearer ${SB_KEY}` }, body: JSON.stringify(payload) });
-                    if(!res.ok) throw new Error("อัปเดตไม่สำเร็จ");
-                    toast("แก้ไขข้อมูลเรียบร้อย", "success");
+                if(id) {
+                    await fetch(`${SB_URL}/admin_users?id=eq.${id}`, { method:'PATCH', headers: { 'Content-Type': 'application/json', 'apikey': SB_KEY, 'Authorization': `Bearer ${SB_KEY}` }, body: JSON.stringify(payload) });
                 } else {
-                    const check = await fetch(`${SB_URL}/admin_users?username=eq.${username}`, { headers: { 'apikey': SB_KEY, 'Authorization': `Bearer ${SB_KEY}` } });
-                    if((await check.json()).length > 0) throw new Error("Username ซ้ำในระบบ");
-                    
-                    payload.username = username; payload.password = password;
-                    const res = await fetch(`${SB_URL}/admin_users`, { method: 'POST', headers: { 'Content-Type': 'application/json', 'apikey': SB_KEY, 'Authorization': `Bearer ${SB_KEY}` }, body: JSON.stringify(payload) });
-                    if(!res.ok) throw new Error("บันทึกไม่สำเร็จ เช็คคอลัมน์ใน DB");
-                    toast("เพิ่มผู้ดูแลเรียบร้อย", "success");
+                    payload.username = document.getElementById('inp-user').value.trim();
+                    await fetch(`${SB_URL}/admin_users`, { method:'POST', headers: { 'Content-Type': 'application/json', 'apikey': SB_KEY, 'Authorization': `Bearer ${SB_KEY}` }, body: JSON.stringify(payload) });
                 }
-                cancelEdit(); loadUsers();
-            } catch(err) { toast(err.message, "error"); } 
-            finally { btn.disabled = false; btn.innerText = id ? "บันทึกแก้ไข" : "สร้างบัญชี"; }
+                toast("บันทึกผู้ใช้เรียบร้อย", "success"); cancelEdit(); loadUsers();
+            } catch(e) { toast("เกิดข้อผิดพลาด", "error"); }
         });
 
-        // Edit Mode
         function prepEdit(id) {
             const u = allUsers.find(x => x.id === id);
-            if(!u) return;
-
             document.getElementById('edit-id').value = u.id;
             document.getElementById('inp-user').value = u.username; document.getElementById('inp-user').readOnly = true;
-            document.getElementById('inp-fname').value = u.first_name || '';
-            document.getElementById('inp-lname').value = u.last_name || '';
-            
-            document.getElementById('inp-role').value = u.role;
-            document.getElementById('disp-role').innerText = u.role === 'PRESIDENT' ? 'ประธาน (PRESIDENT)' : 'แอดมิน (ADMIN)';
-            
-            const pInp = document.getElementById('inp-pass');
-            pInp.value = ''; pInp.required = false;
-            document.getElementById('lbl-pass').innerHTML = `รหัสผ่านใหม่ <span style="font-size:0.7rem;">(เว้นว่างถ้าไม่แก้)</span>`;
-
-            document.getElementById('form-title').innerText = `แก้ไข: @${u.username}`;
-            document.getElementById('form-title').style.color = "var(--warning-yellow)";
-            document.getElementById('btn-save').innerText = "บันทึกแก้ไข";
-            document.getElementById('btn-save').style.background = "var(--warning-yellow)";
-            document.getElementById('btn-cancel').style.display = "block";
-            
-            // Trigger floating label
-            ['inp-user','inp-fname','inp-lname'].forEach(id => document.getElementById(id).dispatchEvent(new Event('change')));
-            window.scrollTo({top:0, behavior:'smooth'});
+            document.getElementById('inp-fname').value = u.first_name; document.getElementById('inp-lname').value = u.last_name;
+            document.getElementById('inp-role').value = u.role; document.getElementById('disp-role').innerText = u.role;
+            document.getElementById('inp-pass').required = false; document.getElementById('lbl-pass').innerText = "รหัสใหม่ (เว้นว่างได้)";
+            document.getElementById('btn-save').innerText = "บันทึกแก้ไข"; document.getElementById('btn-cancel').style.display = "block";
+            // Trigger floating labels
+            ['inp-user','inp-fname','inp-lname'].forEach(id=>document.getElementById(id).dispatchEvent(new Event('change')));
         }
 
         function cancelEdit() {
-            document.getElementById('admin-form').reset();
-            document.getElementById('edit-id').value = '';
-            document.getElementById('inp-user').readOnly = false;
-            document.getElementById('inp-pass').required = true;
-            document.getElementById('lbl-pass').innerHTML = `รหัสผ่าน <span>*</span>`;
-            document.getElementById('inp-role').value = 'ADMIN'; document.getElementById('disp-role').innerText = 'พนักงานดูแลทั่วไป (ADMIN)';
-            
-            document.getElementById('form-title').innerText = "เพิ่มบัญชีผู้ดูแลใหม่";
-            document.getElementById('form-title').style.color = "var(--navy-dark)";
-            document.getElementById('btn-save').innerText = "สร้างบัญชี";
-            document.getElementById('btn-save').style.background = "var(--navy-dark)";
+            document.getElementById('admin-form').reset(); document.getElementById('edit-id').value = '';
+            document.getElementById('inp-user').readOnly = false; document.getElementById('inp-pass').required = true;
+            document.getElementById('lbl-pass').innerText = "รหัสผ่าน"; document.getElementById('btn-save').innerText = "บันทึกข้อมูล";
             document.getElementById('btn-cancel').style.display = "none";
         }
-
-        // Delete
-        let delId = null;
-        function confirmDel(id, username) { delId = id; document.getElementById('user-to-del').innerText = `@${username}`; document.getElementById('confirm-modal').classList.add('show'); }
-        document.getElementById('btn-do-delete').addEventListener('click', async () => {
-            if(!delId) return;
-            const btn = document.getElementById('btn-do-delete'); btn.disabled = true; btn.innerText = "กำลังลบ...";
-            try {
-                await fetch(`${SB_URL}/admin_users?id=eq.${delId}`, { method: 'DELETE', headers: { 'Content-Type': 'application/json', 'apikey': SB_KEY, 'Authorization': `Bearer ${SB_KEY}` } });
-                toast("ลบเรียบร้อย", "success"); closeModal(); loadUsers();
-            } catch(e) { toast("ลบไม่สำเร็จ", "error"); } finally { btn.disabled = false; btn.innerText = "ลบบัญชี"; }
-        });
-
-        // Change Password
-        document.getElementById('pwd-form').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const btn = document.getElementById('btn-pwd');
-            const oldP = document.getElementById('old-pwd').value; const newP = document.getElementById('new-pwd').value;
-            btn.disabled = true; btn.innerText = "ตรวจสอบ...";
-
-            try {
-                const resCheck = await fetch(`${SB_URL}/admin_users?id=eq.${currentUser.id}&select=password`, { headers: { 'apikey': SB_KEY, 'Authorization': `Bearer ${SB_KEY}` } });
-                const checkData = await resCheck.json();
-                if(checkData.length === 0 || checkData[0].password !== oldP) throw new Error("รหัสเดิมผิด");
-
-                const resUpd = await fetch(`${SB_URL}/admin_users?id=eq.${currentUser.id}`, { method: 'PATCH', headers: { 'Content-Type': 'application/json', 'apikey': SB_KEY, 'Authorization': `Bearer ${SB_KEY}` }, body: JSON.stringify({ password: newP }) });
-                if(!resUpd.ok) throw new Error("อัปเดตล้มเหลว");
-                toast("เปลี่ยนรหัสผ่านเรียบร้อย", "success"); document.getElementById('pwd-form').reset();
-            } catch(err) { toast(err.message, "error"); } finally { btn.disabled = false; btn.innerText = "อัปเดตรหัสผ่าน"; }
-        });
 
         init();
     </script>
