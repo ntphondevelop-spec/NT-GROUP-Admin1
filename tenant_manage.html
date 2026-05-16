@@ -2,14 +2,13 @@
 <html lang="th">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>จัดการผู้เช่า - Pak Phanang Prestige Hall</title>
     
     <link href="https://fonts.googleapis.com/css2?family=Anuphan:wght@300;400;500;600;700&family=Audiowide&display=swap" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
     <script>
-        // 🔒 ป้องกันคนข้ามหน้า (Check Session)
+        // ระบบตรวจสอบความปลอดภัย Session แอดมิน
         (function() {
             try {
                 const sessionStr = localStorage.getItem('admin_user_data');
@@ -125,7 +124,7 @@
         input[type="date"].form-control { padding-top: 24px; padding-bottom: 6px; }
         input[type="date"] ~ .floating-label { top: 14px; font-size: 0.75rem; font-weight: 700; color: var(--blue-primary); }
 
-        /* ================= CUSTOM DROPDOWN (ทำเอง) ================= */
+        /* ================= CUSTOM DROPDOWN ================= */
         .custom-select { position: relative; width: 100%; }
         .select-selected {
             width: 100%; padding: 22px 40px 8px 16px; border: 1.5px solid var(--border-color); border-radius: 12px;
@@ -172,20 +171,22 @@
         }
         .search-input:focus { border-color: var(--blue-primary); background:#FFF; box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);}
         
-        .table-responsive { overflow-x: auto; border: 1px solid var(--border-color); border-radius: 16px; background: #FFF;}
-        table { width: 100%; border-collapse: collapse; text-align: left; min-width: 450px;}
-        th { padding: 16px 20px; background: #F8FAFC; color: var(--navy-dark); font-weight: 700; font-size: 0.95rem; border-bottom: 2px solid var(--border-color); white-space: nowrap;}
-        td { padding: 16px 20px; border-bottom: 1px solid var(--border-color); font-size: 1rem; vertical-align: middle;}
+        .tenant-list { display: flex; flex-direction: column; gap: 12px; max-height: 650px; overflow-y: auto; padding-right: 5px;}
+        .tenant-list::-webkit-scrollbar { width: 6px; }
+        .tenant-list::-webkit-scrollbar-thumb { background: var(--border-color); border-radius: 10px; }
+
+        .tenant-card { background: var(--bg-white); border: 1px solid var(--border-color); padding: 20px; border-radius: 16px; display: flex; justify-content: space-between; align-items: center; transition: 0.2s;}
+        .tenant-card:hover { border-color: var(--blue-primary); box-shadow: 0 4px 15px rgba(0,0,0,0.03); }
         
-        .status-badge { padding: 6px 12px; border-radius: 8px; font-size: 0.85rem; font-weight: 700; background: rgba(16, 185, 129, 0.1); color: var(--success-green);}
-        
-        .action-btns { display: flex; gap: 8px; justify-content: flex-end;}
-        .btn-act { width: 36px; height: 36px; border-radius: 10px; border: none; display: flex; justify-content: center; align-items: center; cursor: pointer; transition: 0.2s; background: #F1F5F9; }
-        .btn-act.edit { color: var(--warning-yellow); }
-        .btn-act.edit:hover { background: rgba(245, 158, 11, 0.1); transform: scale(1.1); }
-        .btn-act.delete { color: var(--alert-red); }
-        .btn-act.delete:hover { background: rgba(239, 68, 68, 0.1); transform: scale(1.1); }
-        .btn-act svg { width: 18px; height: 18px; stroke: currentColor; stroke-width: 2.5; fill: none; }
+        .t-room { background: #EFF6FF; color: var(--blue-primary); padding: 4px 12px; border-radius: 8px; font-weight: 900; font-size: 0.85rem; display: inline-block; margin-bottom: 8px;}
+        .t-name { font-weight: 800; color: var(--navy-dark); font-size: 1.1rem;}
+        .t-detail { font-size: 0.85rem; color: var(--text-muted); margin-top: 5px; font-weight: 500;}
+
+        .t-actions { display: flex; gap: 8px; }
+        .btn-icon { background: var(--bg-light); border: 1px solid var(--border-color); width: 38px; height: 38px; border-radius: 10px; display: flex; align-items: center; justify-content: center; cursor: pointer; color: var(--text-muted); transition: 0.2s;}
+        .btn-icon.edit:hover { background: var(--warning-yellow); color: white; border-color: var(--warning-yellow);}
+        .btn-icon.delete:hover { background: var(--alert-red); color: white; border-color: var(--alert-red);}
+        .btn-icon svg { width: 18px; height: 18px; stroke: currentColor; stroke-width: 2.5; fill: none; }
 
         /* ================= MODALS & TOAST ================= */
         .custom-modal-overlay {
@@ -241,11 +242,12 @@
 
     <div class="custom-modal-overlay" id="confirm-modal">
         <div class="modal-box">
-            <h3 style="color: var(--alert-red); margin-bottom: 10px;">ยืนยันการลบข้อมูล</h3>
-            <p style="color: var(--text-muted); font-size: 0.95rem;">ต้องการยกเลิกสัญญาและลบประวัติของห้องพัก <strong id="del-room-text" style="color: var(--navy-dark); font-size: 1.1rem;"></strong> ใช่หรือไม่?</p>
+            <h3 style="color: var(--alert-red); margin-bottom: 10px;">ยืนยันการคืนพื้นที่ห้องพัก</h3>
+            <p style="color: var(--text-muted); font-size: 0.95rem;">ต้องการถอดรายชื่อผู้เช่าออกจากห้อง <strong id="del-room-text" style="color: var(--navy-dark); font-size: 1.1rem;"></strong> และคืนสถานะเป็นห้องว่างใช่หรือไม่?</p>
+            <p style="color: var(--blue-primary); font-size: 0.8rem; margin-top: 10px;">(ประวัติส่วนบุคคลและประวัติบิลของหอพักจะถูกจัดเก็บไว้หลังบ้านอย่างปลอดภัย)</p>
             <div class="modal-btns">
                 <button class="btn-modal cancel" onclick="closeConfirmModal()">ยกเลิก</button>
-                <button class="btn-modal confirm" id="btn-do-delete">ลบข้อมูล</button>
+                <button class="btn-modal confirm" id="btn-do-delete">ยืนยันถอดถอน</button>
             </div>
         </div>
     </div>
@@ -288,7 +290,7 @@
     <main class="main-container">
         <div class="page-header">
             <h1>จัดการข้อมูลผู้เช่าและสัญญา</h1>
-            <p>เพิ่มรายชื่อลูกบ้านใหม่ ตรวจสอบ และแก้ไขข้อมูลสัญญาเช่าปัจจุบัน</p>
+            <p>เพิ่มผู้เช่าใหม่ แก้ไขข้อมูลสัญญา และตรวจสอบสถานะการเข้าพัก</p>
         </div>
 
         <div class="panel-card">
@@ -444,31 +446,20 @@
             </form>
         </div>
 
-        <div class="panel-card">
+        <div class="panel-card" style="padding-right: 15px;">
             <div class="panel-title">
-                <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle></svg>
-                รายชื่อลูกบ้านปัจจุบัน
+                <svg viewBox="0 0 24 24"><line x1="8" y1="6" x2="21" y2="6"></line><line x1="8" y1="12" x2="21" y2="12"></line><line x1="8" y1="18" x2="21" y2="18"></line><line x1="3" y1="6" x2="3.01" y2="6"></line><line x1="3" y1="12" x2="3.01" y2="12"></line><line x1="3" y1="18" x2="3.01" y2="18"></line></svg>
+                รายชื่อลูกบ้านปัจจุบัน (<span id="total-count">0</span>)
             </div>
-            
-            <input type="text" class="search-input" id="search-input" placeholder="ค้นหาจาก เลขห้อง หรือ ชื่อ-นามสกุล..." onkeyup="filterTable()">
 
-            <div class="table-responsive">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>ห้องพัก</th>
-                            <th>ชื่อ - นามสกุล</th>
-                            <th>สถานะ</th>
-                            <th style="text-align: right;">จัดการ</th>
-                        </tr>
-                    </thead>
-                    <tbody id="tenant-table-body">
-                        <tr><td colspan="4" style="text-align:center; padding:30px;">กำลังโหลดข้อมูล...</td></tr>
-                    </tbody>
-                </table>
+            <div class="search-input-wrapper" style="margin-bottom: 20px;">
+                <input type="text" class="form-control" id="search-input" placeholder="ค้นหาจาก เลขห้อง, ชื่อ-นามสกุล หรือ บัตรประชาชน..." onkeyup="filterTable()" style="padding: 12px 16px;">
+            </div>
+
+            <div class="tenant-list" id="tenant-container">
+                <div style="text-align: center; color: var(--text-muted); padding: 30px;">กำลังโหลดข้อมูล...</div>
             </div>
         </div>
-
     </main>
 
     <script>
@@ -476,7 +467,6 @@
         // UI & NAVBAR INIT 
         // ==========================================
         document.addEventListener('DOMContentLoaded', () => {
-            // Session
             try {
                 const sess = JSON.parse(localStorage.getItem('admin_user_data'));
                 if(sess) {
@@ -486,18 +476,15 @@
                 }
             } catch(e) {}
 
-            // Mobile Menu
             const mobileBtn = document.getElementById('mobile-menu-btn');
             const navLinks = document.getElementById('nav-links');
             if(mobileBtn) mobileBtn.addEventListener('click', () => navLinks.classList.toggle('show'));
 
-            // Logout
             document.getElementById('btn-logout').addEventListener('click', () => {
                 localStorage.removeItem('admin_user_data');
                 window.location.href = 'index.html';
             });
 
-            // Input Counters
             ['citizen_id', 'phone', 'zip_code'].forEach(id => {
                 const el = document.getElementById(id);
                 if(el) el.addEventListener('input', function() {
@@ -621,7 +608,7 @@
             document.getElementById('toast-msg').innerText = msg;
             t.className = type === 'error' ? 'is-error show' : 'is-success show';
             document.getElementById('toast-icon-container').innerHTML = iconHTML;
-            setTimeout(() => t.classList.remove('show'), 4000); 
+            setTimeout(() => t.classList.remove('show'), 5000); 
         }
 
         const GLOBAL_URL = 'https://zlzgxpmqplyakhvgkrwc.supabase.co';
@@ -629,11 +616,10 @@
         const OPS_URL = 'https://vnlqxtxifgchrouongpu.supabase.co';
         const OPS_KEY = 'sb_publishable_jBw7w_gyrLx7B0oSHAtWOw_nVTHTzxl';
 
-        // 🌟 ฟังก์ชัน AUTO-FETCH ดึงข้อมูลจากฐานกลางทันทีเมื่อกรอกบัตร 13 หลัก 🌟
+        // ระบบ Auto-Fetch ดึงข้อมูลจากฐานกลาง
         document.getElementById('citizen_id').addEventListener('input', async function() {
             const cid = this.value.trim();
             if (cid.length === 13) {
-                // ถ้าอยู่ในโหมดแก้ไขอยู่แล้ว ไม่ต้องดึงใหม่
                 if(document.getElementById('edit-tenant-id').value !== "") return;
 
                 document.getElementById('cid-loading').style.display = 'block';
@@ -648,10 +634,9 @@
                     const crmData = await res.json();
                     
                     if (crmData.length > 0) {
-                        showToast("พบประวัติในระบบ ดึงข้อมูลอัตโนมัติเรียบร้อย", "success");
+                        showToast("พบข้อมูลในฐานข้อมูลกลาง ดึงข้อมูลอัตโนมัติเรียบร้อย", "success");
                         const c = crmData[0];
                         
-                        // เติมข้อมูลส่วนตัว
                         if(c.first_name) { document.getElementById('first_name').value = c.first_name; document.getElementById('first_name').dispatchEvent(new Event('change')); }
                         if(c.last_name) { document.getElementById('last_name').value = c.last_name; document.getElementById('last_name').dispatchEvent(new Event('change')); }
                         if(c.phone_number) { document.getElementById('phone').value = c.phone_number; document.getElementById('phone').dispatchEvent(new Event('change')); updateCounter('phone', 'count-phone', 10); }
@@ -667,19 +652,18 @@
                             setTimeout(() => setCustomValue('dob_day', d, parseInt(d)), 50);
                         }
                         
-                        // เติมที่อยู่
                         if(c.zip_code) {
                             document.getElementById('zip_code').value = c.zip_code;
                             document.getElementById('zip_code').dispatchEvent(new Event('change'));
                             updateCounter('zip_code', 'count-zip', 5);
-                            await searchZipCode(); // ดึงอำเภอ/จังหวัด อัตโนมัติ
+                            await searchZipCode(); 
                             setTimeout(() => {
                                 if(c.sub_district) setCustomValue('sub_district', c.sub_district, c.sub_district);
                                 if(c.address_line) {
                                     document.getElementById('address_line').value = c.address_line;
                                     document.getElementById('address_line').dispatchEvent(new Event('change'));
                                 }
-                            }, 500); // ดีเลย์รอให้ดรอปดาวน์ตำบลโหลดเสร็จ
+                            }, 500);
                         }
                     }
                 } catch (err) {
@@ -694,7 +678,7 @@
         async function searchZipCode() {
             const zipInput = document.getElementById('zip_code').value.trim();
             const btnSearch = document.getElementById('btn-search-zip');
-            if (zipInput.length !== 5) { showToast('ระบุรหัสไปรษณีย์ 5 หลัก', 'error'); return; }
+            if (zipInput.length !== 5) { showToast('กรุณาระบุรหัสไปรษณีย์ 5 หลัก', 'error'); return; }
 
             btnSearch.innerText = "..."; btnSearch.disabled = true;
 
@@ -710,12 +694,12 @@
                     populateCustomOptions('sub_district', uniqueSubs, null, null);
                     setCustomValue('sub_district', '', ''); 
                 } else { throw new Error(); }
-            } catch (error) { showToast('ไม่พบข้อมูลรหัสไปรษณีย์นี้', 'error'); } 
+            } catch (error) { showToast('ไม่พบข้อมูลรหัสไปรษณีย์ในระบบ', 'error'); } 
             finally { btnSearch.innerText = "ค้นหา"; btnSearch.disabled = false; }
         }
 
         // ==========================================
-        // 4. SAVE OR EDIT (ดัก 409 และ 400 ชัวร์ๆ)
+        // 4. SAVE OR EDIT (ป้องกัน 400 และ 409)
         // ==========================================
         document.getElementById('tenant-form').addEventListener('submit', async (e) => {
             e.preventDefault();
@@ -733,17 +717,17 @@
             const room = document.getElementById('room_number').value.trim();
             const rent = parseFloat(document.getElementById('monthly_rent').value) || 0;
             const debt = parseFloat(document.getElementById('initial_debt').value) || 0;
-            const paymentDate = document.getElementById('payment_date').value || null;
+            const paymentDate = document.getElementById('payment_date').value ? document.getElementById('payment_date').value : null;
 
             const y = document.getElementById('dob_year').value; const m = document.getElementById('dob_month').value; const d = document.getElementById('dob_day').value;
             let dobCE = (y && m && d) ? `${y}-${m}-${d}` : null;
             
-            if(!prefix || !document.getElementById('sub_district').value) { showToast("เลือกคำนำหน้าและตำบลให้ครบ", "error"); return; }
+            if(!prefix || !document.getElementById('sub_district').value) { showToast("กรุณาเลือกคำนำหน้าและตำบลให้ครบถ้วน", "error"); return; }
 
             btn.disabled = true; btnText.innerText = `กำลัง${isEditMode ? 'แก้ไข' : 'บันทึก'}...`;
 
             try {
-                // 1. CRM (Global DB) 
+                // 1. บันทึกข้อมูลส่วนตัวลงฐานข้อมูลกลาง (CRM)
                 const globalPayload = {
                     citizen_id: cid, prefix: prefix, first_name: fname, last_name: lname, date_of_birth: dobCE, religion: document.getElementById('religion').value,
                     address_line: document.getElementById('address_line').value.trim(), sub_district: document.getElementById('sub_district').value,
@@ -767,9 +751,9 @@
                     });
                 }
 
-                if(!crmRes.ok) throw new Error("บันทึกข้อมูลส่วนบุคคลไม่สำเร็จ");
+                if(!crmRes.ok) throw new Error("บันทึกข้อมูลส่วนบุคคลลงระบบกลางไม่สำเร็จ");
 
-                // 2. Dorm Ops
+                // 2. บันทึกข้อมูลสัญญาห้องพัก (Dorm Ops)
                 const opsPayload = { 
                     full_name: `${prefix}${fname} ${lname}`, phone_number: phone, room_number: room, 
                     monthly_rent: rent, initial_debt: debt, payment_date: paymentDate
@@ -780,11 +764,17 @@
                         method: 'PATCH', headers: { 'Content-Type': 'application/json', 'apikey': OPS_KEY, 'Authorization': `Bearer ${OPS_KEY}` },
                         body: JSON.stringify(opsPayload)
                     });
-                    if(!opsRes.ok) throw new Error("แก้ไขข้อมูลสัญญาไม่สำเร็จ");
-                    showToast("อัปเดตสัญญาเรียบร้อย!", "success");
+                    
+                    if (!opsRes.ok) {
+                        const errData = await opsRes.json();
+                        if (opsRes.status === 409) throw new Error(`ล้มเหลว: หมายเลขห้อง ${room} มีผู้เช่าคนอื่นอยู่แล้วในระบบ!`);
+                        throw new Error(`ข้อผิดพลาดจากระบบ: ${errData.message || 'บันทึกไม่ได้'}`);
+                    }
+                    showToast("อัปเดตสัญญาเช่าเรียบร้อยแล้ว", "success");
                 } else {
+                    // ตรวจสอบก่อนว่าห้องว่างไหม
                     const checkRes = await fetch(`${OPS_URL}/rest/v1/dorm_tenants?room_number=eq.${room}&status=eq.ACTIVE&select=id`, { headers: { 'apikey': OPS_KEY, 'Authorization': `Bearer ${OPS_KEY}` } });
-                    if ((await checkRes.json()).length > 0) throw new Error(`ห้อง ${room} มีคนอยู่แล้ว!`);
+                    if ((await checkRes.json()).length > 0) throw new Error(`ไม่สามารถสร้างสัญญาได้: ห้อง ${room} มีคนอยู่แล้ว!`);
                     
                     opsPayload.citizen_id = cid;
                     opsPayload.status = 'ACTIVE';
@@ -793,8 +783,12 @@
                         method: 'POST', headers: { 'Content-Type': 'application/json', 'apikey': OPS_KEY, 'Authorization': `Bearer ${OPS_KEY}` },
                         body: JSON.stringify(opsPayload)
                     });
-                    if(!opsRes.ok) throw new Error("สร้างสัญญาใหม่ไม่สำเร็จ");
-                    showToast("สร้างสัญญาใหม่เรียบร้อย!", "success");
+                    
+                    if (!opsRes.ok) {
+                        const errData = await opsRes.json();
+                        throw new Error(`ข้อผิดพลาด: ${errData.message || 'บันทึกข้อมูลสัญญาไม่สำเร็จ'}`);
+                    }
+                    showToast("สร้างสัญญาใหม่และเพิ่มผู้เช่าสำเร็จ", "success");
                 }
                 cancelEditMode(); fetchTenants(); 
 
@@ -806,33 +800,52 @@
         });
 
         // ==========================================
-        // 5. TABLE, EDIT, DELETE
+        // 5. TABLE, EDIT, SMART EVICTION (DELETE BYPASS)
         // ==========================================
         let tenantsList = [];
         async function fetchTenants() {
-            const res = await fetch(`${OPS_URL}/rest/v1/dorm_tenants?status=eq.ACTIVE&order=room_number.asc`, { headers: { 'apikey': OPS_KEY, 'Authorization': `Bearer ${OPS_KEY}` } });
-            tenantsList = await res.json(); renderTable(tenantsList);
+            try {
+                const res = await fetch(`${OPS_URL}/rest/v1/dorm_tenants?status=eq.ACTIVE&order=room_number.asc`, { headers: { 'apikey': OPS_KEY, 'Authorization': `Bearer ${OPS_KEY}` } });
+                tenantsList = await res.json(); 
+                document.getElementById('total-count').innerText = tenantsList.length;
+                renderTable(tenantsList);
+            } catch (e) { showToast("ไม่สามารถโหลดรายชื่อได้", "error"); }
         }
 
         function renderTable(data) {
-            const tbody = document.getElementById('tenant-table-body');
-            if(data.length === 0) { tbody.innerHTML = `<tr><td colspan="4" style="text-align:center; padding:30px;">ไม่มีข้อมูล</td></tr>`; return; }
-            tbody.innerHTML = data.map(t => `
-                <tr><td style="font-weight:700; color:var(--blue-primary);">${t.room_number}</td><td style="font-weight:600;">${t.full_name}</td><td><span class="status-badge">ACTIVE</span></td>
-                <td><div class="action-btns"><button class="btn-act edit" onclick="prepareEdit('${t.id}')"><svg viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg></button>
-                <button class="btn-act delete" onclick="openConfirmDelete('${t.id}', '${t.room_number}')"><svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg></button></div></td></tr>
+            const container = document.getElementById('tenant-container');
+            
+            if(data.length === 0) { 
+                container.innerHTML = `<div style="text-align: center; color: var(--text-muted); padding: 30px;">ไม่พบข้อมูลผู้เช่า</div>`; 
+                return; 
+            }
+            
+            container.innerHTML = data.map(t => `
+                <div class="tenant-card">
+                    <div>
+                        <div class="t-room">ห้อง ${t.room_number || 'ไม่ได้ระบุ'}</div>
+                        <div class="t-name">${t.full_name}</div>
+                        <div class="t-detail">ค่าเช่า: ฿${parseFloat(t.monthly_rent).toLocaleString()} | โทร: ${t.phone_number || '-'}</div>
+                    </div>
+                    <div class="t-actions">
+                        <button class="btn-icon edit" onclick='prepareEdit(${JSON.stringify(t).replace(/'/g, "&#39;")})' title="แก้ไขข้อมูล">
+                            <svg viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+                        </button>
+                        <button class="btn-icon delete" onclick="openConfirmDelete('${t.id}', '${t.room_number}')" title="ย้ายออก / คืนพื้นที่ห้อง">
+                            <svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+                        </button>
+                    </div>
+                </div>
             `).join('');
         }
 
         function filterTable() {
             const q = document.getElementById('search-input').value.toLowerCase();
-            renderTable(tenantsList.filter(t => t.room_number.includes(q) || t.full_name.toLowerCase().includes(q)));
+            renderTable(tenantsList.filter(t => (t.room_number && t.room_number.includes(q)) || t.full_name.toLowerCase().includes(q) || t.citizen_id.includes(q)));
         }
 
-        async function prepareEdit(id) {
+        async function prepareEdit(tenant) {
             try {
-                const tRes = await fetch(`${OPS_URL}/rest/v1/dorm_tenants?id=eq.${id}&select=*`, { headers: { 'apikey': OPS_KEY, 'Authorization': `Bearer ${OPS_KEY}` } });
-                const tenant = (await tRes.json())[0];
                 const cRes = await fetch(`${GLOBAL_URL}/rest/v1/global_customers?citizen_id=eq.${tenant.citizen_id}&select=*`, { headers: { 'apikey': GLOBAL_KEY, 'Authorization': `Bearer ${GLOBAL_KEY}` } });
                 const crm = (await cRes.json())[0];
 
@@ -843,29 +856,31 @@
                 document.getElementById('btn-save-main').style.background = 'var(--warning-yellow)';
                 document.getElementById('btn-cancel-edit').style.display = 'block';
 
-                document.getElementById('citizen_id').value = crm.citizen_id; document.getElementById('citizen_id').dispatchEvent(new Event('change'));
-                document.getElementById('first_name').value = crm.first_name; document.getElementById('first_name').dispatchEvent(new Event('change'));
-                document.getElementById('last_name').value = crm.last_name; document.getElementById('last_name').dispatchEvent(new Event('change'));
-                document.getElementById('phone').value = crm.phone_number; document.getElementById('phone').dispatchEvent(new Event('change'));
-                updateCounter('citizen_id', 'count-cid', 13); updateCounter('phone', 'count-phone', 10);
-                
-                setCustomValue('prefix', crm.prefix, crm.prefix);
-                setCustomValue('religion', crm.religion, crm.religion);
+                if (crm) {
+                    document.getElementById('citizen_id').value = crm.citizen_id; document.getElementById('citizen_id').dispatchEvent(new Event('change'));
+                    document.getElementById('first_name').value = crm.first_name; document.getElementById('first_name').dispatchEvent(new Event('change'));
+                    document.getElementById('last_name').value = crm.last_name; document.getElementById('last_name').dispatchEvent(new Event('change'));
+                    document.getElementById('phone').value = crm.phone_number; document.getElementById('phone').dispatchEvent(new Event('change'));
+                    updateCounter('citizen_id', 'count-cid', 13); updateCounter('phone', 'count-phone', 10);
+                    
+                    setCustomValue('prefix', crm.prefix, crm.prefix);
+                    setCustomValue('religion', crm.religion, crm.religion);
 
-                if(crm.date_of_birth) {
-                    const [y, m, d] = crm.date_of_birth.split('-');
-                    setCustomValue('dob_year', y, parseInt(y)+543);
-                    setCustomValue('dob_month', m, thaiMonths[parseInt(m)-1]);
-                    document.getElementById('dob_year').dispatchEvent(new Event('change'));
-                    setTimeout(() => setCustomValue('dob_day', d, parseInt(d)), 50);
+                    if(crm.date_of_birth) {
+                        const [y, m, d] = crm.date_of_birth.split('-');
+                        setCustomValue('dob_year', y, parseInt(y)+543);
+                        setCustomValue('dob_month', m, thaiMonths[parseInt(m)-1]);
+                        document.getElementById('dob_year').dispatchEvent(new Event('change'));
+                        setTimeout(() => setCustomValue('dob_day', d, parseInt(d)), 50);
+                    }
+
+                    document.getElementById('zip_code').value = crm.zip_code; document.getElementById('zip_code').dispatchEvent(new Event('change'));
+                    updateCounter('zip_code', 'count-zip', 5);
+                    await searchZipCode();
+                    
+                    document.getElementById('address_line').value = crm.address_line; document.getElementById('address_line').dispatchEvent(new Event('change'));
+                    setCustomValue('sub_district', crm.sub_district, crm.sub_district);
                 }
-
-                document.getElementById('zip_code').value = crm.zip_code; document.getElementById('zip_code').dispatchEvent(new Event('change'));
-                updateCounter('zip_code', 'count-zip', 5);
-                await searchZipCode();
-                
-                document.getElementById('address_line').value = crm.address_line; document.getElementById('address_line').dispatchEvent(new Event('change'));
-                setCustomValue('sub_district', crm.sub_district, crm.sub_district);
 
                 document.getElementById('room_number').value = tenant.room_number; document.getElementById('room_number').dispatchEvent(new Event('change'));
                 document.getElementById('monthly_rent').value = tenant.monthly_rent; document.getElementById('monthly_rent').dispatchEvent(new Event('change'));
@@ -898,12 +913,49 @@
         function openConfirmDelete(id, room) { idToDelete = id; document.getElementById('del-room-text').innerText = room; confirmOverlay.classList.add('show'); }
         function closeConfirmModal() { confirmOverlay.classList.remove('show'); idToDelete = null; }
         
+        // 🚀 Smart Eviction: ลบห้อง หรือ คืนพื้นที่แบบปลอดภัย 🚀
         document.getElementById('btn-do-delete').addEventListener('click', async () => {
             if(!idToDelete) return;
+            const btn = document.getElementById('btn-do-delete');
+            btn.disabled = true; btn.innerText = "กำลังดำเนินการ...";
+
             try {
-                await fetch(`${OPS_URL}/rest/v1/dorm_tenants?id=eq.${idToDelete}`, { method: 'PATCH', headers: { 'Content-Type': 'application/json', 'apikey': OPS_KEY, 'Authorization': `Bearer ${OPS_KEY}` }, body: JSON.stringify({ status: 'MOVED_OUT' }) });
-                showToast("ยกเลิกสัญญาเรียบร้อย", "success"); closeConfirmModal(); fetchTenants();
-            } catch(e) { showToast("ลบไม่สำเร็จ", "error"); }
+                // 1. พยายามใช้คำสั่ง DELETE ถอนรากถอนโคนก่อน (สำหรับคนที่ยังไม่มีประวัติบิล)
+                let delRes = await fetch(`${OPS_URL}/rest/v1/dorm_tenants?id=eq.${idToDelete}`, { 
+                    method: 'DELETE', 
+                    headers: { 'apikey': OPS_KEY, 'Authorization': `Bearer ${OPS_KEY}` } 
+                });
+
+                // 2. ถ้าฐานข้อมูลเตะกลับเป็น 409 (แปลว่าลบไม่ได้ เพราะติดประวัติบิล) เราจะใช้แผน 2 คือการคืนพื้นที่ห้อง
+                if (delRes.status === 409) {
+                    
+                    // เปลี่ยนสถานะเป็น INACTIVE และดึงหมายเลขห้องออก (null)
+                    let patchRes = await fetch(`${OPS_URL}/rest/v1/dorm_tenants?id=eq.${idToDelete}`, {
+                        method: 'PATCH',
+                        headers: { 'Content-Type': 'application/json', 'apikey': OPS_KEY, 'Authorization': `Bearer ${OPS_KEY}` },
+                        body: JSON.stringify({ status: 'INACTIVE', room_number: null })
+                    });
+
+                    // 3. ถ้าฐานข้อมูลไม่อนุญาตให้ห้องเป็นค่าว่าง (400 Bad Request) เราจะตั้งชื่อห้องเป็น OUT-รหัสไอดี
+                    if (patchRes.status === 400 || patchRes.status === 409) {
+                        await fetch(`${OPS_URL}/rest/v1/dorm_tenants?id=eq.${idToDelete}`, {
+                            method: 'PATCH',
+                            headers: { 'Content-Type': 'application/json', 'apikey': OPS_KEY, 'Authorization': `Bearer ${OPS_KEY}` },
+                            body: JSON.stringify({ status: 'INACTIVE', room_number: `OUT-${idToDelete.substring(0,4)}` })
+                        });
+                    }
+                } else if (!delRes.ok) {
+                    throw new Error("ระบบฐานข้อมูลขัดข้อง");
+                }
+
+                showToast("คืนพื้นที่ห้องเรียบร้อย พร้อมรับผู้เช่าใหม่", "success"); 
+                closeConfirmModal(); 
+                fetchTenants();
+            } catch(e) { 
+                showToast("ไม่สามารถคืนพื้นที่ห้องได้ โปรดติดต่อแอดมินระบบ", "error"); 
+            } finally {
+                btn.disabled = false; btn.innerText = "ยืนยันถอดถอน";
+            }
         });
     </script>
 </body>
