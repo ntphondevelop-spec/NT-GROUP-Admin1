@@ -6,10 +6,9 @@
     <title>จัดการผู้เช่า - Pak Phanang Prestige Hall</title>
     
     <link href="https://fonts.googleapis.com/css2?family=Anuphan:wght@300;400;500;600;700&family=Audiowide&display=swap" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
+    
     <script>
-        // 🔒 ระบบตรวจสอบความปลอดภัย Session แอดมิน
+        // ระบบตรวจสอบความปลอดภัย Session แอดมิน
         (function() {
             try {
                 const sessionStr = localStorage.getItem('admin_user_data');
@@ -41,10 +40,10 @@
             --warning-yellow: #F59E0B;
         }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: var(--font-ui); }
-        body { background-color: var(--bg-body); color: var(--text-main); -webkit-font-smoothing: antialiased; overflow-x: hidden;}
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: var(--font-ui); -webkit-tap-highlight-color: transparent;}
+        body { background-color: var(--bg-body); color: var(--text-main); line-height: 1.6; overflow-x: hidden; display: flex; flex-direction: column; min-height: 100vh;}
 
-        /* ================= UNIVERSAL TOP NAVBAR ================= */
+        /* ================= NAVBAR ================= */
         .top-navbar {
             background: var(--bg-white); border-bottom: 1px solid var(--border-color); padding: 0 24px; height: 70px;
             display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 2000; box-shadow: 0 1px 5px rgba(0,0,0,0.03);
@@ -74,7 +73,7 @@
         
         .btn-logout {
             background: #FEF2F2; color: var(--alert-red); border: none; padding: 10px 16px; border-radius: 10px; cursor: pointer;
-            font-weight: 700; font-size: 0.9rem; display: flex; align-items: center; gap: 6px; transition: 0.2s; text-decoration: none; font-family: var(--font-ui);
+            font-weight: 700; font-size: 0.9rem; display: flex; align-items: center; gap: 6px; transition: 0.2s; text-decoration: none;
         }
         .btn-logout:hover { background: var(--alert-red); color: #FFF; box-shadow: 0 4px 10px rgba(239, 68, 68, 0.2); }
         .btn-logout svg { width: 18px; height: 18px; stroke: currentColor; stroke-width: 2.5; fill: none; flex-shrink: 0;}
@@ -86,7 +85,7 @@
         .page-header h1 { font-size: 2rem; font-weight: 700; color: var(--navy-dark); margin-bottom: 8px;}
         .page-header p { color: var(--text-muted); font-size: 1.05rem; }
 
-        .panel-card { background: var(--bg-white); border: 1px solid var(--border-color); border-radius: 20px; padding: 35px; box-shadow: 0 4px 15px rgba(0,0,0,0.03); }
+        .panel-card { background: var(--bg-white); border: 1px solid var(--border-color); border-radius: 20px; padding: 35px; box-shadow: 0 4px 15px rgba(0,0,0,0.03); height: fit-content;}
         .panel-title { font-size: 1.25rem; font-weight: 700; color: var(--navy-dark); margin-bottom: 30px; display: flex; align-items: center; gap: 12px; border-bottom: 2px solid var(--bg-body); padding-bottom: 15px;}
         .panel-title svg { width: 24px; height: 24px; stroke: var(--blue-primary); stroke-width: 2.5; fill: none; }
 
@@ -104,7 +103,7 @@
         
         .form-control { 
             width: 100%; padding: 22px 16px 8px; border: 1.5px solid var(--border-color); border-radius: 12px; 
-            font-size: 1.05rem; font-family: var(--font-ui); color: var(--navy-dark); background: #F8FAFC; outline: none; transition: 0.3s;
+            font-size: 1.05rem; color: var(--navy-dark); background: #F8FAFC; outline: none; transition: 0.3s; font-weight: 600;
         }
         .form-control:focus { border-color: var(--blue-primary); background: #FFF; box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1); }
         .form-control[readonly] { background: #EDF2F7; color: #64748B; cursor: not-allowed; border-color: transparent; }
@@ -129,7 +128,7 @@
         .custom-select { position: relative; width: 100%; }
         .select-selected {
             width: 100%; padding: 22px 40px 8px 16px; border: 1.5px solid var(--border-color); border-radius: 12px;
-            font-size: 1.05rem; font-family: var(--font-ui); color: transparent; background: #F8FAFC; cursor: pointer; transition: 0.3s; min-height: 55px;
+            font-size: 1.05rem; font-weight: 600; color: transparent; background: #F8FAFC; cursor: pointer; transition: 0.3s; min-height: 55px;
             background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2364748B' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
             background-repeat: no-repeat; background-position: right 1rem center; background-size: 1em; display: flex; align-items: flex-end; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
         }
@@ -153,25 +152,23 @@
         .zip-search-wrapper { display: flex; gap: 10px; }
         .btn-search { 
             background: var(--navy-dark); color: #FFF; border: none; padding: 0 20px; border-radius: 12px; cursor: pointer; transition: 0.2s;
-            display: flex; align-items: center; justify-content: center; font-weight: 600; font-size: 1rem; font-family: var(--font-ui); white-space: nowrap;
+            display: flex; align-items: center; justify-content: center; font-weight: 600; font-size: 1rem; white-space: nowrap;
         }
         .btn-search:hover { background: var(--blue-primary); box-shadow: 0 4px 10px rgba(37,99,235,0.2);}
         .btn-search:disabled { background: var(--text-muted); cursor: not-allowed; box-shadow: none; }
 
         .btn-submit {
             width: 100%; background: var(--navy-dark); color: #FFF; border: none; padding: 18px; border-radius: 12px;
-            font-size: 1.15rem; font-weight: 700; font-family: var(--font-ui); cursor: pointer; transition: 0.3s; margin-top: 35px;
+            font-size: 1.15rem; font-weight: 700; cursor: pointer; transition: 0.3s; margin-top: 35px;
             display: flex; justify-content: center; align-items: center; gap: 10px; box-shadow: 0 4px 15px rgba(15, 23, 42, 0.15);
         }
         .btn-submit:hover { background: var(--blue-primary); transform: translateY(-3px); box-shadow: 0 8px 25px rgba(37, 99, 235, 0.3); }
 
-        /* ================= TABLE & ACTIONS ================= */
-        .search-input { 
-            width: 100%; padding: 14px 20px; border: 1.5px solid var(--border-color); border-radius: 12px; margin-bottom: 20px; 
-            outline: none; font-size: 1rem; transition: 0.2s; background: #F8FAFC; font-family: var(--font-ui);
-        }
-        .search-input:focus { border-color: var(--blue-primary); background:#FFF; box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);}
-        
+        /* ================= TENANT LIST ================= */
+        .search-bar { display: flex; gap: 10px; margin-bottom: 20px; }
+        .search-bar input { flex: 1; padding: 14px 20px; border-radius: 12px; border: 1.5px solid var(--border-color); outline: none; background: var(--bg-light); transition: 0.2s; font-size: 0.95rem; font-weight: 600;}
+        .search-bar input:focus { border-color: var(--blue-primary); background: var(--bg-white); box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1); }
+
         .tenant-list { display: flex; flex-direction: column; gap: 12px; max-height: 650px; overflow-y: auto; padding-right: 5px;}
         .tenant-list::-webkit-scrollbar { width: 6px; }
         .tenant-list::-webkit-scrollbar-thumb { background: var(--border-color); border-radius: 10px; }
@@ -199,7 +196,7 @@
         .custom-modal-overlay.show .modal-box { transform: scale(1); }
         
         .modal-btns { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 25px; }
-        .btn-modal { padding: 14px; border-radius: 10px; border: none; font-weight: 700; font-family: var(--font-ui); font-size: 1rem; cursor: pointer; transition: 0.2s; }
+        .btn-modal { padding: 14px; border-radius: 10px; border: none; font-weight: 700; font-size: 1rem; cursor: pointer; transition: 0.2s; }
         .btn-modal.cancel { background: #F1F5F9; color: var(--text-muted); }
         .btn-modal.cancel:hover { background: #E2E8F0; color: var(--navy-dark); }
         .btn-modal.confirm { background: var(--alert-red); color: #FFF; }
@@ -214,10 +211,14 @@
         #smart-toast.show { top: 20px; }
         .toast-icon svg { width: 20px; height: 20px; fill: none; stroke-width: 2.5; }
 
-        /* ================= MOBILE RESPONSIVE ================= */
+        /* ป้ายแจ้งที่มาของข้อมูล (Origin Badge) */
+        .origin-badge {
+            display: inline-flex; align-items: center; gap: 5px; background: #ECFDF5; color: var(--success-green);
+            padding: 6px 12px; border-radius: 8px; font-size: 0.8rem; font-weight: 700; margin-top: 8px; border: 1px solid #A7F3D0;
+        }
+
         @media (max-width: 1024px) { 
-            .main-container { grid-template-columns: 1fr; padding: 20px; } 
-            
+            .main-container { grid-template-columns: 1fr; padding: 20px; gap: 20px; } 
             .mobile-toggle { display: block; }
             .user-details { display: none; }
             
@@ -244,11 +245,11 @@
     <div class="custom-modal-overlay" id="confirm-modal">
         <div class="modal-box">
             <h3 style="color: var(--alert-red); margin-bottom: 10px;">ยืนยันการคืนพื้นที่ห้องพัก</h3>
-            <p style="color: var(--text-muted); font-size: 0.95rem;">ต้องการถอดรายชื่อผู้เช่าออกจากห้อง <strong id="del-room-text" style="color: var(--navy-dark); font-size: 1.1rem;"></strong> และคืนสถานะเป็นห้องว่างใช่หรือไม่?</p>
-            <p style="color: var(--blue-primary); font-size: 0.8rem; margin-top: 10px;">(ประวัติส่วนบุคคลและประวัติบิลจะถูกจัดเก็บไว้หลังบ้านอย่างปลอดภัย)</p>
+            <p style="color: var(--text-muted); font-size: 0.95rem;">คุณต้องการย้ายผู้เช่าออกจากห้อง <strong id="del-room-text" style="color: var(--navy-dark); font-size: 1.1rem;"></strong> และคืนเป็นสถานะห้องว่างใช่หรือไม่?</p>
+            <p style="color: var(--blue-primary); font-size: 0.8rem; margin-top: 10px;">(ประวัติส่วนบุคคลและข้อมูลการโอนเงินจะยังถูกเก็บไว้ในฐานข้อมูลกลาง)</p>
             <div class="modal-btns">
                 <button class="btn-modal cancel" onclick="closeConfirmModal()">ยกเลิก</button>
-                <button class="btn-modal confirm" id="btn-do-delete">ยืนยันถอดถอน</button>
+                <button class="btn-modal confirm" id="btn-do-delete">ยืนยันการทำรายการ</button>
             </div>
         </div>
     </div>
@@ -304,12 +305,15 @@
                 <input type="hidden" id="edit-tenant-id"> 
 
                 <div class="form-section-title">1. ข้อมูลบุคคล (อ้างอิงบัตรประชาชน)</div>
+                
+                <div id="origin-badge" style="display:none; margin-bottom: 15px;"></div>
+
                 <div class="form-grid">
                     <div class="form-group full">
                         <input type="tel" id="citizen_id" class="form-control" maxlength="13" placeholder=" " required inputmode="numeric">
                         <label class="floating-label">เลขประจำตัวประชาชน 13 หลัก <span>*</span></label>
                         <div class="char-counter" id="count-cid">0/13</div>
-                        <div id="cid-loading" style="display:none; position:absolute; right:15px; top:18px; font-size:0.8rem; color:var(--blue-primary); font-weight:700;">กำลังค้นหา...</div>
+                        <div id="cid-loading" style="display:none; position:absolute; right:15px; top:18px; font-size:0.8rem; color:var(--blue-primary); font-weight:700;">กำลังค้นหาฐานข้อมูล...</div>
                     </div>
 
                     <div class="form-group" id="fg-prefix">
@@ -449,7 +453,7 @@
 
         <div class="panel-card" style="padding-right: 15px;">
             <div class="panel-title">
-                <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="8" y1="6" x2="21" y2="6"></line><line x1="8" y1="12" x2="21" y2="12"></line><line x1="8" y1="18" x2="21" y2="18"></line><line x1="3" y1="6" x2="3.01" y2="6"></line><line x1="3" y1="12" x2="3.01" y2="12"></line><line x1="3" y1="18" x2="3.01" y2="18"></line></svg>
+                <svg viewBox="0 0 24 24"><line x1="8" y1="6" x2="21" y2="6"></line><line x1="8" y1="12" x2="21" y2="12"></line><line x1="8" y1="18" x2="21" y2="18"></line><line x1="3" y1="6" x2="3.01" y2="6"></line><line x1="3" y1="12" x2="3.01" y2="12"></line><line x1="3" y1="18" x2="3.01" y2="18"></line></svg>
                 รายชื่อลูกบ้านปัจจุบัน (<span id="total-count">0</span>)
             </div>
 
@@ -588,7 +592,7 @@
         }
 
         // ==========================================
-        // 3. UI & API
+        // 3. UI, Toast & API CONFIG
         // ==========================================
         function updateCounter(inputId, counterId, max) {
             const val = document.getElementById(inputId).value.length;
@@ -612,14 +616,106 @@
             setTimeout(() => t.classList.remove('show'), 4000); 
         }
 
-        // 🌟 ชี้เป้าไปที่ฐานข้อมูลหลักของคุณประธานที่เดียว 🌟
-        const CONFIG = {
-            SB_URL: 'https://vnlqxtxifgchrouongpu.supabase.co/rest/v1',
-            SB_KEY: 'sb_publishable_jBw7w_gyrLx7B0oSHAtWOw_nVTHTzxl'
-        };
+        // 🌟 แยก URL ฐานข้อมูลให้ถูกต้องชัดเจน 🌟
+        const GLOBAL_URL = 'https://zlzgxpmqplyakhvgkrwc.supabase.co';
+        const GLOBAL_KEY = 'sb_publishable_VGH1nDgXMXXIQWb_NnLE6g_yeWOt02O';
+        const OPS_URL = 'https://vnlqxtxifgchrouongpu.supabase.co';
+        const OPS_KEY = 'sb_publishable_jBw7w_gyrLx7B0oSHAtWOw_nVTHTzxl';
+
+        // 🌟 ดึงข้อมูลประวัติส่วนบุคคลจาก GLOBAL_URL 🌟
+        document.getElementById('citizen_id').addEventListener('input', async function() {
+            const cid = this.value.trim();
+            if (cid.length === 13) {
+                if(document.getElementById('edit-tenant-id').value !== "") return;
+
+                document.getElementById('cid-loading').style.display = 'block';
+                document.getElementById('count-cid').style.display = 'none';
+
+                try {
+                    const res = await fetch(`${GLOBAL_URL}/rest/v1/global_customers?citizen_id=eq.${cid}&select=*`, {
+                        headers: { 'apikey': GLOBAL_KEY, 'Authorization': `Bearer ${GLOBAL_KEY}` }
+                    });
+                    
+                    if (!res.ok) throw new Error();
+                    const crmData = await res.json();
+                    
+                    if (crmData.length > 0) {
+                        const c = crmData[0];
+                        showToast("พบประวัติในระบบ ดึงข้อมูลอัตโนมัติเรียบร้อย", "success");
+                        
+                        // แสดงป้ายบอกที่มาของข้อมูล
+                        const originBadge = document.getElementById('origin-badge');
+                        originBadge.innerHTML = `<div class="origin-badge"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg> ดึงข้อมูลประวัติส่วนตัวจากระบบ: ${c.origin_system || 'ไม่ระบุ'}</div>`;
+                        originBadge.style.display = 'block';
+
+                        // เติมข้อมูล
+                        if(c.first_name) { document.getElementById('first_name').value = c.first_name; document.getElementById('first_name').dispatchEvent(new Event('change')); }
+                        if(c.last_name) { document.getElementById('last_name').value = c.last_name; document.getElementById('last_name').dispatchEvent(new Event('change')); }
+                        if(c.phone_number) { document.getElementById('phone').value = c.phone_number; document.getElementById('phone').dispatchEvent(new Event('change')); updateCounter('phone', 'count-phone', 10); }
+                        
+                        if(c.prefix) setCustomValue('prefix', c.prefix, c.prefix);
+                        if(c.religion) setCustomValue('religion', c.religion, c.religion);
+                        
+                        if(c.date_of_birth) {
+                            const [y, m, d] = c.date_of_birth.split('-');
+                            setCustomValue('dob_year', y, parseInt(y)+543);
+                            setCustomValue('dob_month', m, thaiMonths[parseInt(m)-1]);
+                            document.getElementById('dob_year').dispatchEvent(new Event('change'));
+                            setTimeout(() => setCustomValue('dob_day', d, parseInt(d)), 50);
+                        }
+                        
+                        // เติมที่อยู่
+                        if(c.zip_code) {
+                            document.getElementById('zip_code').value = c.zip_code;
+                            document.getElementById('zip_code').dispatchEvent(new Event('change'));
+                            updateCounter('zip_code', 'count-zip', 5);
+                            await searchZipCode(); 
+                            setTimeout(() => {
+                                if(c.sub_district) setCustomValue('sub_district', c.sub_district, c.sub_district);
+                                if(c.address_line) {
+                                    document.getElementById('address_line').value = c.address_line;
+                                    document.getElementById('address_line').dispatchEvent(new Event('change'));
+                                }
+                            }, 500); 
+                        }
+                    }
+                } catch (err) {
+                    console.error("Auto-fetch error:", err);
+                } finally {
+                    document.getElementById('cid-loading').style.display = 'none';
+                    document.getElementById('count-cid').style.display = 'block';
+                }
+            } else {
+                document.getElementById('origin-badge').style.display = 'none';
+            }
+        });
+
+        // 🌟 ดึงข้อมูลรหัสไปรษณีย์จาก GLOBAL_URL 🌟
+        async function searchZipCode() {
+            const zipInput = document.getElementById('zip_code').value.trim();
+            const btnSearch = document.getElementById('btn-search-zip');
+            if (zipInput.length !== 5) { showToast('ระบุรหัสไปรษณีย์ 5 หลัก', 'error'); return; }
+
+            btnSearch.innerText = "..."; btnSearch.disabled = true;
+
+            try {
+                const res = await fetch(`${GLOBAL_URL}/rest/v1/thai_addresses?zipcode=eq.${zipInput}&select=*`, { headers: { 'apikey': GLOBAL_KEY, 'Authorization': `Bearer ${GLOBAL_KEY}` } });
+                const matches = await res.json();
+                
+                if (matches.length > 0) {
+                    document.getElementById('district').value = matches[0].district; document.getElementById('district').dispatchEvent(new Event('change'));
+                    document.getElementById('province').value = matches[0].province; document.getElementById('province').dispatchEvent(new Event('change'));
+                    
+                    const uniqueSubs = [...new Set(matches.map(item => item.subdistrict))];
+                    populateCustomOptions('sub_district', uniqueSubs, null, null);
+                    setCustomValue('sub_district', '', ''); 
+                } else { throw new Error(); }
+            } catch (error) { showToast('ไม่พบข้อมูลรหัสไปรษณีย์นี้', 'error'); } 
+            finally { btnSearch.innerText = "ค้นหา"; btnSearch.disabled = false; }
+        }
 
         // ==========================================
-        // 4. SAVE OR EDIT (ดัก 409 และ 400 ชัวร์ๆ)
+        // 4. SAVE OR EDIT
         // ==========================================
         document.getElementById('tenant-form').addEventListener('submit', async (e) => {
             e.preventDefault();
@@ -639,47 +735,73 @@
             const debt = parseFloat(document.getElementById('initial_debt').value) || 0;
             const paymentDate = document.getElementById('payment_date').value || null;
 
+            const y = document.getElementById('dob_year').value; const m = document.getElementById('dob_month').value; const d = document.getElementById('dob_day').value;
+            let dobCE = (y && m && d) ? `${y}-${m}-${d}` : null;
+            
             if(!prefix || !document.getElementById('sub_district').value) { showToast("เลือกคำนำหน้าและตำบลให้ครบ", "error"); return; }
 
             btn.disabled = true; btnText.innerText = `กำลัง${isEditMode ? 'แก้ไข' : 'บันทึก'}...`;
 
             try {
-                // ข้อมูลที่จะอัปเดตหรือสร้างใหม่
-                const payload = { 
-                    full_name: `${prefix}${fname} ${lname}`, 
-                    phone_number: phone, 
-                    room_number: room, 
-                    monthly_rent: rent, 
-                    initial_debt: debt, 
-                    payment_date: paymentDate,
-                    citizen_id: cid
+                // 1. อัปเดตข้อมูลบุคคลเข้า GLOBAL DB
+                const globalPayload = {
+                    citizen_id: cid, prefix: prefix, first_name: fname, last_name: lname, date_of_birth: dobCE, religion: document.getElementById('religion').value,
+                    address_line: document.getElementById('address_line').value.trim(), sub_district: document.getElementById('sub_district').value,
+                    district: document.getElementById('district').value, province: document.getElementById('province').value, zip_code: document.getElementById('zip_code').value.trim(),
+                    phone_number: phone, origin_system: 'Dormitory'
+                };
+
+                const checkCrm = await fetch(`${GLOBAL_URL}/rest/v1/global_customers?citizen_id=eq.${cid}`, { headers: { 'apikey': GLOBAL_KEY, 'Authorization': `Bearer ${GLOBAL_KEY}` } });
+                const existingCrm = await checkCrm.json();
+                
+                let crmRes;
+                if (existingCrm.length > 0) {
+                    crmRes = await fetch(`${GLOBAL_URL}/rest/v1/global_customers?citizen_id=eq.${cid}`, {
+                        method: 'PATCH', headers: { 'Content-Type': 'application/json', 'apikey': GLOBAL_KEY, 'Authorization': `Bearer ${GLOBAL_KEY}` },
+                        body: JSON.stringify(globalPayload)
+                    });
+                } else {
+                    crmRes = await fetch(`${GLOBAL_URL}/rest/v1/global_customers`, {
+                        method: 'POST', headers: { 'Content-Type': 'application/json', 'apikey': GLOBAL_KEY, 'Authorization': `Bearer ${GLOBAL_KEY}` },
+                        body: JSON.stringify(globalPayload)
+                    });
+                }
+                if(!crmRes.ok) throw new Error("บันทึกประวัติเข้าระบบกลางไม่สำเร็จ");
+
+                // 2. อัปเดตข้อมูลหอพักเข้า OPS DB
+                const opsPayload = { 
+                    full_name: `${prefix}${fname} ${lname}`, phone_number: phone, room_number: room, 
+                    monthly_rent: rent, initial_debt: debt, payment_date: paymentDate
                 };
 
                 if (isEditMode) {
-                    const res = await fetch(`${CONFIG.SB_URL}/dorm_tenants?id=eq.${tenantId}`, {
-                        method: 'PATCH', headers: { 'Content-Type': 'application/json', 'apikey': CONFIG.SB_KEY, 'Authorization': `Bearer ${CONFIG.SB_KEY}` },
-                        body: JSON.stringify(payload)
+                    const opsRes = await fetch(`${OPS_URL}/rest/v1/dorm_tenants?id=eq.${tenantId}`, {
+                        method: 'PATCH', headers: { 'Content-Type': 'application/json', 'apikey': OPS_KEY, 'Authorization': `Bearer ${OPS_KEY}` },
+                        body: JSON.stringify(opsPayload)
                     });
                     
-                    if (!res.ok) {
-                        if (res.status === 409) throw new Error(`ข้อมูลซ้ำ: หมายเลขห้อง ${room} มีคนอยู่แล้ว!`);
-                        throw new Error(`บันทึกไม่ได้ (ตรวจสอบข้อมูลให้ครบถ้วน)`);
+                    if(!opsRes.ok) {
+                        if(opsRes.status === 409) throw new Error(`ล้มเหลว: หมายเลขห้อง ${room} มีคนอยู่แล้ว!`);
+                        throw new Error("แก้ไขสัญญาไม่สำเร็จ");
                     }
                     showToast("อัปเดตสัญญาเรียบร้อย!", "success");
                 } else {
-                    // ตรวจสอบห้องซ้ำ
-                    const checkRes = await fetch(`${CONFIG.SB_URL}/dorm_tenants?room_number=eq.${room}&status=eq.ACTIVE&select=id`, { headers: { 'apikey': CONFIG.SB_KEY, 'Authorization': `Bearer ${CONFIG.SB_KEY}` } });
-                    if ((await checkRes.json()).length > 0) throw new Error(`สร้างสัญญาไม่ได้: ห้อง ${room} มีคนอยู่แล้ว!`);
+                    const checkRes = await fetch(`${OPS_URL}/rest/v1/dorm_tenants?room_number=eq.${room}&status=eq.ACTIVE&select=id`, { headers: { 'apikey': OPS_KEY, 'Authorization': `Bearer ${OPS_KEY}` } });
+                    if ((await checkRes.json()).length > 0) throw new Error(`ไม่สามารถสร้างสัญญาได้: ห้อง ${room} มีคนอยู่แล้ว!`);
                     
-                    payload.status = 'ACTIVE';
+                    opsPayload.citizen_id = cid;
+                    opsPayload.status = 'ACTIVE';
                     
-                    const res = await fetch(`${CONFIG.SB_URL}/dorm_tenants`, {
-                        method: 'POST', headers: { 'Content-Type': 'application/json', 'apikey': CONFIG.SB_KEY, 'Authorization': `Bearer ${CONFIG.SB_KEY}` },
-                        body: JSON.stringify(payload)
+                    const opsRes = await fetch(`${OPS_URL}/rest/v1/dorm_tenants`, {
+                        method: 'POST', headers: { 'Content-Type': 'application/json', 'apikey': OPS_KEY, 'Authorization': `Bearer ${OPS_KEY}` },
+                        body: JSON.stringify(opsPayload)
                     });
                     
-                    if (!res.ok) throw new Error(`บันทึกข้อมูลสัญญาไม่สำเร็จ`);
-                    showToast("สร้างสัญญาใหม่สำเร็จ", "success");
+                    if(!opsRes.ok) {
+                        if(opsRes.status === 409) throw new Error(`ล้มเหลว: หมายเลขห้อง ${room} มีคนอยู่แล้ว!`);
+                        throw new Error("สร้างสัญญาใหม่ไม่สำเร็จ");
+                    }
+                    showToast("สร้างสัญญาใหม่เรียบร้อย!", "success");
                 }
                 cancelEditMode(); fetchTenants(); 
 
@@ -691,12 +813,12 @@
         });
 
         // ==========================================
-        // 5. TABLE, EDIT, SMART EVICTION
+        // 5. TABLE, EDIT, SMART DELETE
         // ==========================================
         let tenantsList = [];
         async function fetchTenants() {
             try {
-                const res = await fetch(`${CONFIG.SB_URL}/dorm_tenants?status=eq.ACTIVE&order=room_number.asc`, { headers: { 'apikey': CONFIG.SB_KEY, 'Authorization': `Bearer ${CONFIG.SB_KEY}` } });
+                const res = await fetch(`${OPS_URL}/rest/v1/dorm_tenants?status=eq.ACTIVE&order=room_number.asc`, { headers: { 'apikey': OPS_KEY, 'Authorization': `Bearer ${OPS_KEY}` } });
                 tenantsList = await res.json(); 
                 document.getElementById('total-count').innerText = tenantsList.length;
                 renderTable(tenantsList);
@@ -705,11 +827,7 @@
 
         function renderTable(data) {
             const container = document.getElementById('tenant-container');
-            
-            if(data.length === 0) { 
-                container.innerHTML = `<div style="text-align: center; color: var(--text-muted); padding: 30px;">ไม่พบข้อมูลผู้เช่า</div>`; 
-                return; 
-            }
+            if(data.length === 0) { container.innerHTML = `<div style="text-align: center; color: var(--text-muted); padding: 30px;">ไม่พบข้อมูลผู้เช่า</div>`; return; }
             
             container.innerHTML = data.map(t => `
                 <div class="tenant-card">
@@ -737,30 +855,44 @@
 
         async function prepareEdit(tenant) {
             try {
+                // ดึงข้อมูลส่วนตัวจาก GLOBAL DB
+                const cRes = await fetch(`${GLOBAL_URL}/rest/v1/global_customers?citizen_id=eq.${tenant.citizen_id}&select=*`, { headers: { 'apikey': GLOBAL_KEY, 'Authorization': `Bearer ${GLOBAL_KEY}` } });
+                const crm = (await cRes.json())[0];
+
                 document.getElementById('edit-tenant-id').value = tenant.id;
                 document.getElementById('form-action-text').innerText = `แก้ไขข้อมูลห้อง ${tenant.room_number}`;
                 document.getElementById('form-action-text').style.color = 'var(--warning-yellow)';
                 document.getElementById('btn-text').innerText = "บันทึกการแก้ไข";
                 document.getElementById('btn-save-main').style.background = 'var(--warning-yellow)';
                 document.getElementById('btn-cancel-edit').style.display = 'block';
+                document.getElementById('origin-badge').style.display = 'none';
 
-                document.getElementById('citizen_id').value = tenant.citizen_id; document.getElementById('citizen_id').dispatchEvent(new Event('change'));
-                
-                // แยกชื่อ-นามสกุลจาก full_name ชั่วคราว (แบบคร่าวๆ)
-                let nameParts = tenant.full_name.split(' ');
-                let fname = nameParts[0];
-                let prefixMatch = fname.match(/^(นาย|นางสาว|นาง)(.*)/);
-                if(prefixMatch) {
-                    setCustomValue('prefix', prefixMatch[1], prefixMatch[1]);
-                    document.getElementById('first_name').value = prefixMatch[2];
-                } else {
-                    document.getElementById('first_name').value = fname;
+                if (crm) {
+                    document.getElementById('citizen_id').value = crm.citizen_id; document.getElementById('citizen_id').dispatchEvent(new Event('change'));
+                    document.getElementById('first_name').value = crm.first_name; document.getElementById('first_name').dispatchEvent(new Event('change'));
+                    document.getElementById('last_name').value = crm.last_name; document.getElementById('last_name').dispatchEvent(new Event('change'));
+                    document.getElementById('phone').value = crm.phone_number; document.getElementById('phone').dispatchEvent(new Event('change'));
+                    updateCounter('citizen_id', 'count-cid', 13); updateCounter('phone', 'count-phone', 10);
+                    
+                    setCustomValue('prefix', crm.prefix, crm.prefix);
+                    setCustomValue('religion', crm.religion, crm.religion);
+
+                    if(crm.date_of_birth) {
+                        const [y, m, d] = crm.date_of_birth.split('-');
+                        setCustomValue('dob_year', y, parseInt(y)+543);
+                        setCustomValue('dob_month', m, thaiMonths[parseInt(m)-1]);
+                        document.getElementById('dob_year').dispatchEvent(new Event('change'));
+                        setTimeout(() => setCustomValue('dob_day', d, parseInt(d)), 50);
+                    }
+
+                    document.getElementById('zip_code').value = crm.zip_code; document.getElementById('zip_code').dispatchEvent(new Event('change'));
+                    updateCounter('zip_code', 'count-zip', 5);
+                    await searchZipCode();
+                    
+                    document.getElementById('address_line').value = crm.address_line; document.getElementById('address_line').dispatchEvent(new Event('change'));
+                    setCustomValue('sub_district', crm.sub_district, crm.sub_district);
                 }
-                document.getElementById('last_name').value = nameParts.slice(1).join(' ');
-                
-                document.getElementById('phone').value = tenant.phone_number; document.getElementById('phone').dispatchEvent(new Event('change'));
-                updateCounter('citizen_id', 'count-cid', 13); updateCounter('phone', 'count-phone', 10);
-                
+
                 document.getElementById('room_number').value = tenant.room_number; document.getElementById('room_number').dispatchEvent(new Event('change'));
                 document.getElementById('monthly_rent').value = tenant.monthly_rent; document.getElementById('monthly_rent').dispatchEvent(new Event('change'));
                 document.getElementById('initial_debt').value = tenant.initial_debt; document.getElementById('initial_debt').dispatchEvent(new Event('change'));
@@ -771,7 +903,7 @@
                 }
 
                 window.scrollTo({ top: 0, behavior: 'smooth' });
-            } catch (err) { showToast('เกิดข้อผิดพลาด', 'error'); cancelEditMode(); }
+            } catch (err) { showToast('ดึงข้อมูลผิดพลาด', 'error'); cancelEditMode(); }
         }
 
         function cancelEditMode() {
@@ -782,6 +914,7 @@
             document.getElementById('btn-text').innerText = "บันทึกข้อมูลและทำสัญญา";
             document.getElementById('btn-save-main').style.background = 'var(--navy-dark)';
             document.getElementById('btn-cancel-edit').style.display = 'none';
+            document.getElementById('origin-badge').style.display = 'none';
 
             ['prefix','religion','dob_year','dob_month','dob_day','sub_district'].forEach(id => setCustomValue(id, '', ''));
             updateCounter('citizen_id', 'count-cid', 13); updateCounter('phone', 'count-phone', 10); updateCounter('zip_code', 'count-zip', 5);
@@ -792,36 +925,36 @@
         function openConfirmDelete(id, room) { idToDelete = id; document.getElementById('del-room-text').innerText = room; confirmOverlay.classList.add('show'); }
         function closeConfirmModal() { confirmOverlay.classList.remove('show'); idToDelete = null; }
         
-        // 🚀 Smart Eviction: คืนพื้นที่ห้องพัก 🚀
+        // 🌟 ฟังก์ชันลบห้อง คืนพื้นที่ 100% (Soft Delete in Ops DB) 🌟
         document.getElementById('btn-do-delete').addEventListener('click', async () => {
             if(!idToDelete) return;
             const btn = document.getElementById('btn-do-delete');
             btn.disabled = true; btn.innerText = "กำลังดำเนินการ...";
 
             try {
-                // อัปเดตสถานะเป็น INACTIVE และตั้งเลขห้องให้ว่าง
-                let patchRes = await fetch(`${CONFIG.SB_URL}/dorm_tenants?id=eq.${idToDelete}`, {
+                // เปลี่ยนสถานะเป็น INACTIVE และตั้งหมายเลขห้องเป็น NULL (คืนพื้นที่)
+                let patchRes = await fetch(`${OPS_URL}/rest/v1/dorm_tenants?id=eq.${idToDelete}`, {
                     method: 'PATCH',
-                    headers: { 'Content-Type': 'application/json', 'apikey': CONFIG.SB_KEY, 'Authorization': `Bearer ${CONFIG.SB_KEY}` },
+                    headers: { 'Content-Type': 'application/json', 'apikey': OPS_KEY, 'Authorization': `Bearer ${OPS_KEY}` },
                     body: JSON.stringify({ status: 'INACTIVE', room_number: null })
                 });
 
-                // ถ้าฐานข้อมูลบล็อกค่าว่าง (400 Bad Request) ให้ใส่เลขห้องหลอก
                 if (!patchRes.ok) {
-                    await fetch(`${CONFIG.SB_URL}/dorm_tenants?id=eq.${idToDelete}`, {
+                    // หาก DB บล็อค NULL ให้ใส่เลขหลอกแทน
+                    await fetch(`${OPS_URL}/rest/v1/dorm_tenants?id=eq.${idToDelete}`, {
                         method: 'PATCH',
-                        headers: { 'Content-Type': 'application/json', 'apikey': CONFIG.SB_KEY, 'Authorization': `Bearer ${CONFIG.SB_KEY}` },
+                        headers: { 'Content-Type': 'application/json', 'apikey': OPS_KEY, 'Authorization': `Bearer ${OPS_KEY}` },
                         body: JSON.stringify({ status: 'INACTIVE', room_number: `OUT-${idToDelete.substring(0,4)}` })
                     });
                 }
 
-                showToast("คืนพื้นที่ห้องเรียบร้อย พร้อมรับผู้เช่าใหม่", "success"); 
+                showToast("คืนพื้นที่ห้องเรียบร้อย พร้อมรับผู้เช่าใหม่ทันที", "success"); 
                 closeConfirmModal(); 
                 fetchTenants();
             } catch(e) { 
-                showToast("ไม่สามารถคืนพื้นที่ห้องได้", "error"); 
+                showToast("ไม่สามารถทำรายการได้ โปรดตรวจสอบระบบ", "error"); 
             } finally {
-                btn.disabled = false; btn.innerText = "ยืนยันถอดถอน";
+                btn.disabled = false; btn.innerText = "ยืนยันการทำรายการ";
             }
         });
     </script>
