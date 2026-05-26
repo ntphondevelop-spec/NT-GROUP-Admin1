@@ -8,7 +8,6 @@
     <link href="https://fonts.googleapis.com/css2?family=Anuphan:wght@300;400;500;600;700&family=Audiowide&display=swap" rel="stylesheet">
     
     <script>
-        // ระบบตรวจสอบความปลอดภัย Session แอดมิน
         (function() {
             try {
                 const sessionStr = localStorage.getItem('admin_user_data');
@@ -41,7 +40,6 @@
         * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
         body { font-family: var(--font-ui); background-color: var(--bg-light); color: var(--text-main); line-height: 1.6; overflow-x: hidden; display: flex; flex-direction: column; min-height: 100vh;}
 
-        /* ================= NAVBAR ================= */
         .navbar {
             background: var(--bg-white); height: 75px; padding: 0 5%; display: flex; 
             align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 1000;
@@ -59,13 +57,11 @@
         .btn-logout { background: #FEF2F2; color: var(--alert-red); border: none; padding: 10px 16px; border-radius: 12px; font-weight: 700; font-size: 0.9rem; display: flex; align-items: center; gap: 8px; cursor: pointer; transition: 0.2s;}
         .btn-logout:hover { background: var(--alert-red); color: var(--bg-white); }
 
-        /* ================= MAIN LAYOUT ================= */
         .main-container { max-width: 1200px; margin: 30px auto; padding: 0 15px; width: 100%; flex: 1;}
         .page-header { margin-bottom: 25px; border-left: 5px solid var(--blue-accent); padding-left: 15px;}
         .page-header h1 { font-size: clamp(1.4rem, 4vw, 1.8rem); font-weight: 800; color: var(--navy-primary); line-height: 1.2;}
         .page-header p { color: var(--text-gray); font-size: 0.95rem; font-weight: 500; margin-top: 5px;}
 
-        /* SUMMARY CARDS */
         .summary-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px; margin-bottom: 25px; }
         .summary-card { background: var(--bg-white); padding: 20px; border-radius: 20px; border: 1px solid var(--border-color); display: flex; align-items: center; gap: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.02);}
         .sum-icon { width: 50px; height: 50px; border-radius: 14px; display: flex; justify-content: center; align-items: center; flex-shrink: 0;}
@@ -73,7 +69,6 @@
         .sum-val h3 { font-size: 1.6rem; font-weight: 900; color: var(--navy-primary); line-height: 1.1;}
         .sum-val p { font-size: 0.8rem; color: var(--text-gray); font-weight: 800; text-transform: uppercase; margin-bottom: 3px;}
 
-        /* CONTROLS */
         .control-panel { background: var(--bg-white); padding: 20px; border-radius: 20px; border: 1px solid var(--border-color); margin-bottom: 25px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px; }
         
         .month-selector { display: flex; align-items: center; gap: 10px; flex: 1; min-width: 280px;}
@@ -89,12 +84,10 @@
         .search-box input:focus { border-color: var(--blue-accent); background: var(--bg-white); }
         .search-box svg { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: var(--text-gray); width: 18px; height: 18px; stroke-width: 2.5;}
 
-        /* TABS */
         .tabs { display: flex; gap: 8px; margin-bottom: 20px; padding: 6px; background: var(--border-color); border-radius: 14px; width: fit-content; overflow-x: auto; max-width: 100%;}
         .tab-btn { background: transparent; border: none; padding: 10px 20px; border-radius: 10px; font-weight: 800; font-family: var(--font-ui); color: var(--text-gray); cursor: pointer; transition: 0.2s; font-size: 0.9rem; white-space: nowrap;}
         .tab-btn.active { background: var(--bg-white); color: var(--blue-accent); box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
 
-        /* BILL CARDS (MOBILE PERFECT) */
         .bill-grid { display: grid; grid-template-columns: 1fr; gap: 15px; }
         .bill-card { background: var(--bg-white); border: 1px solid var(--border-color); border-radius: 20px; padding: 25px; display: flex; flex-direction: column; gap: 15px; position: relative; transition: 0.2s; box-shadow: 0 4px 15px rgba(0,0,0,0.01);}
         .bill-card:hover { border-color: var(--blue-accent); box-shadow: 0 10px 25px rgba(37,99,235,0.05); }
@@ -126,11 +119,9 @@
         .btn-remind { background: #FFFBEB; color: var(--warning-yellow); border: 1px solid #FDE68A; }
         .btn-remind:hover { background: var(--warning-yellow); color: white; }
 
-        /* ปุ่มลบที่เน้นให้เห็นชัดเจน */
         .btn-delete-bill { background: #FFFFFF; color: var(--alert-red); border: 1px solid var(--alert-red); }
         .btn-delete-bill:hover { background: var(--alert-red); color: white; }
 
-        /* ================= MODALS & UTILS ================= */
         .modal { position: fixed; inset: 0; background: rgba(15,23,42,0.9); z-index: 9999; display: none; justify-content: center; align-items: center; padding: 20px; backdrop-filter: blur(5px); }
         .modal.show { display: flex; animation: fadeIn 0.2s; }
         @keyframes fadeIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
@@ -264,8 +255,8 @@
         
         let allTenants = [];
         let allBills = [];
-        let currentMonthKey = ''; // เดือนปัจจุบันที่ใช้สำหรับ Auto-Billing
-        let selectedViewMonth = ''; // เดือนที่แอดมินเลือกดู
+        let currentMonthKey = '';
+        let selectedViewMonth = '';
         let currentTab = 'PENDING';
         let currentRejectId = null;
 
@@ -279,7 +270,7 @@
                 : '<svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" fill="none" stroke-width="3"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>';
             document.getElementById('toast-msg').innerText = msg;
             t.classList.add('show');
-            setTimeout(() => t.classList.remove('show'), 3000);
+            setTimeout(() => t.classList.remove('show'), 3500);
         }
 
         function closeModal(id) { document.getElementById(id).classList.remove('show'); }
@@ -330,34 +321,43 @@
                 allTenants = await tRes.json();
                 allBills = await bRes.json();
                 
-                // 🤖 ระบบตรวจสอบและสร้างบิลอัตโนมัติ (รันเฉพาะเดือนปัจจุบัน)
-                await autoGenerateBills();
+                // 🌟 ระบบ Self-Healing: ตรวจสอบและสร้างบิลอัตโนมัติ 🌟
+                await syncAllBills();
 
                 updateStats();
                 renderList();
-            } catch(e) { showToast("โหลดข้อมูลล้มเหลว", "error"); }
+            } catch(e) { showToast("โหลดข้อมูลล้มเหลว", "error"); console.error(e); }
         }
 
-        async function autoGenerateBills() {
+        async function syncAllBills() {
             let newlyCreated = false;
-            const currentMonthBills = allBills.filter(b => b.billing_month === currentMonthKey);
-            
+            const headers = { 'Content-Type': 'application/json', 'apikey': CONFIG.SB_KEY, 'Authorization': `Bearer ${CONFIG.SB_KEY}` };
+
             for (const t of allTenants) {
-                const exists = currentMonthBills.find(b => b.room_number === t.room_number);
-                if (!exists && t.monthly_rent) {
-                    try {
-                        await fetch(`${CONFIG.SB_URL}/billing_statements`, {
-                            method: 'POST',
-                            headers: { 'Content-Type': 'application/json', 'apikey': CONFIG.SB_KEY, 'Authorization': `Bearer ${CONFIG.SB_KEY}` },
-                            body: JSON.stringify({ 
-                                room_number: t.room_number, 
-                                billing_month: currentMonthKey, 
-                                amount_due: t.monthly_rent, 
-                                payment_status: 'UNPAID' 
-                            })
-                        });
-                        newlyCreated = true;
-                    } catch(err) { console.error("Auto-bill failed for room:", t.room_number); }
+                // 1. เช็คยอดยกมา (Initial Debt) ของลูกบ้านทุกคน
+                if (parseFloat(t.initial_debt || 0) > 0) {
+                    if (!allBills.find(b => b.room_number === t.room_number && b.billing_month === 'INITIAL')) {
+                        try {
+                            await fetch(`${CONFIG.SB_URL}/billing_statements`, {
+                                method: 'POST', headers,
+                                body: JSON.stringify({ room_number: t.room_number, billing_month: 'INITIAL', amount_due: t.initial_debt, payment_status: 'UNPAID' })
+                            });
+                            newlyCreated = true;
+                        } catch(e){}
+                    }
+                }
+
+                // 2. เช็คบิลเดือนปัจจุบัน
+                if (parseFloat(t.monthly_rent || 0) > 0) {
+                    if (!allBills.find(b => b.room_number === t.room_number && b.billing_month === currentMonthKey)) {
+                        try {
+                            await fetch(`${CONFIG.SB_URL}/billing_statements`, {
+                                method: 'POST', headers,
+                                body: JSON.stringify({ room_number: t.room_number, billing_month: currentMonthKey, amount_due: t.monthly_rent, payment_status: 'UNPAID' })
+                            });
+                            newlyCreated = true;
+                        } catch(e){}
+                    }
                 }
             }
 
@@ -386,13 +386,10 @@
             renderList();
         }
 
-        // --- ระบบเช็คเกินกำหนดชำระ (Smart Reminder) ---
         function checkOverdue(tenantPaymentDateStr, billMonth) {
             if (!tenantPaymentDateStr || billMonth === 'INITIAL') return false;
-            
             const d = new Date(tenantPaymentDateStr);
             const dueDay = d.getDate() || 5; 
-
             const now = new Date();
             const currentDay = now.getDate();
             const [bYear, bMonth] = billMonth.split('-');
@@ -408,7 +405,6 @@
             const search = document.getElementById('search-input').value.toLowerCase();
             
             let filtered = [];
-            // ถ้าเป็น PENDING ให้แสดงบิลทุกเดือนที่ส่งสลิปมา เพื่อให้แอดมินไม่พลาด
             if(currentTab === 'PENDING') {
                 filtered = allBills.filter(b => b.payment_status === 'PENDING_VERIFICATION');
             } else {
@@ -416,7 +412,7 @@
             }
 
             if(search) {
-                filtered = filtered.filter(b => b.room_number.includes(search) || (allTenants.find(t => t.room_number === b.room_number)?.full_name.toLowerCase().includes(search)));
+                filtered = filtered.filter(b => (b.room_number && b.room_number.includes(search)) || (allTenants.find(t => t.room_number === b.room_number)?.full_name.toLowerCase().includes(search)));
             }
 
             if(filtered.length === 0) {
@@ -430,9 +426,9 @@
                 const t = allTenants.find(x => x.room_number === b.room_number) || { full_name: 'ไม่พบข้อมูลผู้เช่า', payment_date: null };
                 
                 let monthStr = 'ยอดแรกเข้า / ยอดยกมา';
-                if(b.billing_month !== 'INITIAL') {
+                if(b.billing_month !== 'INITIAL' && b.billing_month.includes('-')) {
                     const [y, m] = b.billing_month.split('-');
-                    monthStr = `${th[parseInt(m)-1]} ${parseInt(y)+543}`;
+                    if(y && m) monthStr = `${th[parseInt(m)-1]} ${parseInt(y)+543}`;
                 }
 
                 const isOverdue = (currentTab === 'UNPAID' && checkOverdue(t.payment_date, b.billing_month));
@@ -440,7 +436,7 @@
 
                 let rejectNote = '';
                 if (b.reject_reason && currentTab === 'UNPAID') {
-                    rejectNote = `<div class="reject-reason">ถูกตีกลับสลิปครั้งก่อน: ${b.reject_reason}</div>`;
+                    rejectNote = `<div class="reject-reason">ตีกลับครั้งก่อน: ${b.reject_reason}</div>`;
                 }
 
                 let actions = '';
@@ -452,21 +448,20 @@
                     `;
                 } else if(b.payment_status === 'UNPAID') {
                     actions = `
-                        <button class="btn-act btn-remind" onclick="copyRemindText('${b.room_number}', '${t.full_name}', '${b.amount_due}')"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg> คัดลอกข้อความทวง</button>
+                        <button class="btn-act btn-remind" onclick="copyRemindText('${b.room_number}', '${t.full_name}', '${b.amount_due}')"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg> ก๊อปปี้ข้อความทวง</button>
                         <button class="btn-act btn-approve" onclick="updateStatus('${b.id}', 'PAID', 'CASH')">รับเงินสด</button>
                     `;
                 }
 
-                // 🗑️ ปุ่มลบบิล เด่นชัดสีแดง สำหรับลบรายการทุกสถานะ
                 const deleteAction = `<button class="btn-act btn-delete-bill" onclick="deleteBill('${b.id}')"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg> ลบบิลทิ้ง</button>`;
 
                 return `
                     <div class="bill-card">
                         <div class="bill-header">
                             <div>
-                                <div class="room-badge">ห้อง ${b.room_number}</div>
+                                <div class="room-badge">ห้อง ${b.room_number || '-'}</div>
                                 <div class="tenant-name">คุณ${t.full_name}</div>
-                                <div class="bill-month">งวดประจำเดือน: ${monthStr}</div>
+                                <div class="bill-month">งวดบิล: ${monthStr}</div>
                                 ${overdueHtml}
                             </div>
                             <div class="bill-amt-section">
@@ -492,7 +487,7 @@
 
         async function submitReject() {
             const reason = document.getElementById('reject-reason').value.trim();
-            if(!reason) { showToast("กรุณาระบุสาเหตุการตีกลับ", "error"); return; }
+            if(!reason) { showToast("กรุณาระบุสาเหตุ", "error"); return; }
             
             try {
                 await fetch(`${CONFIG.SB_URL}/billing_statements?id=eq.${currentRejectId}`, {
@@ -507,21 +502,20 @@
         }
 
         async function updateStatus(id, status, method = 'TRANSFER') {
-            if(!confirm("ยืนยันการอนุมัติรับชำระเงินสำหรับรายการนี้ใช่หรือไม่?")) return;
+            if(!confirm("ยืนยันการอนุมัติรับเงินรายการนี้ใช่หรือไม่?")) return;
             try {
                 await fetch(`${CONFIG.SB_URL}/billing_statements?id=eq.${id}`, {
                     method: 'PATCH',
                     headers: { 'Content-Type': 'application/json', 'apikey': CONFIG.SB_KEY, 'Authorization': `Bearer ${CONFIG.SB_KEY}` },
                     body: JSON.stringify({ payment_status: status, payment_method: method, paid_at: new Date(), reject_reason: null })
                 });
-                showToast("บันทึกรับเงินเรียบร้อยแล้ว", "success");
+                showToast("บันทึกรับเงินเรียบร้อย", "success");
                 fetchData();
             } catch(e) { showToast("ไม่สามารถบันทึกได้", "error"); }
         }
 
-        // 🗑️ ฟังก์ชันลบบิลของจริง สำหรับแอดมิน
         async function deleteBill(id) {
-            if(!confirm("⚠️ คำเตือน: คุณต้องการ 'ลบบิล' รายการนี้ออกจากระบบอย่างถาวรใช่หรือไม่?\n(สำหรับกรณีผู้เช่าย้ายออก หรือ ไม่ต้องชำระในงวดนี้)")) return;
+            if(!confirm("⚠️ คำเตือน: คุณต้องการ 'ลบบิล' รายการนี้ออกจากระบบใช่หรือไม่?\n(ลูกบ้านจะไม่เห็นบิลนี้อีกเลย)")) return;
             try {
                 await fetch(`${CONFIG.SB_URL}/billing_statements?id=eq.${id}`, {
                     method: 'DELETE',
@@ -533,7 +527,7 @@
         }
 
         function viewSlip(url) {
-            if(!url) { showToast("ไม่พบหลักฐานการโอน", "error"); return; }
+            if(!url) { showToast("ไม่พบหลักฐาน", "error"); return; }
             document.getElementById('modal-img').src = url;
             document.getElementById('slip-modal').classList.add('show');
         }
@@ -544,7 +538,6 @@
             showToast("คัดลอกข้อความทวงสำเร็จ นำไปส่งใน Line ได้เลย", "success");
         }
 
-        // INIT
         initMonthPicker();
         fetchData();
     </script>
