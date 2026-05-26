@@ -6,9 +6,10 @@
     <title>จัดการผู้เช่า - Pak Phanang Prestige Hall</title>
     
     <link href="https://fonts.googleapis.com/css2?family=Anuphan:wght@300;400;500;600;700&family=Audiowide&display=swap" rel="stylesheet">
-    
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
     <script>
-        // ระบบตรวจสอบความปลอดภัย Session แอดมิน
+        // ระบบตรวจสอบความปลอดภัย Session
         (function() {
             try {
                 const sessionStr = localStorage.getItem('admin_user_data');
@@ -86,8 +87,13 @@
         .page-header p { color: var(--text-muted); font-size: 1.05rem; }
 
         .panel-card { background: var(--bg-white); border: 1px solid var(--border-color); border-radius: 20px; padding: 35px; box-shadow: 0 4px 15px rgba(0,0,0,0.03); height: fit-content;}
-        .panel-title { font-size: 1.25rem; font-weight: 700; color: var(--navy-dark); margin-bottom: 30px; display: flex; align-items: center; gap: 12px; border-bottom: 2px solid var(--bg-body); padding-bottom: 15px;}
+        .panel-title { font-size: 1.25rem; font-weight: 700; color: var(--navy-dark); margin-bottom: 25px; display: flex; align-items: center; gap: 12px; border-bottom: 2px solid var(--bg-body); padding-bottom: 15px;}
         .panel-title svg { width: 24px; height: 24px; stroke: var(--blue-primary); stroke-width: 2.5; fill: none; }
+
+        /* ================= TABS FOR TENANT LIST ================= */
+        .tabs { display: flex; gap: 8px; margin-bottom: 20px; padding: 6px; background: var(--border-color); border-radius: 14px; width: fit-content; overflow-x: auto; max-width: 100%;}
+        .tab-btn { background: transparent; border: none; padding: 10px 20px; border-radius: 10px; font-weight: 800; font-family: var(--font-ui); color: var(--text-muted); cursor: pointer; transition: 0.2s; font-size: 0.9rem; white-space: nowrap;}
+        .tab-btn.active { background: var(--bg-white); color: var(--blue-primary); box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
 
         /* ================= FORM STYLES ================= */
         .form-section-title { 
@@ -103,7 +109,7 @@
         
         .form-control { 
             width: 100%; padding: 22px 16px 8px; border: 1.5px solid var(--border-color); border-radius: 12px; 
-            font-size: 1.05rem; color: var(--navy-dark); background: #F8FAFC; outline: none; transition: 0.3s; font-weight: 600;
+            font-size: 1.05rem; font-family: var(--font-ui); color: var(--navy-dark); background: #F8FAFC; outline: none; transition: 0.3s; font-weight: 600;
         }
         .form-control:focus { border-color: var(--blue-primary); background: #FFF; box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1); }
         .form-control[readonly] { background: #EDF2F7; color: #64748B; cursor: not-allowed; border-color: transparent; }
@@ -152,14 +158,14 @@
         .zip-search-wrapper { display: flex; gap: 10px; }
         .btn-search { 
             background: var(--navy-dark); color: #FFF; border: none; padding: 0 20px; border-radius: 12px; cursor: pointer; transition: 0.2s;
-            display: flex; align-items: center; justify-content: center; font-weight: 600; font-size: 1rem; white-space: nowrap;
+            display: flex; align-items: center; justify-content: center; font-weight: 600; font-size: 1rem; font-family: var(--font-ui); white-space: nowrap;
         }
         .btn-search:hover { background: var(--blue-primary); box-shadow: 0 4px 10px rgba(37,99,235,0.2);}
         .btn-search:disabled { background: var(--text-muted); cursor: not-allowed; box-shadow: none; }
 
         .btn-submit {
             width: 100%; background: var(--navy-dark); color: #FFF; border: none; padding: 18px; border-radius: 12px;
-            font-size: 1.15rem; font-weight: 700; cursor: pointer; transition: 0.3s; margin-top: 35px;
+            font-size: 1.15rem; font-weight: 700; font-family: var(--font-ui); cursor: pointer; transition: 0.3s; margin-top: 35px;
             display: flex; justify-content: center; align-items: center; gap: 10px; box-shadow: 0 4px 15px rgba(15, 23, 42, 0.15);
         }
         .btn-submit:hover { background: var(--blue-primary); transform: translateY(-3px); box-shadow: 0 8px 25px rgba(37, 99, 235, 0.3); }
@@ -180,11 +186,13 @@
         .t-name { font-weight: 800; color: var(--navy-dark); font-size: 1.1rem;}
         .t-detail { font-size: 0.85rem; color: var(--text-muted); margin-top: 5px; font-weight: 500;}
 
-        .t-actions { display: flex; gap: 8px; }
+        .t-actions { display: flex; gap: 8px; align-items: center;}
         .btn-icon { background: var(--bg-light); border: 1px solid var(--border-color); width: 38px; height: 38px; border-radius: 10px; display: flex; align-items: center; justify-content: center; cursor: pointer; color: var(--text-muted); transition: 0.2s;}
         .btn-icon.edit:hover { background: var(--warning-yellow); color: white; border-color: var(--warning-yellow);}
         .btn-icon.delete:hover { background: var(--alert-red); color: white; border-color: var(--alert-red);}
         .btn-icon svg { width: 18px; height: 18px; stroke: currentColor; stroke-width: 2.5; fill: none; }
+
+        .badge-inactive { font-size: 0.8rem; font-weight: 700; color: var(--text-muted); background: var(--border-color); padding: 4px 10px; border-radius: 8px;}
 
         /* ================= MODALS & TOAST ================= */
         .custom-modal-overlay {
@@ -196,7 +204,7 @@
         .custom-modal-overlay.show .modal-box { transform: scale(1); }
         
         .modal-btns { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 25px; }
-        .btn-modal { padding: 14px; border-radius: 10px; border: none; font-weight: 700; font-size: 1rem; cursor: pointer; transition: 0.2s; }
+        .btn-modal { padding: 14px; border-radius: 10px; border: none; font-weight: 700; font-family: var(--font-ui); font-size: 1rem; cursor: pointer; transition: 0.2s; }
         .btn-modal.cancel { background: #F1F5F9; color: var(--text-muted); }
         .btn-modal.cancel:hover { background: #E2E8F0; color: var(--navy-dark); }
         .btn-modal.confirm { background: var(--alert-red); color: #FFF; }
@@ -211,7 +219,6 @@
         #smart-toast.show { top: 20px; }
         .toast-icon svg { width: 20px; height: 20px; fill: none; stroke-width: 2.5; }
 
-        /* ป้ายแจ้งที่มาของข้อมูล (Origin Badge) */
         .origin-badge {
             display: inline-flex; align-items: center; gap: 5px; background: #ECFDF5; color: var(--success-green);
             padding: 6px 12px; border-radius: 8px; font-size: 0.8rem; font-weight: 700; margin-top: 8px; border: 1px solid #A7F3D0;
@@ -244,12 +251,12 @@
 
     <div class="custom-modal-overlay" id="confirm-modal">
         <div class="modal-box">
-            <h3 style="color: var(--alert-red); margin-bottom: 10px;">ยืนยันการคืนพื้นที่ห้องพัก</h3>
-            <p style="color: var(--text-muted); font-size: 0.95rem;">คุณต้องการย้ายผู้เช่าออกจากห้อง <strong id="del-room-text" style="color: var(--navy-dark); font-size: 1.1rem;"></strong> และคืนเป็นสถานะห้องว่างใช่หรือไม่?</p>
-            <p style="color: var(--blue-primary); font-size: 0.8rem; margin-top: 10px;">(ประวัติส่วนบุคคลและข้อมูลการโอนเงินจะยังถูกเก็บไว้ในฐานข้อมูลกลาง)</p>
+            <h3 style="color: var(--alert-red); margin-bottom: 10px;">ยืนยันการย้ายออก</h3>
+            <p style="color: var(--text-muted); font-size: 0.95rem;">ต้องการย้ายผู้เช่าออกจากห้อง <strong id="del-room-text" style="color: var(--navy-dark); font-size: 1.1rem;"></strong> และคืนสถานะห้องว่างใช่หรือไม่?</p>
+            <p style="color: var(--blue-primary); font-size: 0.8rem; margin-top: 10px;">(ประวัติรายเดือนจะถูกเก็บไว้ที่แท็บประวัติย้ายออกอย่างปลอดภัย)</p>
             <div class="modal-btns">
                 <button class="btn-modal cancel" onclick="closeConfirmModal()">ยกเลิก</button>
-                <button class="btn-modal confirm" id="btn-do-delete">ยืนยันการทำรายการ</button>
+                <button class="btn-modal confirm" id="btn-do-delete">ยืนยันย้ายออก</button>
             </div>
         </div>
     </div>
@@ -452,13 +459,18 @@
         </div>
 
         <div class="panel-card" style="padding-right: 15px;">
-            <div class="panel-title">
+            <div class="panel-title" style="margin-bottom: 20px;">
                 <svg viewBox="0 0 24 24"><line x1="8" y1="6" x2="21" y2="6"></line><line x1="8" y1="12" x2="21" y2="12"></line><line x1="8" y1="18" x2="21" y2="18"></line><line x1="3" y1="6" x2="3.01" y2="6"></line><line x1="3" y1="12" x2="3.01" y2="12"></line><line x1="3" y1="18" x2="3.01" y2="18"></line></svg>
-                รายชื่อลูกบ้านปัจจุบัน (<span id="total-count">0</span>)
+                รายชื่อผู้เช่าหอพัก
+            </div>
+
+            <div class="tabs" id="tenant-tabs">
+                <button class="tab-btn active" onclick="switchTenantTab('ACTIVE', this)">ผู้เช่าปัจจุบัน (<span id="count-active">0</span>)</button>
+                <button class="tab-btn" onclick="switchTenantTab('INACTIVE', this)">ประวัติย้ายออก (<span id="count-inactive">0</span>)</button>
             </div>
 
             <div class="search-input-wrapper" style="margin-bottom: 20px;">
-                <input type="text" class="form-control" id="search-input" placeholder="ค้นหา ห้อง, ชื่อ หรือ เลขบัตร..." onkeyup="filterTable()" style="padding: 12px 16px;">
+                <input type="text" class="form-control" id="search-input" placeholder="ค้นหา ห้อง, ชื่อ หรือ เลขบัตร..." onkeyup="renderTable()" style="padding: 12px 16px;">
             </div>
 
             <div class="tenant-list" id="tenant-container">
@@ -616,7 +628,6 @@
             setTimeout(() => t.classList.remove('show'), 4000); 
         }
 
-        // 🌟 แยก URL ฐานข้อมูลให้ถูกต้องชัดเจน 🌟
         const GLOBAL_URL = 'https://zlzgxpmqplyakhvgkrwc.supabase.co';
         const GLOBAL_KEY = 'sb_publishable_VGH1nDgXMXXIQWb_NnLE6g_yeWOt02O';
         const OPS_URL = 'https://vnlqxtxifgchrouongpu.supabase.co';
@@ -643,12 +654,10 @@
                         const c = crmData[0];
                         showToast("พบประวัติในระบบ ดึงข้อมูลอัตโนมัติเรียบร้อย", "success");
                         
-                        // แสดงป้ายบอกที่มาของข้อมูล
                         const originBadge = document.getElementById('origin-badge');
-                        originBadge.innerHTML = `<div class="origin-badge"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg> ดึงข้อมูลประวัติส่วนตัวจากระบบ: ${c.origin_system || 'ไม่ระบุ'}</div>`;
+                        originBadge.innerHTML = `<div class="origin-badge"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg> ดึงข้อมูลประวัติส่วนตัวจากระบบ: ${c.origin_system || 'Dormitory'}</div>`;
                         originBadge.style.display = 'block';
 
-                        // เติมข้อมูล
                         if(c.first_name) { document.getElementById('first_name').value = c.first_name; document.getElementById('first_name').dispatchEvent(new Event('change')); }
                         if(c.last_name) { document.getElementById('last_name').value = c.last_name; document.getElementById('last_name').dispatchEvent(new Event('change')); }
                         if(c.phone_number) { document.getElementById('phone').value = c.phone_number; document.getElementById('phone').dispatchEvent(new Event('change')); updateCounter('phone', 'count-phone', 10); }
@@ -664,7 +673,6 @@
                             setTimeout(() => setCustomValue('dob_day', d, parseInt(d)), 50);
                         }
                         
-                        // เติมที่อยู่
                         if(c.zip_code) {
                             document.getElementById('zip_code').value = c.zip_code;
                             document.getElementById('zip_code').dispatchEvent(new Event('change'));
@@ -813,29 +821,65 @@
         });
 
         // ==========================================
-        // 5. TABLE, EDIT, SMART DELETE
+        // 5. TABLE, TABS & SMART EVICTION (ย้ายตารางหนี)
         // ==========================================
-        let tenantsList = [];
+        let allTenantsData = [];
+        let currentTenantTab = 'ACTIVE';
+
         async function fetchTenants() {
             try {
-                const res = await fetch(`${OPS_URL}/rest/v1/dorm_tenants?status=eq.ACTIVE&order=room_number.asc`, { headers: { 'apikey': OPS_KEY, 'Authorization': `Bearer ${OPS_KEY}` } });
-                tenantsList = await res.json(); 
-                document.getElementById('total-count').innerText = tenantsList.length;
-                renderTable(tenantsList);
+                // ดึงข้อมูลลูกบ้านทั้งหมด ทั้งกำลังเช่าอยู่และย้ายออกไปแล้ว
+                const res = await fetch(`${OPS_URL}/rest/v1/dorm_tenants?order=room_number.asc`, { headers: { 'apikey': OPS_KEY, 'Authorization': `Bearer ${OPS_KEY}` } });
+                allTenantsData = await res.json(); 
+                
+                updateTenantTabs();
+                renderTable();
             } catch (e) { showToast("ไม่สามารถโหลดรายชื่อได้", "error"); }
         }
 
-        function renderTable(data) {
+        function updateTenantTabs() {
+            const activeCount = allTenantsData.filter(t => t.status === 'ACTIVE').length;
+            const inactiveCount = allTenantsData.filter(t => t.status === 'INACTIVE' || t.status === 'MOVED_OUT').length;
+            document.getElementById('count-active').innerText = activeCount;
+            document.getElementById('count-inactive').innerText = inactiveCount;
+        }
+
+        function switchTenantTab(tab, btn) {
+            currentTenantTab = tab;
+            document.querySelectorAll('#tenant-tabs .tab-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            renderTable();
+        }
+
+        function renderTable() {
             const container = document.getElementById('tenant-container');
-            if(data.length === 0) { container.innerHTML = `<div style="text-align: center; color: var(--text-muted); padding: 30px;">ไม่พบข้อมูลผู้เช่า</div>`; return; }
+            const q = document.getElementById('search-input').value.toLowerCase();
             
-            container.innerHTML = data.map(t => `
-                <div class="tenant-card">
-                    <div>
-                        <div class="t-room">ห้อง ${t.room_number || 'ไม่ได้ระบุ'}</div>
-                        <div class="t-name">${t.full_name}</div>
-                        <div class="t-detail">ค่าเช่า: ฿${parseFloat(t.monthly_rent).toLocaleString()} | โทร: ${t.phone_number || '-'}</div>
-                    </div>
+            // กรองตามสถานะ Tab ที่เลือก
+            let filtered = allTenantsData.filter(t => {
+                if(currentTenantTab === 'ACTIVE') return t.status === 'ACTIVE';
+                else return t.status === 'INACTIVE' || t.status === 'MOVED_OUT';
+            });
+
+            // กรองตามช่องค้นหา
+            if(q) {
+                filtered = filtered.filter(t => (t.room_number && t.room_number.includes(q)) || t.full_name.toLowerCase().includes(q) || t.citizen_id.includes(q));
+            }
+
+            if(filtered.length === 0) { 
+                container.innerHTML = `<div style="text-align: center; color: var(--text-muted); padding: 30px;">ไม่พบข้อมูล</div>`; 
+                return; 
+            }
+            
+            container.innerHTML = filtered.map(t => {
+                // เช็คเลขห้อง ถ้าเป็น Null หรือขึ้นต้นด้วย OUT- ให้แสดงว่า "คืนห้องแล้ว"
+                let roomDisplay = t.room_number || 'คืนห้องแล้ว';
+                if(roomDisplay.startsWith('OUT-')) roomDisplay = 'คืนห้องแล้ว';
+
+                let actionHtml = '';
+                if(currentTenantTab === 'ACTIVE') {
+                    // แถบใช้งานปัจจุบัน: แสดงปุ่มแก้ไขและย้ายออก
+                    actionHtml = `
                     <div class="t-actions">
                         <button class="btn-icon edit" onclick='prepareEdit(${JSON.stringify(t).replace(/'/g, "&#39;")})' title="แก้ไขข้อมูล">
                             <svg viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
@@ -843,14 +887,23 @@
                         <button class="btn-icon delete" onclick="openConfirmDelete('${t.id}', '${t.room_number}')" title="ย้ายออก / คืนพื้นที่ห้อง">
                             <svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
                         </button>
-                    </div>
-                </div>
-            `).join('');
-        }
+                    </div>`;
+                } else {
+                    // แถบประวัติย้ายออก: ซ่อนปุ่ม แปะป้ายสถานะ
+                    actionHtml = `<span style="font-size: 0.85rem; font-weight: 700; color: var(--text-muted); background: var(--bg-body); padding: 4px 10px; border-radius: 8px; border: 1px solid var(--border-color);">ย้ายออกแล้ว</span>`;
+                }
 
-        function filterTable() {
-            const q = document.getElementById('search-input').value.toLowerCase();
-            renderTable(tenantsList.filter(t => (t.room_number && t.room_number.includes(q)) || t.full_name.toLowerCase().includes(q) || t.citizen_id.includes(q)));
+                return `
+                <div class="tenant-card">
+                    <div>
+                        <div class="t-room" style="${currentTenantTab !== 'ACTIVE' ? 'background:var(--bg-body); color:var(--text-muted); border: 1px solid var(--border-color);' : ''}">ห้อง ${roomDisplay}</div>
+                        <div class="t-name" style="${currentTenantTab !== 'ACTIVE' ? 'color:var(--text-muted);' : ''}">${t.full_name}</div>
+                        <div class="t-detail">ค่าเช่า: ฿${parseFloat(t.monthly_rent).toLocaleString()} | โทร: ${t.phone_number || '-'}</div>
+                    </div>
+                    ${actionHtml}
+                </div>
+                `;
+            }).join('');
         }
 
         async function prepareEdit(tenant) {
@@ -925,22 +978,22 @@
         function openConfirmDelete(id, room) { idToDelete = id; document.getElementById('del-room-text').innerText = room; confirmOverlay.classList.add('show'); }
         function closeConfirmModal() { confirmOverlay.classList.remove('show'); idToDelete = null; }
         
-        // 🌟 ฟังก์ชันลบห้อง คืนพื้นที่ 100% (Soft Delete in Ops DB) 🌟
+        // 🚀 Smart Eviction: ย้ายตารางหนี + คืนห้องว่าง 🚀
         document.getElementById('btn-do-delete').addEventListener('click', async () => {
             if(!idToDelete) return;
             const btn = document.getElementById('btn-do-delete');
             btn.disabled = true; btn.innerText = "กำลังดำเนินการ...";
 
             try {
-                // เปลี่ยนสถานะเป็น INACTIVE และตั้งหมายเลขห้องเป็น NULL (คืนพื้นที่)
+                // เปลี่ยนสถานะเป็น INACTIVE และตั้งเลขห้องให้ว่าง (null)
                 let patchRes = await fetch(`${OPS_URL}/rest/v1/dorm_tenants?id=eq.${idToDelete}`, {
                     method: 'PATCH',
                     headers: { 'Content-Type': 'application/json', 'apikey': OPS_KEY, 'Authorization': `Bearer ${OPS_KEY}` },
                     body: JSON.stringify({ status: 'INACTIVE', room_number: null })
                 });
 
+                // ถ้าฐานข้อมูลบล็อกค่าว่าง (400 Bad Request) ให้ใส่เลขห้องหลอก
                 if (!patchRes.ok) {
-                    // หาก DB บล็อค NULL ให้ใส่เลขหลอกแทน
                     await fetch(`${OPS_URL}/rest/v1/dorm_tenants?id=eq.${idToDelete}`, {
                         method: 'PATCH',
                         headers: { 'Content-Type': 'application/json', 'apikey': OPS_KEY, 'Authorization': `Bearer ${OPS_KEY}` },
@@ -950,7 +1003,7 @@
 
                 showToast("คืนพื้นที่ห้องเรียบร้อย พร้อมรับผู้เช่าใหม่ทันที", "success"); 
                 closeConfirmModal(); 
-                fetchTenants();
+                fetchTenants(); // ระบบจะดึงข้อมูลใหม่ และเด้งชื่อคนนี้ไปอยู่แท็บ "ประวัติย้ายออก" อัตโนมัติ!
             } catch(e) { 
                 showToast("ไม่สามารถทำรายการได้ โปรดตรวจสอบระบบ", "error"); 
             } finally {
